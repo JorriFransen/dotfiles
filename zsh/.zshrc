@@ -26,7 +26,7 @@ alias yay='yay --color=auto '
 
 alias gb='git branch'
 alias gc='git commit'
-alias gch='git checkout'
+alias gco='git checkout'
 alias gs='git status'
 alias ga='git add'
 alias gpush='git push'
