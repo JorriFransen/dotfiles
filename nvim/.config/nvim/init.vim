@@ -8,8 +8,8 @@ set shiftwidth=4
 set ignorecase
 set smartcase
 
-set shada=""
-set shadafile="$HOME/.config/nvim/.viminfo"
+set viminfo=""
+set viminfofile="$HOME/.config/nvim/.viminfo"
 
 filetype plugin indent on
 
