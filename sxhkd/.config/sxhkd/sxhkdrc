@@ -1,0 +1,44 @@
+alt + Return
+	st
+
+alt + d
+    rofi -modi drun -show drun
+
+alt + b
+	blueman-manager
+
+alt + i
+	brave
+
+alt + I
+	brave --incognito
+
+alt + n
+    brave netflix.com
+
+alt + e
+    emacs
+
+alt + q
+    qutebrowser
+
+alt + v
+    vivaldi-stable
+
+alt + b
+    killall blueman-manager; blueman-manager
+
+XF86AudioRaiseVolume
+    pamixer -i 5
+
+XF86AudioLowerVolume
+    pamixer -d 5
+
+XF86MonBrightnessUp
+    light -A 10
+
+XF86MonBrightnessDown
+    light -U 10
+
+alt + w
+    feh --randomize --bg-fill ~/wallpapers/*
