@@ -23,9 +23,10 @@ export EDITOR=nvim
 alias vim='nvim '
 alias ls='ls --color=auto --group-directories-first'
 alias yay='yay --color=auto '
+alias bctl='bluetoothctl'
 
 alias gb='git branch'
-alias gc='git commit'
+alias gc='git commit && git push'
 alias gco='git checkout'
 alias gs='git status'
 alias ga='git add'
