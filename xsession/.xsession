@@ -22,6 +22,7 @@ cbatticon -n &
 pasystray &
 nm-applet &
 redshift-gtk &
+volnoti &
 
 nextcloud &
 
