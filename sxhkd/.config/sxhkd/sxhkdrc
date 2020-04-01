@@ -29,10 +29,10 @@ alt + b
     killall blueman-manager; blueman-manager
 
 XF86AudioRaiseVolume
-    pamixer -i 5
+    pamixer -i 5 && volnoti-show $(pamixer --get-volume)
 
 XF86AudioLowerVolume
-    pamixer -d 5
+    pamixer -d 5 && volnoti-show $(pamixer --get-volume)
 
 XF86MonBrightnessUp
     light -A 10
@@ -42,3 +42,14 @@ XF86MonBrightnessDown
 
 alt + w
     feh --randomize --bg-fill ~/wallpapers/*
+
+
+
+alt + T
+    surf tradingview.com
+
+alt + P
+    surf phemex.com/trade
+
+alt + s
+    tabbed surf -pe
