@@ -39,6 +39,8 @@ HISTFILE=~/.config/zsh/zsh_hist
 HISTSIZE=1000
 SAVEHIST=10000
 
+alias mpv='noglob mpv'
+
 setopt autocd extendedglob nomatch
 bindkey -v
 export KEYTIMEOUT=1
@@ -72,6 +74,7 @@ export SSH_AUTH_SOCK
 
 export ZODIAC_MODULE_PATH=/home/jorri/dev/zodiac/modules
 
-export PATH=$PATH:/home/jorri/.gem/ruby/2.7.0/bin
+export PATH=$PATH:/home/jorri/.scripts:/home/jorri/.gem/ruby/2.7.0/bin
 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
