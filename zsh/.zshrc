@@ -18,9 +18,8 @@ my_git_super_status () {
 
 PROMPT='[%~$(my_git_super_status)]$ '
 
-export EDITOR=nvim
+export EDITOR=vim
 
-alias vim='nvim '
 alias ls='ls --color=auto --group-directories-first'
 alias yay='yay --color=auto '
 alias bctl='bluetoothctl'
@@ -40,6 +39,7 @@ HISTSIZE=1000
 SAVEHIST=10000
 
 alias mpv='noglob mpv'
+alias brace='noglob brave'
 
 setopt autocd extendedglob nomatch
 bindkey -v
