@@ -51,15 +51,49 @@ call plug#begin('~/.vim/plugged')
     Plug 'ctrlpvim/ctrlp.vim'
     Plug 'Raimondi/delimitMate'
     Plug 'octol/vim-cpp-enhanced-highlight'
-    Plug 'itchyny/lightline.vim'
+    Plug 'derekwyatt/vim-fswitch'
+    Plug 'skywind3000/asyncrun.vim'
 
+    Plug 'itchyny/lightline.vim'
     Plug 'chriskempson/base16-vim'
     Plug 'rakr/vim-one'
 call plug#end()
 
+" fswitch setup
+au! BufEnter *.cpp let b:fswitchdst = 'h,hpp' | let b:fswitchlocs = '../include/*/'
+au! BufEnter *.h let b:fswitchdst = 'cpp,c' | let b:fswitchlocs = '../../source/'
+
+" AsyncRun setup
+let g:asyncrun_open = 8
+let g:asyncrun_rootmarks = ['.git', '.root']
+
 set termguicolors
-"let base16colorspace=256 " Access colors present in the 256 colorspace
 colorscheme one
 set background=dark
 
 let g:lightline = { 'colorscheme': 'one', }
+
+func Compile_cmake()
+    exec "wa"
+    :AsyncRun -cwd=<root> echo ninja: Entering directory \`build\' && cmake --build build
+endfunc
+
+" Custom keybindings 
+map <SPACE>qq :wqa<CR>
+"   Build 
+map <F5> :call Compile_cmake()<CR>
+map <F4> :call asyncrun#quickfix_toggle(8)<CR>
+map <SPACE>cd :call asyncrun#quickfix_toggle(8)<CR>
+map <SPACE>en :w<CR>:cn<CR>
+map <SPACE>ep :w<CR>:cp<CR>
+
+" File switching
+map ,ga :FSHere<CR>
+map ,gh :FSLeft<CR>
+map ,gH :FSSplitLeft<CR>
+map ,gl :FSRight<CR>
+map ,gL :FSSplitRight<CR>
+map ,gj :FSBelow<CR>
+map ,gJ :FSSplitBelow<CR>
+map ,gk :FSAbove<CR>
+map ,gK :FSSPlitAbove<CR>
