@@ -5,7 +5,10 @@ filetype plugin indent on
 " Enable line numbers
 set number
 
-set colorcolumn=80
+" set colorcolumn=100
+
+set incsearch
+set hlsearch
 
 " Tabs...
 set tabstop=4 shiftwidth=4 expandtab
@@ -42,8 +45,8 @@ set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣
 
 
 " Syntax highlighting for extensions
-autocmd BufNewFile,BufRead *.zdc set syntax=c
-
+autocmd BufNewFile,BufRead *.zdc set syntax=cpp
+autocmd BufNewFile,BufRead *.zdc set filetype=cpp
 
 " Theme/Visuals
 
@@ -53,6 +56,8 @@ call plug#begin('~/.vim/plugged')
     Plug 'octol/vim-cpp-enhanced-highlight'
     Plug 'derekwyatt/vim-fswitch'
     Plug 'skywind3000/asyncrun.vim'
+    Plug 'preservim/nerdcommenter'
+    Plug 'tpope/vim-fugitive'
 
     Plug 'itchyny/lightline.vim'
     Plug 'chriskempson/base16-vim'
@@ -73,13 +78,29 @@ set background=dark
 
 let g:lightline = { 'colorscheme': 'one', }
 
+" Different cursor for insert/normal mode
+let &t_SI = "\e[5 q"
+let &t_EI = "\e[2 q"
+
+" optional reset cursor on start:
+augroup myCmds
+au!
+autocmd VimEnter * silent !echo -ne "\e[2 q"
+augroup END
+
+
 func Compile_cmake()
     exec "wa"
     :AsyncRun -cwd=<root> echo ninja: Entering directory \`build\' && cmake --build build
 endfunc
 
 " Custom keybindings 
+inoremap {<CR> {<CR>}<Esc>O
 map <SPACE>qq :wqa<CR>
+
+" Nerdcommenter
+map <SPACE>; <plug>NERDCommenterToggle
+
 "   Build 
 map <F5> :call Compile_cmake()<CR>
 map <F4> :call asyncrun#quickfix_toggle(8)<CR>
@@ -88,7 +109,9 @@ map <SPACE>en :w<CR>:cn<CR>
 map <SPACE>ep :w<CR>:cp<CR>
 
 " File switching
-map ,ga :FSHere<CR>
+map <SPACE>bb :CtrlPBuffer<CR>
+map <SPACE>pf :CtrlPMRU<CR>
+map ,ga :w<CR>:FSHere<CR>
 map ,gh :FSLeft<CR>
 map ,gH :FSSplitLeft<CR>
 map ,gl :FSRight<CR>
@@ -97,3 +120,4 @@ map ,gj :FSBelow<CR>
 map ,gJ :FSSplitBelow<CR>
 map ,gk :FSAbove<CR>
 map ,gK :FSSPlitAbove<CR>
+
