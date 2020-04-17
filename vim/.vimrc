@@ -2,8 +2,16 @@
 set encoding=utf-8
 filetype plugin indent on
 
+if has('gui_running')
+    set guifont=Hack\ Nerd\ Font\ Mono\ 11
+    
+    " Disable the toolbar
+    set guioptions-=T
+endif
+
 " Enable line numbers
 set number
+
 
 " set colorcolumn=100
 
