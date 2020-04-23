@@ -32,6 +32,8 @@ alias ga='git add'
 alias gpush='git push'
 alias gpull='git pull'
 
+alias fos='fossil '
+
 bindkey "^R" history-incremental-search-backward
 
 HISTFILE=~/.config/zsh/zsh_hist
@@ -78,3 +80,4 @@ export PATH=$PATH:/home/jorri/.scripts:/home/jorri/.gem/ruby/2.7.0/bin
 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+ufetch
