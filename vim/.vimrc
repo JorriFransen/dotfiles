@@ -70,6 +70,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'itchyny/lightline.vim'
     Plug 'chriskempson/base16-vim'
     Plug 'rakr/vim-one'
+    Plug 'altercation/vim-colors-solarized'
 call plug#end()
 
 " fswitch setup
@@ -80,11 +81,12 @@ au! BufEnter *.h let b:fswitchdst = 'cpp,c' | let b:fswitchlocs = '../../source/
 let g:asyncrun_open = 8
 let g:asyncrun_rootmarks = ['.git', '.root']
 
-set termguicolors
-colorscheme one
+"set termguicolors
+"let g:solarized_termcolors=256
+colorscheme solarized
 set background=dark
 
-let g:lightline = { 'colorscheme': 'one', }
+let g:lightline = { 'colorscheme': 'solarized', }
 
 " Different cursor for insert/normal mode
 let &t_SI = "\e[5 q"
@@ -111,6 +113,7 @@ map <SPACE>; <plug>NERDCommenterToggle
 
 "   Build 
 map <F5> :call Compile_cmake()<CR>
+imap <F5> <Esc>:call Compile_cmake()<CR>
 map <F4> :call asyncrun#quickfix_toggle(8)<CR>
 map <SPACE>cd :call asyncrun#quickfix_toggle(8)<CR>
 map <SPACE>en :w<CR>:cn<CR>
