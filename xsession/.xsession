@@ -16,7 +16,7 @@ export SSH_AUTH_SOCK GNOME_KEYRING_CONTROL GNOME_KEYRING_PID GPG_AGENT_INFO
 
 sxhkd &
 feh --randomize --bg-fill ~/wallpapers/* &
-compton &
+picom &
 blueman-applet &
 cbatticon -n &
 pasystray &
@@ -30,3 +30,4 @@ nextcloud &
 # xinput set-prop 13 305 1
 
 exec dwm
+
