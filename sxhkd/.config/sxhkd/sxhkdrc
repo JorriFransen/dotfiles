@@ -1,5 +1,5 @@
 alt + Return
-	st
+	alacritty
 
 alt + d
     rofi -modi drun -show drun
