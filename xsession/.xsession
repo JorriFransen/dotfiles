@@ -4,7 +4,7 @@ do
     LOCALTIME=$(date +%d-%m-%y\ %H:%M)
     TEMP="$(($(cat /sys/class/thermal/thermal_zone0/temp) / 1000))C"
 
-    xsetroot -name " $TEMP | $LOCALTIME"
+    xsetroot -name "  $TEMP | $LOCALTIME "
 
     sleep 5s
 done &

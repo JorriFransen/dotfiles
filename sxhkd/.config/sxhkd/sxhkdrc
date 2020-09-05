@@ -8,13 +8,13 @@ alt + b
 	blueman-manager
 
 alt + i
-	brave
+	firefox
 
 alt + I
 	brave --incognito
 
 alt + n
-    brave netflix.com
+    firefox netflix.com
 
 alt + e
     emacs

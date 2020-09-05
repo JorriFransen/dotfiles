@@ -7,6 +7,9 @@ if has('gui_running')
     
     " Disable the toolbar
     set guioptions-=T
+
+    " Disable the menubar
+    set guioptions-=m
 endif
 
 " Enable line numbers
@@ -76,7 +79,16 @@ call plug#begin('~/.vim/plugged')
     Plug 'tpope/vim-dispatch'
     Plug 'vim-syntastic/syntastic'
     Plug 'prabirshrestha/asyncomplete.vim'
+
+    Plug 'vim-scripts/nextval'
 call plug#end()
+
+" Set options for syntastic
+"let g:syntastic_cpp_checkers=['clang_check', 'clang_tidy', 'gcc']
+let g:syntastic_enable_signs=1
+let g:syntastic_cpp_check_header=0
+let g:syntastic_cpp_remove_include_errors=1
+let g:syntastic_cpp_config_file='.syntastic_cpp_config'
 
 " asyncomplete setup
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -134,7 +146,7 @@ map <SPACE>ep :w<CR>:cp<CR>
 
 " File switching
 map <SPACE>bb :CtrlPBuffer<CR>
-map <SPACE>pf :CtrlPMRU<CR>
+map <SPACE>pf :CtrlPMixed<CR>
 map ,ga :w<CR>:FSHere<CR>
 map ,gh :FSLeft<CR>
 map ,gH :FSSplitLeft<CR>
