@@ -18,7 +18,7 @@ my_git_super_status () {
 
 PROMPT='[%~$(my_git_super_status)]$ '
 
-export EDITOR=vim
+export EDITOR=nvim
 
 alias ls='ls --color=auto --group-directories-first'
 alias yay='yay --color=auto '
