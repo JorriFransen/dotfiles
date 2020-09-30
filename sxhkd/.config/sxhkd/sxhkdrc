@@ -5,7 +5,7 @@ alt + d
     rofi -modi drun -show drun
 
 alt + b
-	blueman-manager
+    rofi-bluetooth
 
 alt + i
 	firefox
@@ -24,9 +24,6 @@ alt + q
 
 alt + v
     vivaldi-stable
-
-alt + b
-    killall blueman-manager; blueman-manager
 
 XF86AudioRaiseVolume
     pamixer -i 5 && volnoti-show $(pamixer --get-volume)

@@ -80,4 +80,7 @@ export PATH=$PATH:/home/jorri/.scripts:/home/jorri/.gem/ruby/2.7.0/bin
 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+any-nix-shell zsh --info-right | source /dev/stdin
+
 ufetch
+

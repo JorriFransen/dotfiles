@@ -17,17 +17,16 @@ export SSH_AUTH_SOCK GNOME_KEYRING_CONTROL GNOME_KEYRING_PID GPG_AGENT_INFO
 sxhkd &
 feh --randomize --bg-fill ~/wallpapers/* &
 picom &
-blueman-applet &
+sleep 5 && blueman-applet &
 cbatticon -n &
 pasystray &
 nm-applet &
 redshift-gtk &
 volnoti &
 
-nextcloud &
+rfkill unblock bluetooth
 
-~/dev/arch_touchpad_setup/arch_touchpad_setup.bash
-# xinput set-prop 13 305 1
+~/.packages/arch_touchpad_setup/arch_touchpad_setup.bash
 
 exec dwm
 
