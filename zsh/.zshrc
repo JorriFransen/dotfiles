@@ -84,3 +84,5 @@ any-nix-shell zsh --info-right | source /dev/stdin
 
 ufetch
 
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
