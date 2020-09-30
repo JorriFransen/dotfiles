@@ -17,7 +17,7 @@ set cursorline
 
 set clipboard=unnamedplus
 
-set path=.,**
+set path=.,,**
 set wildignore=*.o,*~
 
 let $RTP=split(&runtimepath, ',')[0]
@@ -136,3 +136,6 @@ inoremap {<CR> {<CR>}<Esc>O
 map <leader>T :call Open_Terminal()<CR>
 map <leader>C :tabe $RC<CR>
 map <leader>R :w<CR>:so %<CR>
+
+set exrc
+set secure
