@@ -29,4 +29,3 @@ rfkill unblock bluetooth
 ~/.packages/arch_touchpad_setup/arch_touchpad_setup.bash
 
 exec dwm
-
