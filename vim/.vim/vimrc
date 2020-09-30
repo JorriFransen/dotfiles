@@ -71,7 +71,7 @@ let g:NERDDefaultAlign = 'left'
 au! BufEnter *.cpp let b:fswitchdst = 'h,hpp' | let b:fswitchlocs = '../include/*/'
 au! BufEnter *.h let b:fswitchdst = 'cpp,c' | let b:fswitchlocs = '../../source/'
 
-let g:lightline = { 'colorscheme': 'jellybeans', }
+let g:lightline = { 'colorscheme': 'one', }
 
 " Different cursor for insert/normal mode
 let &t_SI = "\e[5 q"
@@ -113,8 +113,8 @@ noremap <leader>wh :wincmd h<CR>
 noremap <leader>wl :wincmd l<CR>
 noremap <leader>wj :wincmd j<CR>
 noremap <leader>wk :wincmd k<CR>
-noremap <leader>ws :wincmd s<CR>
-noremap <leader>wv :wincmd v<CR>
+noremap <leader>ws :wincmd s <CR> :wincmd j<CR> :GFiles<CR>
+noremap <leader>wv :wincmd v <CR> :wincmd l<CR> :GFiles<CR>
 
 nnoremap <F5> :call Compile()<CR>
 inoremap <F5> <esc>: call Compile()<CR>
@@ -123,13 +123,13 @@ noremap <leader>cd :call quickfix#toggle()<CR>
 noremap <leader>en :cn<CR>
 noremap <leader>ep :cp<CR>
 noremap ,ga :w<CR>:FSHere<CR>
-noremap <C-p> :GFiles!<CR>
-noremap <leader>pp :GFiles!<CR>
-noremap <leader>pf :FZF!<CR>
+noremap <C-p> :GFiles<CR>
+noremap <leader>pp :GFiles<CR>
+noremap <leader>pf :FZF<CR>
 noremap <leader>f :find 
 noremap <leader>b :buffer 
 noremap <leader>bb :Buffers!<CR> 
-noremap <leader>g :Rg!<CR>
+noremap <leader>g :Rg<CR>
 
 map <leader>; <plug>NERDCommenterToggle
 
