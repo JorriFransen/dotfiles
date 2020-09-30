@@ -52,6 +52,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'rakr/vim-one'
     Plug 'morhetz/gruvbox'
 
+    Plug 'skywind3000/asyncrun.vim'
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
     Plug 'derekwyatt/vim-fswitch'
