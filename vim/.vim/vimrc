@@ -14,7 +14,6 @@ set encoding=utf-8
 set ttimeoutlen=1
 set number
 set cursorline
-
 set clipboard=unnamedplus
 
 set path=.,,**
@@ -29,12 +28,14 @@ set directory^=$HOME/.cache/vim/swap//
 if has('gui_running')
     set guioptions-=T
     set guioptions-=m
+    set guifont=Hack\ Nerd\ Font\ Mono\ 11
 endif
 
 if (has("nvim"))
     let $nvim_tui_enable_true_color=1
     autocmd TermOpen * startinsert
 endif
+
 if (has("termguicolors"))
     set termguicolors
 endif
@@ -49,6 +50,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'itchyny/lightline.vim'
     Plug 'octol/vim-cpp-enhanced-highlight'
     Plug 'rakr/vim-one'
+    Plug 'morhetz/gruvbox'
 
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
@@ -68,7 +70,7 @@ let g:NERDDefaultAlign = 'left'
 au! BufEnter *.cpp let b:fswitchdst = 'h,hpp' | let b:fswitchlocs = '../include/*/'
 au! BufEnter *.h let b:fswitchdst = 'cpp,c' | let b:fswitchlocs = '../../source/'
 
-let g:lightline = { 'colorscheme': 'one', }
+let g:lightline = { 'colorscheme': 'jellybeans', }
 
 " Different cursor for insert/normal mode
 let &t_SI = "\e[5 q"
