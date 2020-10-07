@@ -7,7 +7,7 @@ setlocal path=.,,**
 compiler cpp
 
 function! Compile()
-    wa
+    exec "wa"
 
     " call quickfix#open()
     " silent make

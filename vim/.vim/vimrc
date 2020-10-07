@@ -16,7 +16,7 @@ set number
 set cursorline
 set clipboard=unnamedplus
 
-set path=.,,**
+set path=.,,*
 set wildignore=*.o,*~
 
 let $RTP=split(&runtimepath, ',')[0]
@@ -106,7 +106,6 @@ noremap <leader>tq :tabc<CR>
 
 tmap <C-h> <C-\><C-n>:tabp<CR>
 tmap <C-l> <C-\><C-n>:tabn<CR>
-tmap <C-j> <C-\><C-n>:tabc<CR>
 
 " Window navigation
 noremap <leader>wh :wincmd h<CR>
@@ -128,7 +127,7 @@ noremap <leader>pp :GFiles<CR>
 noremap <leader>pf :FZF<CR>
 noremap <leader>f :find 
 noremap <leader>b :buffer 
-noremap <leader>bb :Buffers!<CR> 
+noremap <leader>bb :Buffers<CR> 
 noremap <leader>g :Rg<CR>
 
 map <leader>; <plug>NERDCommenterToggle
