@@ -83,7 +83,7 @@ au!
 autocmd VimEnter * silent !echo -ne "\e[2 q"
 augroup END
 
-function Open_Terminal()
+function! Open_Terminal()
     if (has("nvim"))
         exec "tabe | terminal"
     else
@@ -116,7 +116,9 @@ noremap <leader>ws :wincmd s <CR> :wincmd j<CR> :GFiles<CR>
 noremap <leader>wv :wincmd v <CR> :wincmd l<CR> :GFiles<CR>
 
 nnoremap <F5> :call Compile()<CR>
+nnoremap <leader>cc :call Compile()<CR>
 inoremap <F5> <esc>: call Compile()<CR>
+inoremap <leader>cc <esc>: call Compile()<CR>
 
 noremap <leader>cd :call quickfix#toggle()<CR>
 noremap <leader>en :cn<CR>
