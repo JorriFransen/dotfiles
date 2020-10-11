@@ -118,7 +118,7 @@ noremap <leader>wv :wincmd v <CR> :wincmd l<CR> :GFiles<CR>
 nnoremap <F5> :call Compile()<CR>
 nnoremap <leader>cc :call Compile()<CR>
 inoremap <F5> <esc>: call Compile()<CR>
-inoremap <leader>cc <esc>: call Compile()<CR>
+" inoremap <leader>cc <esc>: call Compile()<CR>
 
 noremap <leader>cd :call quickfix#toggle()<CR>
 noremap <leader>en :cn<CR>
