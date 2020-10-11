@@ -1,5 +1,8 @@
 #! /usr/bin/env sh
 
+git submodule init
+git submodule update
+
 OPTIND=1
 
 IGNORED_FOLDERS=""
