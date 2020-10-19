@@ -28,17 +28,6 @@ fi
 
 alias ls='ls --color=auto --group-directories-first'
 alias yay='yay --color=auto '
-alias bctl='bluetoothctl'
-
-alias gb='git branch'
-alias gc='git commit && git push'
-alias gco='git checkout'
-alias gs='git status'
-alias ga='git add'
-alias gpush='git push'
-alias gpull='git pull'
-
-alias fos='fossil '
 
 bindkey "^R" history-incremental-search-backward
 
@@ -66,21 +55,22 @@ bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
-man() {
-    LESS_TERMCAP_md=$'\e[01;31m' \
-    LESS_TERMCAP_me=$'\e[0m' \
-    LESS_TERMCAP_se=$'\e[0m' \
-    LESS_TERMCAP_so=$'\e[01;44;33m' \
-    LESS_TERMCAP_ue=$'\e[0m' \
-    LESS_TERMCAP_us=$'\e[01;32m' \
-    command man "$@"
-}
+# colors
+# man() {
+#     LESS_TERMCAP_md=$'\e[01;31m' \
+#     LESS_TERMCAP_me=$'\e[0m' \
+#     LESS_TERMCAP_se=$'\e[0m' \
+#     LESS_TERMCAP_so=$'\e[01;44;33m' \
+#     LESS_TERMCAP_ue=$'\e[0m' \
+#     LESS_TERMCAP_us=$'\e[01;32m' \
+#     command man "$@"
+# }
 #
+
+
 #eval $(keychain --eval --quiet id_rsa)
 eval $(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)
 export SSH_AUTH_SOCK
-
-export ZODIAC_MODULE_PATH=/home/jorri/dev/zodiac/modules
 
 export PATH=$PATH:/home/jorri/.scripts:/home/jorri/.gem/ruby/2.7.0/bin
 
