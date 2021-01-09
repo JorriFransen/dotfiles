@@ -2,15 +2,25 @@
 env:
   TERM: xterm-256color
 
-font: 
+font:
   normal:
-    family: Hack Nerd Font Mono
+    family: FiraCode Nerd Font
     style: regular
   bold:
-    family: Hack Nerd Font Mono
+    family: FiraCode Nerd Font
   italic:
-    family: Hack Nerd Font Mono
-  size: 7.8
+    family: FiraCode Nerd Font
+  size: 7.5
+
+# font:
+#   normal:
+#     family: Hack Nerd Font Mono
+#     style: regular
+#   bold:
+#     family: Hack Nerd Font Mono
+#   italic:
+#     family: Hack Nerd Font Mono
+#   size: 7.8
 
 background_opacity: 0.92
 # background_opacity: 1
@@ -32,7 +42,7 @@ background_opacity: 0.92
     #magenta: '0xc678dd'
     #cyan:    '0x46d9ff'
     #white:   '0xbbc2cf'
-    
+
 # Colors (One Dark)
 colors:
   # Default colors
