@@ -1,0 +1,38 @@
+
+add_newline = false
+
+[line_break]
+disabled = true
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[➜](bold red)"
+vicmd_symbol = "[](bold  yellow)"
+
+[battery]
+[[battery.display]]
+threshold = 50
+style = "bold yellow"
+[[battery.display]]
+threshold = 20
+style = "bold red"
+
+[directory]
+trunctation_length = 3
+truncate_to_repo = false
+truncation_symbol = "..."
+
+[git_branch]
+format = "[$symbol$branch ]($style)"
+symbol = ""
+
+[git_tag]
+tag_disabled = false
+
+[git_status]
+stashed = "≡"
+
+[cmake]
+format = "[$symbol$version]($style) "
+symbol = "喝"
+
