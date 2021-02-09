@@ -1,24 +1,4 @@
 
-source /home/jorri/.packages/zsh-git-prompt/zshrc.sh
-
-in_git_repo () {
-    if [ -d .git ]; then
-        echo .git;
-    else
-        echo $(git rev-parse --git-dir 2> /dev/null);
-    fi;
-}
-
-my_git_super_status () {
-    if [ $(in_git_repo) ]; then
-        echo " $(git_super_status)";
-    fi;
-
-}
-
-PROMPT='[%~$(my_git_super_status)]$ '
-
-
 if ! command -v nvim &> /dev/null; then
     export EDITOR=vim
 else
@@ -58,27 +38,21 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
 # colors
-# man() {
-#     LESS_TERMCAP_md=$'\e[01;31m' \
-#     LESS_TERMCAP_me=$'\e[0m' \
-#     LESS_TERMCAP_se=$'\e[0m' \
-#     LESS_TERMCAP_so=$'\e[01;44;33m' \
-#     LESS_TERMCAP_ue=$'\e[0m' \
-#     LESS_TERMCAP_us=$'\e[01;32m' \
-#     command man "$@"
-# }
-#
-
+man() {
+    LESS_TERMCAP_md=$'\e[01;31m' \
+    LESS_TERMCAP_me=$'\e[0m' \
+    LESS_TERMCAP_se=$'\e[0m' \
+    LESS_TERMCAP_so=$'\e[01;44;33m' \
+    LESS_TERMCAP_ue=$'\e[0m' \
+    LESS_TERMCAP_us=$'\e[01;32m' \
+    command man "$@"
+}
 
 #eval $(keychain --eval --quiet id_rsa)
 eval $(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)
 export SSH_AUTH_SOCK
 
-export PATH=$PATH:/home/jorri/.scripts:/home/jorri/.gem/ruby/2.7.0/bin
-
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-any-nix-shell zsh --info-right | source /dev/stdin
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -87,8 +61,3 @@ ufetch
 eval "$(starship init zsh)"
 
 
-PATH="/home/jorri/perl5/bin${PATH:+:${PATH}}"; export PATH;
-PERL5LIB="/home/jorri/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="/home/jorri/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"/home/jorri/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/home/jorri/perl5"; export PERL_MM_OPT;
