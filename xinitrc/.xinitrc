@@ -10,20 +10,24 @@ do
 done &
 
 dbus-update-activation-environment --systemd DISPLAY
-eval $(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)
-export SSH_AUTH_SOCK GNOME_KEYRING_CONTROL GNOME_KEYRING_PID GPG_AGENT_INFO
+#eval $(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)
+#export SSH_AUTH_SOCK GNOME_KEYRING_CONTROL GNOME_KEYRING_PID GPG_AGENT_INFO
 
 
 sxhkd &
-feh --randomize --bg-fill ~/wallpapers/* &
+feh --randomize --bg-fill ~/Pictures/* &
 picom &
 sleep 5 && blueman-applet &
 cbatticon -n &
 pasystray &
 nm-applet &
-redshift-gtk &
+
+redshift-gtk -l 52.39:4.65&
+#redshift-gtk &
+
 volnoti &
 optimus-manager-qt &
+mailspring -b &
 
 rfkill unblock bluetooth
 
