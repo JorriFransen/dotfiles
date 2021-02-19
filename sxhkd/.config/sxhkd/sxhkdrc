@@ -1,5 +1,5 @@
 alt + Return
-    alacritty
+    st
 
 alt + d
     rofi -modi drun -show drun
@@ -7,23 +7,20 @@ alt + d
 alt + b
     rofi-bluetooth
 
+alt + shift + b
+    blueman-manager
+
 alt + i
-    firefox
+    librewolf
 
 alt + I
-    brave --incognito
-
-alt + n
-    firefox netflix.com
+    librewolf --private-window
 
 alt + e
     nvim-qt --no-ext-tabline --no-ext-popupmenu --fullscreen
 
 alt + q
     qutebrowser
-
-alt + v
-    vivaldi-stable
 
 XF86AudioRaiseVolume
     pamixer -i 5 && volnoti-show $(pamixer --get-volume)
@@ -40,11 +37,3 @@ XF86MonBrightnessDown
 alt + w
     feh --randomize --bg-fill ~/wallpapers/*
 
-alt + T
-    surf tradingview.com
-
-alt + P
-    surf phemex.com/trade
-
-alt + s
-    tabbed surf -pe
