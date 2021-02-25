@@ -4,9 +4,6 @@ alt + Return
 alt + d
     rofi -modi drun -show drun
 
-alt + b
-    rofi-bluetooth
-
 alt + shift + b
     blueman-manager
 
