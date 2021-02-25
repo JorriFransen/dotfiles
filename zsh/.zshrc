@@ -10,18 +10,19 @@ else
     alias vim=nvim
 fi
 
-# alias ls='ls --color=auto --group-directories-first'
-alias ls='exa --group-directories-first'
+alias ls='ls --color=auto --group-directories-first'
 alias nc="nordvpn connect"
 alias nd="nordvpn disconnect"
 alias g="git"
-
-bindkey "^R" history-incremental-search-backward
-
+alias mutt=neomutt
 
 setopt autocd extendedglob nomatch
 bindkey -v
 export KEYTIMEOUT=1
+
+# bindkey "^R" history-incremental-search-backward
+source /usr/share/fzf/key-bindings.zsh
+source /usr/share/fzf/completion.zsh
 
 autoload -U compinit
 zstyle ':completion:*' menu select
@@ -36,26 +37,28 @@ bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
-# colors
-man() {
-    export LESS_TERMCAP_mb=$'\e[1;35m'
-    export LESS_TERMCAP_md=$'\e[1;32m'
-    export LESS_TERMCAP_me=$'\e[0m'
-    export LESS_TERMCAP_se=$'\e[0m'
-    export LESS_TERMCAP_so=$'\e[01;47;30m'
-    export LESS_TERMCAP_ue=$'\e[0m'
-    export LESS_TERMCAP_us=$'\e[1;4;31m'
-    command man "$@"
+# man colors
+# man() {
+#     export LESS_TERMCAP_mb=$'\e[1;35m'
+#     export LESS_TERMCAP_md=$'\e[1;32m'
+#     export LESS_TERMCAP_me=$'\e[0m'
+#     export LESS_TERMCAP_se=$'\e[0m'
+#     export LESS_TERMCAP_so=$'\e[01;47;30m'
+#     export LESS_TERMCAP_ue=$'\e[0m'
+#     export LESS_TERMCAP_us=$'\e[1;4;31m'
+#     command man "$@"
+# }
+
+man () {
+    text=$(command man "$@") && echo "$text" | vim -R +":set ft=man nomod nonu noma nolist colorcolumn=" - ;
 }
-
-
 
 # eval $(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)
 # export SSH_AUTH_SOCK
 export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 gpgconf --launch gpg-agent
 
-export PATH=$PATH:/home/jorri/.scripts:/home/jorri/.gem/ruby/2.7.0/bin
+export PATH=$PATH:/home/jorri/.scripts
 
 PATH="/home/jorri/perl5/bin${PATH:+:${PATH}}"; export PATH;
 PERL5LIB="/home/jorri/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
