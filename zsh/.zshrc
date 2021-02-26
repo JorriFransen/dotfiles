@@ -11,8 +11,8 @@ else
 fi
 
 alias ls='ls --color=auto --group-directories-first'
-alias nc="nordvpn connect"
-alias nd="nordvpn disconnect"
+alias nc="sudo systemctl start nordvpnd && nordvpn connect"
+alias nd="nordvpn disconnect && sudo systemctl stop nordvpnd"
 alias g="git"
 alias mutt=neomutt
 
