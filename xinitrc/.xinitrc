@@ -17,13 +17,10 @@ dbus-update-activation-environment --systemd DISPLAY
 sxhkd &
 feh --randomize --bg-fill ~/Pictures/* &
 picom &
-sleep 5 && blueman-applet &
 cbatticon -n &
-pasystray &
 nm-applet &
 
-redshift-gtk -l 52.39:4.65&
-#redshift-gtk &
+redshift -l 52.39:4.65&
 
 volnoti &
 optimus-manager-qt &
