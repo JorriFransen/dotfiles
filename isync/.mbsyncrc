@@ -1,0 +1,43 @@
+IMAPStore jorri-remote
+Host mail.jorrifransen.nl
+Port 993
+User jorri@jorrifransen.nl
+PassCmd "pass jorri@jorrifransen.nl"
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+MaildirStore jorri-local
+Path ~/.mail/jorri/
+Inbox ~/.mail/jorri/INBOX
+Subfolders Verbatim
+Flatten .
+
+Channel jorri
+Far :jorri-remote:
+Near :jorri-local:
+Create Both
+Expunge Both
+Patterns *
+SyncState *
+
+
+IMAPStore gmail-remote
+Host imap.gmail.com
+SSLType IMAPS
+AuthMechs LOGIN
+User jorrifransen@gmail.com
+PassCmd "pass google.com/mbsync-app-password"
+
+MaildirStore gmail-local
+Path ~/.mail/gmail/
+Inbox ~/.mail/gmail/INBOX
+Subfolders Verbatim
+Flatten .
+
+Channel gmail
+Far :gmail-remote:
+Near :gmail-local:
+Create Both
+Expunge Both
+Patterns * !"[Gmail]/All Mail" !"[Gmail]/Important" !"[Gmail]/Starred" !"[Gmail]/Bin"
+SyncState *
