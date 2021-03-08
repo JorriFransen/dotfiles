@@ -1,0 +1,32 @@
+## Account settings
+set from = "jorri@jorrifransen.nl"
+set realname = "Jorri Fransen"
+
+set mbox_type = Maildir
+set folder = "~/.mail/jorri/"
+
+set imap_pass="pass jorri@jorrifransen.nl"
+set smtp_pass=$imap_pass
+
+set smtp_url ="smtp://jorri@jorrifransen.nl@mail.jorrifransen.nl:587"
+
+set header_cache = "~/.cache/mutt/jorri/header_cache"
+set message_cachedir = "~/.cache/mutt/jorri/message_cache"
+
+set spoolfile = +INBOX
+set postponed = +Drafts 
+set record = +Sent 
+set trash = +Trash
+
+mailboxes =INBOX =Drafts =Sent =Facturen =Junk =Trash
+
+# navigation settings
+macro index,pager gi '<change-folder>=INBOX<enter>' "go to inbox"
+macro index,pager gs "<change-folder>Sent<enter>" "go to sent"
+macro index,pager gd "<change-folder>=Drafts<enter>" "go to drafts"
+macro index,pager gt "<change-folder>=Trash<enter>" "go to trash"
+macro index,pager gj "<change-folder>=Spam<enter>" "go to junk"
+macro index,pager gf "<change-folder>=Facturen<enter>" "go to facturen"
+
+# synchronization settings ['s' to sync]
+macro index S "<shell-escape>mbsync jorri<enter>" "sync email"

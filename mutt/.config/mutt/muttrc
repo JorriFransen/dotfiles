@@ -1,0 +1,31 @@
+source ./colors.muttrc
+
+bind index,pager g noop
+source ~/.config/mutt/gmail.rc
+source ~/.config/mutt/jorri.rc
+
+bind index,pager a noop
+macro index,pager a1 '<sync-mailbox><refresh><enter-command>source ~/.config/mutt/jorri.rc<enter><change-folder>!<enter>;
+macro index,pager a2 '<sync-mailbox><refresh><enter-command>source ~/.config/mutt/gmail.rc<enter><change-folder>!<enter>;
+
+## General settings
+set mail_check_stats
+set sort= 'reverse-date'
+set date_format="%d/%m %I:%M"
+set to_chars="     "
+set index_format="%2C %Z %d %-15.15F %s (%c)"
+set mark_old=no
+set sidebar_visible = yes
+set sidebar_width = 25
+set sidebar_short_path = no
+set sidebar_next_new_wrap = yes
+set sidebar_format = '%B%?F? [%F]?%* %?N?%N/? %?S?%S?'
+bind index,pager \Ck sidebar-prev
+bind index,pager \Cj sidebar-next
+bind index,pager \Cl sidebar-open
+bind index,pager b sidebar-toggle-visible
+
+auto_view text/html
+set mailcap_path = ~/.config/mutt/mailcap
+macro index,pager B "<view-attachments><search>html<enter><view-mailcap><exit>"
+
