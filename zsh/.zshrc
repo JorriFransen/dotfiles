@@ -10,9 +10,11 @@ else
     alias vim=nvim
 fi
 
+alias sudo='sudo '
 alias ls='ls --color=auto --group-directories-first'
 alias nc="sudo systemctl start nordvpnd && nordvpn connect"
 alias nd="nordvpn disconnect && sudo systemctl stop nordvpnd"
+alias ns="nordvpn status"
 alias g="git"
 alias mutt=neomutt
 
@@ -74,7 +76,6 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-echo Fix redshift geoclue hack!
 ufetch
 
 eval "$(starship init zsh)"
