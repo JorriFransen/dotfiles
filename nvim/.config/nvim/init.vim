@@ -32,6 +32,7 @@ call plug#begin()
     Plug 'kyazdani42/nvim-web-devicons'
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
+    Plug 'romgrk/barbar.nvim'
 
     " Tools
     Plug 'skywind3000/asyncrun.vim'
