@@ -5,7 +5,7 @@ theme = "gruvbox"
 line-number = "relative"
 idle-timeout = 200
 true-color = true
-completion-trigger-len = 2
+completion-trigger-len = 1
 
 [editor.cursor-shape]
 insert = "bar"
