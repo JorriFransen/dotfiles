@@ -79,6 +79,7 @@ noremap <leader>wv :vsplit<cr>
 noremap <leader>ws :split<cr>
 
 noremap <leader>thh :set hls!<CR>
+noremap <leader>tbb :call ToggleBackgroundColor()<cr>
 noremap <leader>tt :wincmd T<CR>
 noremap <leader>T :tabe<CR>:terminal<CR>i<CR>
 noremap <C-h> :tabp<CR>
@@ -111,6 +112,10 @@ function! ToggleQuickfix()
     else
         cclose
     endif
+endfunction
+
+function! ToggleBackgroundColor()
+    let &bg=(&bg=='light'?'dark':'light')
 endfunction
 
 
