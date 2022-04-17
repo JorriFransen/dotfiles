@@ -30,9 +30,9 @@ call plug#begin()
     " Visual
     Plug 'gruvbox-community/gruvbox'
     Plug 'kyazdani42/nvim-web-devicons'
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
-    Plug 'romgrk/barbar.nvim'
+    "Plug 'vim-airline/vim-airline'
+    "Plug 'vim-airline/vim-airline-themes'
+    "Plug 'romgrk/barbar.nvim'
 
     " Tools
     Plug 'skywind3000/asyncrun.vim'
@@ -44,6 +44,7 @@ call plug#begin()
     Plug 'mbbill/undotree'
     Plug 'psliwka/vim-smoothie'
     Plug 'nvim-treesitter/nvim-treesitter'
+    Plug 'puremourning/vimspector'
 
 
     " Language support
@@ -84,8 +85,10 @@ noremap <C-h> :tabp<CR>
 noremap <C-l> :tabn<CR>
 tnoremap <C-h> <C-\><C-n>:tabp<CR>
 tnoremap <C-l> <C-\><C-n>:tabn<CR>
-nnoremap <F5> :call Compile()<CR>
-inoremap <F5> <esc>: call Compile()<CR>
+nnoremap <F1> :call Compile()<CR>
+inoremap <F1> <esc>: call Compile()<CR>
+nnoremap <leader>dl :call vimspector#Launch(1)<CR>
+nnoremap <leader>dr :VimspectorReset<CR>
 nnoremap <leader>cd :call ToggleQuickfix()<CR>
 nnoremap <leader>en :cn<cr>
 nnoremap <C-j> :cn<cr>
@@ -94,6 +97,8 @@ nnoremap <C-k> :cp<cr>
 
 noremap <leader>ga :CocCommand clangd.switchSourceHeader<CR>
 noremap <leader>gs :CocCommand clangd.switchSourceHeader vsplit<CR>
+
+let g:vimspector_enable_mappings = 'HUMAN'
 
 set listchars=eol:·,tab:⍿·,trail:×
 
@@ -110,14 +115,14 @@ endfunction
 
 
 " Airline
-let g:airline_theme='gruvbox'
-let g:airline_powerline_fonts = 1
-let g:airline_left_sep = ""
-let g:airline_right_sep = ""
-let g:airline_right_alt_sep = ""
-let g:airline_extensions = [ "branch", "whitespace", "coc", "fzf", "nvimlsp", "quickfix", "undotree", "searchcount" ]
-let g:airline#extensions#fzf#enabled = 1
-let g:airline#extensions#default#layout = [ [ 'a', 'b', 'c' ], [ 'x', 'y', 'z', 'error', 'warning' ] ]
+"let g:airline_theme='gruvbox'
+"let g:airline_powerline_fonts = 1
+"let g:airline_left_sep = ""
+"let g:airline_right_sep = ""
+"let g:airline_right_alt_sep = ""
+"let g:airline_extensions = [ "branch", "whitespace", "coc", "fzf", "nvimlsp", "quickfix", "undotree", "searchcount" ]
+"let g:airline#extensions#fzf#enabled = 1
+"let g:airline#extensions#default#layout = [ [ 'a', 'b', 'c' ], [ 'x', 'y', 'z', 'error', 'warning' ] ]
 
 " Hide statusline when using fzf
 autocmd! FileType fzf set laststatus=0 noshowmode noruler
