@@ -51,7 +51,9 @@ bindkey -v '^?' backward-delete-char
 
 alias ls='ls --color'
 
-PATH=$PATH:/home/jorri/.cargo/bin
+PATH=$PATH:$HOME/.cargo/bin
+PATH=$PATH:$HOME/.scripts
+
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
