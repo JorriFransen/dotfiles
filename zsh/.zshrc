@@ -26,7 +26,13 @@ antigen theme romkatv/powerlevel10k
 antigen apply
 
 # Setup fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+if [ -f ~/.fzf.zsh ]; then
+    source ~/.fzf.zsh
+else
+    [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
+    [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
+fi
+
 
 # Setup autosuggestions
 bindkey '^ ' autosuggest-accept
