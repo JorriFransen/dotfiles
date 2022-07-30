@@ -20,3 +20,6 @@ font:
 
 # Live config reload (changes require restart)
 live_config_reload: true
+
+env:
+  TERM: xterm-256color
