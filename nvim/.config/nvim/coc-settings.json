@@ -1,4 +1,11 @@
 {
-  "clangd.inlayHints.enable": false
-  
+    "clangd.inlayHints.enable": false,
+
+    "languageserver": {
+        "odin": {
+            "command": "ols",
+            "filetypes": ["odin"],
+            "rootPatterns": ["ols.json"]
+        }
+    }
 }

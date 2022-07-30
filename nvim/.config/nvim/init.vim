@@ -50,6 +50,8 @@ call plug#begin()
     " Language support
     Plug 'rhysd/vim-llvm'
     Plug 'LnL7/vim-nix'
+    Plug 'ziglang/zig.vim'
+    Plug 'Tetralux/odin.vim'
 
     " Coc language support
     Plug 'clangd/coc-clangd'
@@ -64,6 +66,10 @@ colorscheme gruvbox
 let mapleader = " "
 map <leader>; <plug>NERDCommenterToggle
 inoremap {<CR> {<CR>}<Esc>O
+
+let g:NERDSpaceDelims = 1
+let g:NERDDefaultAlign = "left"
+let g:NERDCustomDelimiters = { 'odin': { 'left': '//'}}
 
 nnoremap <leader>ff :Files<CR>
 nnoremap <leader>fg :GFiles<CR>
@@ -98,6 +104,8 @@ nnoremap <C-k> :cp<cr>
 
 noremap <leader>ga :CocCommand clangd.switchSourceHeader<CR>
 noremap <leader>gs :CocCommand clangd.switchSourceHeader vsplit<CR>
+
+noremap <leader>cr :CocRestart<cr>
 
 let g:vimspector_enable_mappings = 'HUMAN'
 
