@@ -106,6 +106,7 @@ noremap <leader>ga :CocCommand clangd.switchSourceHeader<CR>
 noremap <leader>gs :CocCommand clangd.switchSourceHeader vsplit<CR>
 
 noremap <leader>cr :CocRestart<cr>
+noremap <leader>v <c-v>
 
 let g:vimspector_enable_mappings = 'HUMAN'
 
