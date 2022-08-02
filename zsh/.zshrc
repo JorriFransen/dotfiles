@@ -63,10 +63,11 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
 alias ls='ls --color'
-alias gdb='gdbtui '
 
 PATH=$PATH:$HOME/.cargo/bin
 PATH=$PATH:$HOME/.scripts
+PATH=$PATH:$HOME/dev/Odin/install
+PATH=$PATH:$HOME/dev/ols/install
 
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
