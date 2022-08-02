@@ -7,6 +7,6 @@ function! Compile()
     " silent make
 
     let g:asyncrun_open = 14
-    AsyncRun make
+    AsyncRun ODINTEST_FLAGS="-no-color" make
     redraw!
 endfunction
