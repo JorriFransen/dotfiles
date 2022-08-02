@@ -64,7 +64,6 @@ bindkey -v '^?' backward-delete-char
 
 alias ls='ls --color'
 
-PATH=$PATH:$HOME/.cargo/bin
 PATH=$PATH:$HOME/.scripts
 PATH=$PATH:$HOME/dev/Odin/install
 PATH=$PATH:$HOME/dev/ols/install
