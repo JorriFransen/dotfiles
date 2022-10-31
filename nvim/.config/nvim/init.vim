@@ -1,3 +1,6 @@
+if !exists('g:vscode')
+" set guifont=FiraCode\ Nerd\ Font:h13
+
 set cursorline
 set number
 set relativenumber
@@ -25,6 +28,8 @@ set noundofile
 set signcolumn=number
 set termguicolors
 
+set updatetime=100 "For coc and vim-gitgutter
+
 call plug#begin()
 
     " Visual
@@ -32,7 +37,10 @@ call plug#begin()
     Plug 'kyazdani42/nvim-web-devicons'
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
-    "Plug 'romgrk/barbar.nvim'
+
+    " Plug 'crispgm/nvim-tabline'
+    " Fork with support for 'hide_single_buffer'
+    Plug 'theRealCarneiro/nvim-tabline'
 
     " Tools
     Plug 'skywind3000/asyncrun.vim'
@@ -45,7 +53,9 @@ call plug#begin()
     Plug 'psliwka/vim-smoothie'
     Plug 'nvim-treesitter/nvim-treesitter'
     Plug 'puremourning/vimspector'
-
+    Plug 'tpope/vim-fugitive'
+    Plug 'christoomey/vim-conflicted'
+    Plug 'airblade/vim-gitgutter'
 
     " Language support
     Plug 'rhysd/vim-llvm'
@@ -63,19 +73,35 @@ call plug#end()
 
 colorscheme gruvbox
 
+lua << EOF
+require('tabline').setup({
+    show_index = false,
+    modify_indicator = '*',
+    hide_single_buffer = true,
+})
+EOF
+
 let mapleader = " "
 map <leader>; <plug>NERDCommenterToggle
 inoremap {<CR> {<CR>}<Esc>O
 
 let g:NERDSpaceDelims = 1
 let g:NERDDefaultAlign = "left"
-let g:NERDCustomDelimiters = { 'odin': { 'left': '//'}}
+let g:NERDCustomDelimiters = {
+                \ 'odin': { 'left': '//'},
+                \ 'zbc': { 'left': '//'}
+            \ }
 
 nnoremap <leader>ff :Files<CR>
 nnoremap <leader>fg :GFiles<CR>
 nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>bb :Buffers<CR>
 nnoremap <leader>frg :Rg<cr>
+nnoremap <leader>ch :History:<CR>
+nnoremap <leader>gs :G<CR>
+nnoremap <leader>gp :G push<CR>
+nnoremap <leader>ggt :GitGutterToggle<CR>
+nnoremap <leader>gght :GitGutterLineHighlightsToggle<CR>
 
 noremap <leader>h :wincmd h<CR>
 noremap <leader>l :wincmd l<CR>
@@ -103,7 +129,7 @@ nnoremap <leader>ep :cp<cr>
 nnoremap <C-k> :cp<cr>
 
 noremap <leader>ga :CocCommand clangd.switchSourceHeader<CR>
-noremap <leader>gs :CocCommand clangd.switchSourceHeader vsplit<CR>
+noremap <leader>gsv :CocCommand clangd.switchSourceHeader vsplit<CR>
 
 noremap <leader>cr :CocRestart<cr>
 noremap <leader>v <c-v>
@@ -151,7 +177,7 @@ autocmd! FileType fzf set laststatus=0 noshowmode noruler
 
     " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
     " delays and poor user experience.
-    set updatetime=300
+    set updatetime=100
 
     " Don't pass messages to |ins-completion-menu|.
     set shortmess+=c
@@ -248,3 +274,42 @@ EOF
 " End treesitter config
 "
 "
+
+else
+
+set cursorline
+set number
+set relativenumber
+
+set mouse=a
+set clipboard^=unnamed,unnamedplus
+
+set hlsearch
+set ignorecase
+set smartcase
+
+set scrolloff=5
+set splitbelow
+set splitright
+
+set backspace=start,eol,indent
+set shiftwidth=4
+set tabstop=4
+set expandtab
+
+set hidden
+set noswapfile
+set noundofile
+
+set signcolumn=number
+set termguicolors
+
+set updatetime=100 "For coc and vim-gitgutter
+call plug#begin()
+    Plug 'preservim/nerdcommenter'
+call plug#end()
+
+let mapleader = " "
+map <leader>; <plug>NERDCommenterToggle
+
+endif
