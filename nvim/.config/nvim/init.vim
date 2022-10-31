@@ -73,14 +73,6 @@ call plug#end()
 
 colorscheme gruvbox
 
-lua << EOF
-require('tabline').setup({
-    show_index = false,
-    modify_indicator = '*',
-    hide_single_buffer = true,
-})
-EOF
-
 let mapleader = " "
 map <leader>; <plug>NERDCommenterToggle
 inoremap {<CR> {<CR>}<Esc>O
@@ -120,6 +112,10 @@ tnoremap <C-h> <C-\><C-n>:tabp<CR>
 tnoremap <C-l> <C-\><C-n>:tabn<CR>
 nnoremap <F1> :call Compile()<CR>
 inoremap <F1> <esc>: call Compile()<CR>
+nnoremap <F2> :call Clean()<CR>
+inoremap <F2> <esc>: call Clean()<CR>
+nnoremap <leader><F1> :call EmitCompileCommands()<CR>
+inoremap <leader><F1> <esc>: call EmitCompileCommands()<CR>
 nnoremap <leader>dl :call vimspector#Launch(1)<CR>
 nnoremap <leader>dr :VimspectorReset<CR>
 nnoremap <leader>cd :call ToggleQuickfix()<CR>
@@ -274,6 +270,15 @@ EOF
 " End treesitter config
 "
 "
+
+
+lua << EOF
+require('tabline').setup({
+    show_index = false,
+    modify_indicator = '*',
+    hide_single_buffer = true,
+})
+EOF
 
 else
 

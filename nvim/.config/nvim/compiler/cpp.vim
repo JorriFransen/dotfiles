@@ -1,6 +1,6 @@
 let current_compiler = 'cpp'
 
-CompilerSet makeprg=cmake\ --build\ build
+CompilerSet makeprg=./.build.sh
 
 " Clang with in source build
 CompilerSet errorformat=%E../../%f:%l:%c:%m
