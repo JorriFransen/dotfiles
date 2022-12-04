@@ -48,7 +48,9 @@ if [ $(command -v nvim) ]; then
     EDITOR=nvim
     alias vim='nvim'
 fi
+export EDITOR
 
+alias gnvim='gnvim --disable-ext-cmdline --disable-ext-tabline'
 autoload -U compinit
 zstyle ':completion:*' menu select
 zmodload zsh/complist
@@ -63,6 +65,10 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
 alias ls='ls --color'
+
+
+function svndiff() { svn diff $@ | colordiff | less --quit-if-one-screen -R; }
+function svnlog() { svn log $@ | less --quit-if-one-screen; }
 
 PATH=$PATH:$HOME/.scripts
 PATH=$PATH:$HOME/dev/Odin/install
