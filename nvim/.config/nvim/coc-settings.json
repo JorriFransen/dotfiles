@@ -1,6 +1,6 @@
 {
     "suggest.noselect": true,
-    "clangd.inlayHints.enable": false,
+    "semanticTokens.enable": true,
 
     "languageserver": {
         "odin": {

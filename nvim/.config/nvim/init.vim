@@ -46,12 +46,16 @@ call plug#begin()
     Plug 'skywind3000/asyncrun.vim'
     Plug 'neoclide/coc.nvim', { 'branch': 'release' }
     Plug 'Raimondi/delimitMate'
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    Plug 'junegunn/fzf.vim'
+    " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    " Plug 'junegunn/fzf.vim'
     Plug 'preservim/nerdcommenter'
     Plug 'mbbill/undotree'
     Plug 'psliwka/vim-smoothie'
-    Plug 'nvim-treesitter/nvim-treesitter'
+    " Plug 'nvim-treesitter/nvim-treesitter'
+    " Plug 'jackguo380/vim-lsp-cxx-highlight'
+    Plug 'nvim-telescope/telescope.nvim'
+    " Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+    Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
     Plug 'puremourning/vimspector'
     Plug 'tpope/vim-fugitive'
     Plug 'christoomey/vim-conflicted'
@@ -67,6 +71,11 @@ call plug#begin()
     Plug 'clangd/coc-clangd'
     Plug 'josa42/coc-sh'
     Plug 'voldikss/coc-cmake'
+
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'kyazdani42/nvim-web-devicons'
+    Plug 'MunifTanjim/nui.nvim'
+    Plug 'nvim-neo-tree/neo-tree.nvim'
 
 
 call plug#end()
@@ -84,12 +93,18 @@ let g:NERDCustomDelimiters = {
                 \ 'zbc': { 'left': '//'}
             \ }
 
-nnoremap <leader>ff :Files<CR>
-nnoremap <leader>fg :GFiles<CR>
-nnoremap <leader>fb :Buffers<CR>
-nnoremap <leader>bb :Buffers<CR>
-nnoremap <leader>frg :Rg<cr>
-nnoremap <leader>ch :History:<CR>
+" nnoremap <leader>ff :Files<CR>
+" nnoremap <leader>fg :GFiles<CR>
+" nnoremap <leader>fb :Buffers<CR>
+" nnoremap <leader>bb :Buffers<CR>
+" nnoremap <leader>frg :Rg<cr>
+" nnoremap <leader>ch :History:<CR>
+nnoremap <leader>ff :Telescope find_files<CR>
+nnoremap <leader>bb :Telescope buffers<CR>
+nnoremap <leader>rg :Telescope live_grep<CR>
+nnoremap <leader>gs :Telescope grep_string<CR>
+nnoremap <leader>tr :Telescope resume<CR>
+
 nnoremap <leader>gs :G<CR>
 nnoremap <leader>gp :G push<CR>
 nnoremap <leader>ggt :GitGutterToggle<CR>
@@ -115,9 +130,10 @@ inoremap <F1> <esc>: call Compile()<CR>
 nnoremap <F2> :call Clean()<CR>
 inoremap <F2> <esc>: call Clean()<CR>
 nnoremap <leader><F1> :call EmitCompileCommands()<CR>
-inoremap <leader><F1> <esc>: call EmitCompileCommands()<CR>
 nnoremap <leader>dl :call vimspector#Launch(1)<CR>
 nnoremap <leader>dr :VimspectorReset<CR>
+nmap <Leader>di <Plug>VimspectorBalloonEval
+xmap <Leader>di <Plug>VimspectorBalloonEval
 nnoremap <leader>cd :call ToggleQuickfix()<CR>
 nnoremap <leader>en :cn<cr>
 nnoremap <C-j> :cn<cr>
@@ -129,6 +145,8 @@ noremap <leader>gsv :CocCommand clangd.switchSourceHeader vsplit<CR>
 
 noremap <leader>cr :CocRestart<cr>
 noremap <leader>v <c-v>
+
+noremap <leader>nt :Neotree toggle left<CR>
 
 let g:vimspector_enable_mappings = 'HUMAN'
 
@@ -251,33 +269,46 @@ autocmd! FileType fzf set laststatus=0 noshowmode noruler
 "
 "
 
-"
-" Begin treesitter config
-"
-"
-
 lua << EOF
-require'nvim-treesitter.configs'.setup {
-  -- ensure_installed = { "c", "cpp", "lua" }, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  highlight = {
-    enable = true,              -- false will disable the whole extension
-    -- disable = { "c", "rust" },  -- list of language that will be disabled
-  },
-}
-EOF
+--require'nvim-treesitter.configs'.setup {
+--  highlight = {
+--    enable = true,
+--  }
+--}
 
-"
-" End treesitter config
-"
-"
-
-
-lua << EOF
 require('tabline').setup({
     show_index = false,
     modify_indicator = '*',
     hide_single_buffer = true,
 })
+
+-- You dont need to set any of these options. These are the default ones. Only
+-- the loading is important
+require('telescope').setup {
+  defaults = {
+    extensions = {
+      fzf = {
+        -- fuzzy = true,                    -- false will only do exact matching
+        override_generic_sorter = true,  -- override the generic sorter
+        override_file_sorter = true,     -- override the file sorter
+        -- case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+                                         -- the default case_mode is "smart_case"
+      }
+    }, --extensions
+    mappings = {
+      n = {
+        ['<c-q>'] = require('telescope.actions').delete_buffer
+      },
+      i = {
+        ['<c-q>'] = require('telescope.actions').delete_buffer
+      }
+    } --mappings
+  }  
+}
+-- To get fzf loaded and working with telescope, you need to call
+-- load_extension, somewhere after setup function:
+require('telescope').load_extension('fzf')
+
 EOF
 
 else
