@@ -67,7 +67,8 @@ bindkey -v '^?' backward-delete-char
 alias ls='ls --color'
 
 
-function svndiff() { svn diff $@ | colordiff | less --quit-if-one-screen -R; }
+# function svndiff() { svn diff $@ | colordiff | less --quit-if-one-screen -R; }
+function svndiff() { diffuse -m $@ }
 function svnlog() { svn log $@ | less --quit-if-one-screen; }
 
 PATH=$PATH:$HOME/.scripts
