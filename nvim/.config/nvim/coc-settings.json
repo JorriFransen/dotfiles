@@ -1,6 +1,6 @@
 {
     "suggest.noselect": true,
-    "semanticTokens.enable": true,
+    "semanticTokens.filetypes": ["*"],
 
     "languageserver": {
         "odin": {

@@ -6,7 +6,7 @@ set number
 set relativenumber
 
 set mouse=a
-set clipboard^=unnamed,unnamedplus
+set clipboard=unnamedplus
 
 set hlsearch
 set ignorecase
@@ -34,9 +34,12 @@ call plug#begin()
 
     " Visual
     Plug 'gruvbox-community/gruvbox'
+    Plug 'rebelot/kanagawa.nvim'
+    Plug 'EdenEast/nightfox.nvim'
     Plug 'kyazdani42/nvim-web-devicons'
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
+    " Plug 'vim-airline/vim-airline'
+    " Plug 'vim-airline/vim-airline-themes'
+    Plug 'nvim-lualine/lualine.nvim'
 
     " Plug 'crispgm/nvim-tabline'
     " Fork with support for 'hide_single_buffer'
@@ -49,10 +52,10 @@ call plug#begin()
     " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     " Plug 'junegunn/fzf.vim'
     Plug 'preservim/nerdcommenter'
-    Plug 'mbbill/undotree'
+    " Plug 'mbbill/undotree'
     Plug 'psliwka/vim-smoothie'
     " Plug 'nvim-treesitter/nvim-treesitter'
-    " Plug 'jackguo380/vim-lsp-cxx-highlight'
+    Plug 'jackguo380/vim-lsp-cxx-highlight'
     Plug 'nvim-telescope/telescope.nvim'
     " Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
     Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
@@ -80,7 +83,22 @@ call plug#begin()
 
 call plug#end()
 
-colorscheme gruvbox
+
+lua << ENDNF
+local groups = {
+    all = {
+        CocMenuSel = { bg = "#424243" };
+    }
+}
+require('nightfox').setup({
+    groups = groups,
+})
+ENDNF
+
+
+" colorscheme gruvbox
+" colorscheme kanagawa
+colorscheme carbonfox
 
 let mapleader = " "
 map <leader>; <plug>NERDCommenterToggle
@@ -169,14 +187,34 @@ endfunction
 
 
 " Airline
-let g:airline_theme='gruvbox'
-let g:airline_powerline_fonts = 1
-let g:airline_left_sep = ""
-let g:airline_right_sep = ""
-let g:airline_right_alt_sep = ""
-let g:airline_extensions = [ "branch", "whitespace", "coc", "fzf", "nvimlsp", "quickfix", "undotree", "searchcount" ]
-let g:airline#extensions#fzf#enabled = 1
-let g:airline#extensions#default#layout = [ [ 'a', 'b', 'c' ], [ 'x', 'y', 'z', 'error', 'warning' ] ]
+" let g:airline_theme='gruvbox'
+"let g:airline_theme='onedark'
+"let g:airline_powerline_fonts = 1
+"let g:airline_left_sep = ''
+"let g:airline_right_sep = ''
+"let g:airline_right_alt_sep = '' 
+"let g:airline_extensions = [ "branch", "whitespace", "coc", "fzf", "nvimlsp", "quickfix", "undotree", "searchcount" ]
+"let g:airline#extensions#fzf#enabled = 1
+"let g:airline#extensions#default#layout = [ [ 'a', 'b', 'c' ], [ 'x', 'y', 'z', 'error', 'warning' ] ]
+
+lua << ENDLL
+require('lualine').setup {
+    options = { section_separators = '', component_separators = '' },
+    sections = {
+        lualine_a = { 'mode' },
+        lualine_b = { 'branch', 'diff', { 'diagnostics', sources = { 'nvim_lsp', 'coc'}}, 'g:coc_status'},
+        },
+    extensions = {'quickfix', 'neo-tree'},
+    tabline = {
+      lualine_a = {'tabs'},
+      lualine_b = {},
+      lualine_c = {},
+      lualine_x = {},
+      lualine_y = {},
+      lualine_z = {'buffers'}
+    }
+}
+ENDLL
 
 " Hide statusline when using fzf
 autocmd! FileType fzf set laststatus=0 noshowmode noruler
@@ -185,7 +223,8 @@ autocmd! FileType fzf set laststatus=0 noshowmode noruler
 
 "
 " Begin coc config
-"
+
+    let g:coc_default_antic_highlight_groups = 1
     set nobackup
     set nowritebackup
 
@@ -303,13 +342,19 @@ require('telescope').setup {
         ['<c-q>'] = require('telescope.actions').delete_buffer
       }
     } --mappings
-  }  
+  }
 }
 -- To get fzf loaded and working with telescope, you need to call
 -- load_extension, somewhere after setup function:
 require('telescope').load_extension('fzf')
 
 EOF
+
+hi link CocSemClass CocSemType
+hi clear CocSemVariable
+hi! link CocSemVariable NONE
+hi link CocSemProperty CocSemComment
+
 
 else
 
