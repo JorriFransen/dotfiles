@@ -2,11 +2,40 @@
     "suggest.noselect": true,
     "semanticTokens.filetypes": ["*"],
 
+    "python.linting.pylintEnabled": true,
+
     "languageserver": {
         "odin": {
             "command": "ols",
             "filetypes": ["odin"],
             "rootPatterns": ["ols.json"]
+        },
+        "python": {
+          "command": "python3",
+          "args": [
+            "-mpylsp"
+            // To enable pylsp-rope logging
+            // ,"-vv", "--log-file", "/tmp/coc-lsp.log"
+          ],
+          "trace.server": "verbose",
+          "filetypes": [
+            "python"
+          ],
+          "settings": {
+            "pyright":{ "enable": true},
+            "pyls": {
+            "enable": true,
+            "trace": {
+              "server": "verbose"
+            },
+            "commandPath": "",
+            "configurationSources": [
+              "pycodestyle"
+            ],
+            "plugins": {
+            }
+          }
         }
+    }
     }
 }

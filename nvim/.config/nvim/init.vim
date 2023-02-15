@@ -8,6 +8,8 @@ set relativenumber
 set mouse=a
 set clipboard=unnamedplus
 
+set noshowmode
+
 set hlsearch
 set ignorecase
 set smartcase
@@ -40,6 +42,7 @@ call plug#begin()
     " Plug 'vim-airline/vim-airline'
     " Plug 'vim-airline/vim-airline-themes'
     Plug 'nvim-lualine/lualine.nvim'
+    " Plug 'bronson/vim-trailing-whitespace'
 
     " Plug 'crispgm/nvim-tabline'
     " Fork with support for 'hide_single_buffer'
@@ -52,7 +55,7 @@ call plug#begin()
     " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     " Plug 'junegunn/fzf.vim'
     Plug 'preservim/nerdcommenter'
-    " Plug 'mbbill/undotree'
+    Plug 'mbbill/undotree'
     Plug 'psliwka/vim-smoothie'
     " Plug 'nvim-treesitter/nvim-treesitter'
     Plug 'jackguo380/vim-lsp-cxx-highlight'
@@ -62,13 +65,14 @@ call plug#begin()
     Plug 'puremourning/vimspector'
     Plug 'tpope/vim-fugitive'
     Plug 'christoomey/vim-conflicted'
-    Plug 'airblade/vim-gitgutter'
 
     " Language support
     Plug 'rhysd/vim-llvm'
     Plug 'LnL7/vim-nix'
     Plug 'ziglang/zig.vim'
     Plug 'Tetralux/odin.vim'
+    Plug 'praem90/nvim-phpcsf'
+    Plug 'StanAngeloff/php.vim'
 
     " Coc language support
     Plug 'clangd/coc-clangd'
@@ -83,6 +87,17 @@ call plug#begin()
 
 call plug#end()
 
+au FileType php let b:delimitMate_autoclose = 0
+
+let g:nvim_phpcs_config_phpcs_path = '/home/jorri/.php/phpcs.phar'
+let g:nvim_phpcs_config_phpcbf_paths = '/home/jorri/.php/phpcbf.phar'
+let g:nvim_phpcs_config_phpcs_standard = '/home/jorri/.php/PHP_Lenient.xml'
+
+augroup PHBSCF
+    autocmd!
+    autocmd CursorHold,BufWritePost,BufReadPost,InsertLeave *.php :lua require'phpcs'.cs()
+    autocmd BufWritePost *.php :lua require'phpcs'.cbf()
+augroup END
 
 lua << ENDNF
 local groups = {
@@ -100,9 +115,12 @@ ENDNF
 " colorscheme kanagawa
 colorscheme carbonfox
 
+hi Normal guibg=NONE ctermbg=NONE
+
 let mapleader = " "
 map <leader>; <plug>NERDCommenterToggle
 inoremap {<CR> {<CR>}<Esc>O
+inoremap <<CR> <<CR>><Esc>O
 
 let g:NERDSpaceDelims = 1
 let g:NERDDefaultAlign = "left"
@@ -123,10 +141,10 @@ nnoremap <leader>rg :Telescope live_grep<CR>
 nnoremap <leader>gs :Telescope grep_string<CR>
 nnoremap <leader>tr :Telescope resume<CR>
 
+nnoremap <leader>ut :UndotreeToggle<CR>
+
 nnoremap <leader>gs :G<CR>
 nnoremap <leader>gp :G push<CR>
-nnoremap <leader>ggt :GitGutterToggle<CR>
-nnoremap <leader>gght :GitGutterLineHighlightsToggle<CR>
 
 noremap <leader>h :wincmd h<CR>
 noremap <leader>l :wincmd l<CR>
@@ -185,24 +203,62 @@ function! ToggleBackgroundColor()
     let &bg=(&bg=='light'?'dark':'light')
 endfunction
 
+autocmd CursorHold,BufWritePost * unlet! b:statusline_trailing_whitespace_warning
 
 " Airline
 " let g:airline_theme='gruvbox'
-"let g:airline_theme='onedark'
-"let g:airline_powerline_fonts = 1
-"let g:airline_left_sep = ''
-"let g:airline_right_sep = ''
-"let g:airline_right_alt_sep = '' 
-"let g:airline_extensions = [ "branch", "whitespace", "coc", "fzf", "nvimlsp", "quickfix", "undotree", "searchcount" ]
-"let g:airline#extensions#fzf#enabled = 1
-"let g:airline#extensions#default#layout = [ [ 'a', 'b', 'c' ], [ 'x', 'y', 'z', 'error', 'warning' ] ]
+let g:airline_theme='base16_classic_dark'
+let g:airline_powerline_fonts = 1
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_extensions = [ "branch", "whitespace", "coc", "fzf", "nvimlsp", "quickfix", "searchcount" ]
+let g:airline#extensions#fzf#enabled = 1
+let g:airline#extensions#default#layout = [ [ 'a', 'b', 'c' ], [ 'x', 'y', 'z', 'error', 'warning' ] ]
 
 lua << ENDLL
+local ws_msg = ''
+local ws_timer = vim.loop.new_timer()
+local ws_buf = -1
+local ws_should_update = true
+
+ws_timer:start(2000, 2000, function()
+    ws_should_update = true
+    ws_buf = -1
+end)
+
+local function ws_component()
+    local bufnr = vim.api.nvim_get_current_buf()
+    if ws_should_update or ws_buf ~= bufnr then
+        ws_should_update = false
+        ws_buf = bufnr;
+        local ft = vim.api.nvim_buf_get_option(bufnr, 'filetype')
+        local bt = vim.api.nvim_buf_get_option(bufnr, 'buftype')
+
+        if ft == 'TelescopePrompt' or
+           ft == "fugitive" or
+           bt == 'terminal' then
+            return ''
+        end
+
+        local line = vim.fn.search('\\s\\+$', 'nw')
+        if line ~= 0 then
+            ws_msg =  '[' .. line .. ']trail'
+        else
+            ws_msg = ''
+        end
+    end
+    return ws_msg
+end
 require('lualine').setup {
     options = { section_separators = '', component_separators = '' },
     sections = {
-        lualine_a = { 'mode' },
+        lualine_a = { { 'mode', fmt = function(str) return string.lower(str) end } },
         lualine_b = { 'branch', 'diff', { 'diagnostics', sources = { 'nvim_lsp', 'coc'}}, 'g:coc_status'},
+        lualine_c = {'filename'},
+        lualine_x = {'encoding', 'fileformat', 'filetype'},
+        lualine_y = {'progress'},
+        lualine_z = {'location', { ws_component, color = { bg = 'orange' } } }
         },
     extensions = {'quickfix', 'neo-tree'},
     tabline = {
@@ -218,7 +274,7 @@ ENDLL
 
 " Hide statusline when using fzf
 autocmd! FileType fzf set laststatus=0 noshowmode noruler
-  \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+  \| autocmd BufLeave <buffer> set laststatus=2 showkmode ruler
 
 
 "
