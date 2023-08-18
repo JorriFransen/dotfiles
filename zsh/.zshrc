@@ -74,6 +74,8 @@ function svnlog() { svn log $@ | less --quit-if-one-screen; }
 PATH=$PATH:$HOME/.scripts
 PATH=$PATH:$HOME/dev/Odin/install
 PATH=$PATH:$HOME/dev/ols/install
+PATH=$HOME/.local/bin:$PATH
+PATH=$PATH:/usr/local/bin
 
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
