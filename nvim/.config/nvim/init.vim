@@ -1,5 +1,4 @@
 if !exists('g:vscode')
-" set guifont=FiraCode\ Nerd\ Font:h13
 
 set cursorline
 set number
@@ -17,6 +16,9 @@ set smartcase
 set scrolloff=5
 set splitbelow
 set splitright
+
+filetype plugin on
+filetype indent off
 
 set backspace=start,eol,indent
 set shiftwidth=4
@@ -39,14 +41,11 @@ call plug#begin()
     Plug 'rebelot/kanagawa.nvim'
     Plug 'EdenEast/nightfox.nvim'
     Plug 'kyazdani42/nvim-web-devicons'
-    " Plug 'vim-airline/vim-airline'
-    " Plug 'vim-airline/vim-airline-themes'
     Plug 'nvim-lualine/lualine.nvim'
     " Plug 'bronson/vim-trailing-whitespace'
 
-    " Plug 'crispgm/nvim-tabline'
-    " Fork with support for 'hide_single_buffer'
-    Plug 'theRealCarneiro/nvim-tabline'
+    " Plug 'theRealCarneiro/nvim-tabline'
+    Plug 'alvarosevilla95/luatab.nvim'
 
     " Tools
     Plug 'skywind3000/asyncrun.vim'
@@ -67,6 +66,7 @@ call plug#begin()
     Plug 'christoomey/vim-conflicted'
 
     " Language support
+    " Plug 'sheerun/vim-polyglot'
     Plug 'rhysd/vim-llvm'
     Plug 'LnL7/vim-nix'
     Plug 'ziglang/zig.vim'
@@ -80,12 +80,13 @@ call plug#begin()
     Plug 'voldikss/coc-cmake'
 
     Plug 'nvim-lua/plenary.nvim'
-    Plug 'kyazdani42/nvim-web-devicons'
     Plug 'MunifTanjim/nui.nvim'
     Plug 'nvim-neo-tree/neo-tree.nvim'
 
 
 call plug#end()
+
+" autocmd User CocNvimInit call CocAction('runCommand', 'git.toggleGutters')
 
 au FileType php let b:delimitMate_autoclose = 0
 
@@ -102,39 +103,38 @@ augroup END
 lua << ENDNF
 local groups = {
     all = {
-        CocMenuSel = { bg = "#424243" };
+        CocMenuSel = { bg = '#424243' };
     }
 }
 require('nightfox').setup({
     groups = groups,
+    options = {
+        transparent = false,
+    }
 })
 ENDNF
 
 
 " colorscheme gruvbox
 " colorscheme kanagawa
-colorscheme carbonfox
+" colorscheme carbonfox
+colorscheme terafox
 
-hi Normal guibg=NONE ctermbg=NONE
+" hi Normal guibg=NONE ctermbg=NONE
 
-let mapleader = " "
+let mapleader = ' '
 map <leader>; <plug>NERDCommenterToggle
 inoremap {<CR> {<CR>}<Esc>O
 inoremap <<CR> <<CR>><Esc>O
 
 let g:NERDSpaceDelims = 1
-let g:NERDDefaultAlign = "left"
+let g:NERDDefaultAlign = 'left'
 let g:NERDCustomDelimiters = {
                 \ 'odin': { 'left': '//'},
-                \ 'zbc': { 'left': '//'}
+                \ 'zbc': { 'left': '//'},
+                \ 'zc': { 'left': '//'}
             \ }
 
-" nnoremap <leader>ff :Files<CR>
-" nnoremap <leader>fg :GFiles<CR>
-" nnoremap <leader>fb :Buffers<CR>
-" nnoremap <leader>bb :Buffers<CR>
-" nnoremap <leader>frg :Rg<cr>
-" nnoremap <leader>ch :History:<CR>
 nnoremap <leader>ff :Telescope find_files<CR>
 nnoremap <leader>bb :Telescope buffers<CR>
 nnoremap <leader>rg :Telescope live_grep<CR>
@@ -145,6 +145,7 @@ nnoremap <leader>ut :UndotreeToggle<CR>
 
 nnoremap <leader>gs :G<CR>
 nnoremap <leader>gp :G push<CR>
+nnoremap <leader>gl :G log --oneline --graph --all<CR>
 
 noremap <leader>h :wincmd h<CR>
 noremap <leader>l :wincmd l<CR>
@@ -178,6 +179,7 @@ nnoremap <C-k> :cp<cr>
 
 noremap <leader>ga :CocCommand clangd.switchSourceHeader<CR>
 noremap <leader>gsv :CocCommand clangd.switchSourceHeader vsplit<CR>
+noremap <leader>ggt :CocCommand git.toggleGutters<CR>
 
 noremap <leader>cr :CocRestart<cr>
 noremap <leader>v <c-v>
@@ -204,17 +206,6 @@ function! ToggleBackgroundColor()
 endfunction
 
 autocmd CursorHold,BufWritePost * unlet! b:statusline_trailing_whitespace_warning
-
-" Airline
-" let g:airline_theme='gruvbox'
-let g:airline_theme='base16_classic_dark'
-let g:airline_powerline_fonts = 1
-let g:airline_left_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-let g:airline_extensions = [ "branch", "whitespace", "coc", "fzf", "nvimlsp", "quickfix", "searchcount" ]
-let g:airline#extensions#fzf#enabled = 1
-let g:airline#extensions#default#layout = [ [ 'a', 'b', 'c' ], [ 'x', 'y', 'z', 'error', 'warning' ] ]
 
 lua << ENDLL
 local ws_msg = ''
@@ -250,34 +241,103 @@ local function ws_component()
     end
     return ws_msg
 end
+
 require('lualine').setup {
     options = { section_separators = '', component_separators = '' },
     sections = {
         lualine_a = { { 'mode', fmt = function(str) return string.lower(str) end } },
-        lualine_b = { 'branch', 'diff', { 'diagnostics', sources = { 'nvim_lsp', 'coc'}}, 'g:coc_status'},
+
+        lualine_b = { 'branch',
+                      'diff',
+                      { 'diagnostics',
+                        sources = { 'nvim_lsp', 'coc'},
+                      },
+                      'g:coc_status'
+                    },
+
         lualine_c = {'filename'},
         lualine_x = {'encoding', 'fileformat', 'filetype'},
         lualine_y = {'progress'},
         lualine_z = {'location', { ws_component, color = { bg = 'orange' } } }
         },
     extensions = {'quickfix', 'neo-tree'},
-    tabline = {
-      lualine_a = {'tabs'},
-      lualine_b = {},
-      lualine_c = {},
-      lualine_x = {},
-      lualine_y = {},
-      lualine_z = {'buffers'}
-    }
+--    tabline = {
+--      lualine_a = {'tabs'},
+--      lualine_b = {},
+--      lualine_c = {},
+--      lualine_x = {},
+--      lualine_y = {},
+--      lualine_z = {'buffers'}
+--    }
 }
 ENDLL
 
+lua << ENDLUATAB
+local ltab = require('luatab')
+ltab.setup({ 
+    title = function(bufnr)
+        local file = vim.fn.bufname(bufnr)
+        local buftype = vim.fn.getbufvar(bufnr, '&buftype')
+        local filetype = vim.fn.getbufvar(bufnr, '&filetype')
+
+      if buftype == 'help' then
+            return 'help:' .. vim.fn.fnamemodify(file, ':t:r')
+        elseif buftype == 'quickfix' then
+            return 'quickfix'
+        elseif filetype == 'TelescopePrompt' then
+            return 'Telescope'
+        elseif filetype == 'git' then
+            return 'Git'
+        elseif filetype == 'fugitive' then
+            return 'Fugitive'
+        elseif file:sub(file:len()-2, file:len()) == 'FZF' then
+            return 'FZF'
+        elseif buftype == 'terminal' then
+            local _, mtch = string.match(file, "term:(.*):(%a+)")
+            return mtch ~= nil and mtch or vim.fn.fnamemodify(vim.env.SHELL, ':t')
+        elseif file == '' then
+            return '[No Name]'
+        else
+            return vim.fn.fnamemodify(file, ':p:.')
+        end
+    end,
+
+    modified = function(bufnr)
+        local filetype = vim.fn.getbufvar(bufnr, '&filetype')
+        if filetype == 'TelescopePrompt' then return '' end
+        return vim.fn.getbufvar(bufnr, '&modified') == 1 and '[+] ' or ''
+    end,
+
+    windowCount = function(index)
+        local nwins = 0
+        local success, wins = pcall(vim.api.nvim_tabpage_list_wins, index)
+        if success then
+            for _ in pairs(wins) do nwins = nwins + 1 end
+        end
+        return nwins > 1 and '[' .. nwins .. '] ' or ''
+    end,
+
+    cell = function(index)
+        local isSelected = vim.fn.tabpagenr() == index
+        local buflist = vim.fn.tabpagebuflist(index)
+        local winnr = vim.fn.tabpagewinnr(index)
+        local bufnr = buflist[winnr]
+        local hl = (isSelected and '%#TabLineSel#' or '%#TabLine#')
+
+        return hl .. '%' .. index .. 'T' .. ' ' ..
+            ltab.helpers.windowCount(index) ..
+            ltab.helpers.devicon(bufnr, isSelected) .. '%T' ..
+            ltab.helpers.title(bufnr) .. ' ' ..
+            ltab.helpers.modified(bufnr) ..
+            ltab.helpers.separator(index)
+    end,
+})
+ENDLUATAB
+
 " Hide statusline when using fzf
-autocmd! FileType fzf set laststatus=0 noshowmode noruler
-  \| autocmd BufLeave <buffer> set laststatus=2 showkmode ruler
+autocmd! FileType fzf set laststatus=0 noshowmode noruler | autocmd BufLeave <buffer> set laststatus=2 showkmode ruler
 
 
-"
 " Begin coc config
 
     let g:coc_default_antic_highlight_groups = 1
@@ -371,12 +431,6 @@ lua << EOF
 --  }
 --}
 
-require('tabline').setup({
-    show_index = false,
-    modify_indicator = '*',
-    hide_single_buffer = true,
-})
-
 -- You dont need to set any of these options. These are the default ones. Only
 -- the loading is important
 require('telescope').setup {
@@ -410,6 +464,7 @@ hi link CocSemClass CocSemType
 hi clear CocSemVariable
 hi! link CocSemVariable NONE
 hi link CocSemProperty CocSemComment
+
 
 
 else
