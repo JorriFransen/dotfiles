@@ -65,6 +65,7 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
 alias ls='ls --color'
+alias iwyu-tool='iwyu_tool.py'
 
 
 # function svndiff() { svn diff $@ | colordiff | less --quit-if-one-screen -R; }
@@ -76,7 +77,6 @@ PATH=$PATH:$HOME/dev/Odin/install
 PATH=$PATH:$HOME/dev/ols/install
 PATH=$HOME/.local/bin:$PATH
 PATH=$PATH:/usr/local/bin
-
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
