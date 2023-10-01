@@ -25,6 +25,14 @@ require('lazy').setup({
 
     'tpope/vim-fugitive',
     'mbbill/undotree',
+    'skywind3000/asyncrun.vim',
+
+    {
+        'klen/nvim-config-local',
+        config = function()
+            require('config-local').setup { }
+        end,
+    },
 
     {
         'nvim-neo-tree/neo-tree.nvim',
@@ -77,7 +85,12 @@ require('lazy').setup({
     -- Detect tabstop and shiftwidth automatically
     'tpope/vim-sleuth',
 
-    'Raimondi/delimitmate',
+    -- 'Raimondi/delimitmate',
+    {
+        'windwp/nvim-autopairs',
+        event = "InsertEnter",
+        opts = {}
+    },
 
     'psliwka/vim-smoothie',
 
@@ -137,12 +150,25 @@ require('lazy').setup({
     {
         'hrsh7th/nvim-cmp',
         dependencies = {
+            -- Snippet Engine & its associated nvim-cmp source
+            'L3MON4D3/LuaSnip',
+            'saadparwaiz1/cmp_luasnip',
+
             -- Adds LSP completion capabilities
             'hrsh7th/cmp-nvim-lsp',
+            -- 'hrsh7th/cmp-nvim-lsp-signature-help',
+            {
+                'ray-x/lsp_signature.nvim',
+                event = "VeryLazy",
+                opts = {},
+                config = function(_, opts) require'lsp_signature'.setup(opts) end,
+            },
+
+            -- Adds a number of user-friendly snippets
+            'rafamadriz/friendly-snippets',
         }
     }
 })
-
 
 
 vim.o.cursorline = true
@@ -394,6 +420,11 @@ require('neo-tree').setup {
     }
 }
 
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
@@ -408,15 +439,21 @@ local on_attach = function(_, bufnr)
             desc = 'LSP: ' .. desc
         end
 
-    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
 
     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+    nmap('<leader>qf', ':lua vim.lsp.buf.code_action({apply=true})<CR>', '[C]ode [A]ction')
 
     nmap('gd', vim.lsp.buf.definition, "Goto definition")
+    nmap('gr', telescope_fn.lsp_references, "Goto definition")
+    nmap('gI', telescope_fn.lsp_implementations, "Goto definition")
+
+    nmap('K', vim.lsp.buf.hover, "Hover documentation")
+    nmap('<C-k>', vim.lsp.buf.signature_help, "Signature documentation")
 end
---
+
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 --
@@ -443,6 +480,11 @@ local servers = {
         },
     },
 }
+
+vim.keymap.set('n', '<leader>ga', ':ClangdSwitchSourceHeader<CR>');
+vim.keymap.set({'n', 'i'}, '<F1>', ':lua Compile()<CR>')
+vim.keymap.set({'n', 'i'}, '<leader><F1>', ':lua EmitCompileCommands()<CR>')
+vim.keymap.set({'n', 'i'}, '<F2>', ':lua Clean()<CR>')
 
 -- Setup neovim lua configuration
 require('neodev').setup()
@@ -472,10 +514,20 @@ mason_lspconfig.setup_handlers {
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
 local cmp = require 'cmp'
+local luasnip = require 'luasnip'
+require('luasnip.loaders.from_vscode').lazy_load();
+luasnip.config.setup {}
 
 ---@diagnostic disable: missing-fields
 cmp.setup {
+    snippet = {
+        expand = function(args)
+            luasnip.lsp_expand(args.body)
+        end
+    },
     mapping = cmp.mapping.preset.insert {
+        ['<Tab>'] = cmp.mapping.select_next_item(),
+        ['<S-Tab>'] = cmp.mapping.select_prev_item(),
         ['<C-n>'] = cmp.mapping.select_next_item(),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
         ['<C-d>'] = cmp.mapping.scroll_docs(-4),
@@ -485,22 +537,32 @@ cmp.setup {
             behavior = cmp.ConfirmBehavior.Replace,
             select = true,
         },
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
+        -- ['<Tab>'] = cmp.mapping(function(fallback)
+        --     if cmp.visible() then
+        --         cmp.select_next_item()
+        --     elseif luasnip.expand_or_locally_jumpable() then
+        --         luasnip.expand_or_jump()
+        --     else
+        --         fallback()
+        --     end
+        -- end, { 'i', 's' }),
+        -- ['<S-Tab>'] = cmp.mapping(function(fallback)
+        --     if cmp.visible() then
+        --         cmp.select_prev_item()
+        --     elseif luasnip.locally_jumpable(-1) then
+        --         luasnip.jump(-1)
+        --     else
+        --         fallback()
+        --     end
+        -- end, { 'i', 's' }),
     },
     sources = {
         { name = 'nvim_lsp' },
+        -- { name = 'nvim_lsp_signature_help' },
+        { name = 'luasnip' },
     },
 }
+
+-- Insert '(' after selecting a function
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
