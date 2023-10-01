@@ -27,6 +27,8 @@ require('lazy').setup({
     'mbbill/undotree',
     'skywind3000/asyncrun.vim',
 
+    'Tetralux/odin.vim',
+
     {
         'klen/nvim-config-local',
         config = function()
@@ -286,7 +288,7 @@ vim.keymap.set('t', '<C-h>', '<C-\\><C-n>:tabn<CR>', { noremap = true });
 
 vim.keymap.set('n', '<leader>dr', ":execute 'bd!' winbufnr(g:vimspector_session_windows.terminal) <bar> VimspectorReset <CR>", { noremap = true, silent = true });
 
-vim.keymap.set('n', '<leader>cd', ":execute empty(filter(getwininfo(), 'v:val.quickfix')) == 1 ? 'copen' : 'close'<CR>", { noremap = true, silent = true });
+vim.keymap.set('n', '<leader>cd', ":execute empty(filter(getwininfo(), 'v:val.quickfix')) == 1 ? 'copen' : 'cclose'<CR>", { noremap = true, silent = true });
 vim.keymap.set('n', '<leader>en', ':cn<CR>')
 vim.keymap.set('n', '<leader>ep', ':cp<CR>')
 vim.keymap.set('n', '<leader>ef', ':cfirst<CR>');
