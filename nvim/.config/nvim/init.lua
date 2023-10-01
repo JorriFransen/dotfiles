@@ -37,6 +37,14 @@ require('lazy').setup({
     },
 
     {
+        'goolord/alpha-nvim',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        config = function ()
+            require'alpha'.setup(require'alpha.themes.startify'.config)
+        end
+    },
+
+    {
         'nvim-neo-tree/neo-tree.nvim',
         branch = "v3.x",
         dependencies = {
@@ -203,8 +211,8 @@ vim.o.undodir = vim.fn.expand('~/.nvim/undo')
 vim.o.signcolumn = 'number'
 vim.o.termguicolors = true
 
-vim.o.updatetime = 250
-vim.o.timeoutlen = 300
+vim.o.updatetime = 100
+vim.o.timeoutlen = 250
 
 vim.o.completeopt = 'menuone,noselect'
 
@@ -212,7 +220,7 @@ vim.cmd.colorscheme('kanagawa')
 
 
 
-vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+-- vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('i', '{<CR>', '{<CR>}<Esc>O', { noremap = true })
 
 -- Remap for dealing with word wrap
@@ -226,18 +234,6 @@ vim.keymap.set('n', '<leader>j', ':wincmd j<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>k', ':wincmd k<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>wv', ':vsplit<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>ws', ':split<CR>', { noremap = true })
-
--- [[ Highlight on yank ]]
--- See `:help vim.highlight.on_yank()`
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
-vim.api.nvim_create_autocmd('TextYankPost', {
-    callback = function()
-        vim.highlight.on_yank()
-    end,
-    group = highlight_group,
-    pattern = '*',
-})
-
 
 -- [[ Telescope config ]] --
 require('telescope').setup {
@@ -485,7 +481,7 @@ local servers = {
 
 vim.keymap.set('n', '<leader>ga', ':ClangdSwitchSourceHeader<CR>');
 vim.keymap.set({'n', 'i'}, '<F1>', ':lua Compile()<CR>')
-vim.keymap.set({'n', 'i'}, '<leader><F1>', ':lua EmitCompileCommands()<CR>')
+vim.keymap.set({'n'}, '<leader><F1>', ':lua EmitCompileCommands()<CR>')
 vim.keymap.set({'n', 'i'}, '<F2>', ':lua Clean()<CR>')
 
 -- Setup neovim lua configuration
@@ -528,8 +524,8 @@ cmp.setup {
         end
     },
     mapping = cmp.mapping.preset.insert {
-        ['<Tab>'] = cmp.mapping.select_next_item(),
-        ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+        -- ['<Tab>'] = cmp.mapping.select_next_item(),
+        -- ['<S-Tab>'] = cmp.mapping.select_prev_item(),
         ['<C-n>'] = cmp.mapping.select_next_item(),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
         ['<C-d>'] = cmp.mapping.scroll_docs(-4),
@@ -539,24 +535,24 @@ cmp.setup {
             behavior = cmp.ConfirmBehavior.Replace,
             select = true,
         },
-        -- ['<Tab>'] = cmp.mapping(function(fallback)
-        --     if cmp.visible() then
-        --         cmp.select_next_item()
-        --     elseif luasnip.expand_or_locally_jumpable() then
-        --         luasnip.expand_or_jump()
-        --     else
-        --         fallback()
-        --     end
-        -- end, { 'i', 's' }),
-        -- ['<S-Tab>'] = cmp.mapping(function(fallback)
-        --     if cmp.visible() then
-        --         cmp.select_prev_item()
-        --     elseif luasnip.locally_jumpable(-1) then
-        --         luasnip.jump(-1)
-        --     else
-        --         fallback()
-        --     end
-        -- end, { 'i', 's' }),
+        ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_next_item()
+            elseif luasnip.expand_or_locally_jumpable() then
+                luasnip.expand_or_jump()
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_prev_item()
+            elseif luasnip.locally_jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
     },
     sources = {
         { name = 'nvim_lsp' },
@@ -566,5 +562,8 @@ cmp.setup {
 }
 
 -- Insert '(' after selecting a function
-local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+-- local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+-- cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+
+local ft =require('Comment.ft')
+ft.set('zc', { '//%s', '/*%s/*'})
