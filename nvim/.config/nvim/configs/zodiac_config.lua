@@ -22,10 +22,31 @@ function Iwyu()
     async_command('./.iwyu.sh')
 end
 
+local test_args = ''
+function RunTestsSetOptions()
+    vim.ui.input({ prompt = "Test options: ", default = test_args },
+                 function(input)
+                     test_args = input
+                 end)
+
+    RunTests()
+end
+
 function RunTests()
-    async_command('bin/zodiac_tests')
+    -- print(Test_args)
+    async_command('bin/zodiac_tests ' .. test_args)
+end
+
+local run_args = 'tests/main.zc'
+function RunSetOptions()
+    vim.ui.input({ prompt = "Run options: ", default = run_args },
+                 function(input)
+                     run_args = input
+                 end)
+
+    Run()
 end
 
 function Run()
-    async_command('bin/zodiac tests/main.zc')
+    async_command('bin/zodiac ' .. run_args)
 end
