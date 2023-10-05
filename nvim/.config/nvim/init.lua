@@ -247,6 +247,11 @@ require('telescope').setup {
         mappings = {
 
         }
+    },
+    pickers = {
+        colorscheme = {
+            enable_preview = true,
+        }
     }
 }
 
@@ -283,7 +288,7 @@ vim.keymap.set('i', '<C-T><C-l>', '<ESC>:tabn<CR>', { noremap = true });
 vim.keymap.set('t', '<C-T><C-h>', '<C-\\><C-n>:tabp<CR>', { noremap = true });
 vim.keymap.set('t', '<C-T><C-l>', '<C-\\><C-n>:tabn<CR>', { noremap = true });
 
-vim.keymap.set('n', '<leader>dr', ":execute 'bd!' winbufnr(g:vimspector_session_windows.terminal) <bar> VimspectorReset <CR>", { noremap = true, silent = true });
+vim.keymap.set('n', '<leader>dr', ":execute 'bd!' winbufnr(g:vimspector_session_windows.terminal) <bar> VimspectorReset<CR>", { noremap = true, silent = true });
 
 vim.keymap.set('n', '<leader>cd', ":execute empty(filter(getwininfo(), 'v:val.quickfix')) == 1 ? 'copen' : 'cclose'<CR>", { noremap = true, silent = true });
 vim.keymap.set('n', '<leader>en', ':cn<CR>')
@@ -352,7 +357,7 @@ require("scope").setup{}
 
 require("bufferline").setup{
     options = {
-        -- always_show_bufferline = false,
+        always_show_bufferline = false,
     }
 }
 vim.o.showtabline = 1
