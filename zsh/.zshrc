@@ -33,6 +33,9 @@ else
     [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
 fi
 
+# Overwrite ctrl-T binding from fzf to ctrl-x,ctrl-t
+bindkey -r '^T'
+bindkey '^X^T' fzf-file-widget
 
 # Setup autosuggestions
 bindkey '^ ' autosuggest-accept
@@ -65,6 +68,7 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
 alias ls='ls --color'
+alias sxiv='sxiv -pfa -sf -o'
 
 
 # function svndiff() { svn diff $@ | colordiff | less --quit-if-one-screen -R; }
@@ -72,7 +76,6 @@ function svndiff() { diffuse -m $@ }
 function svnlog() { svn log $@ | less --quit-if-one-screen; }
 
 PATH=$PATH:$HOME/.scripts
-PATH=$PATH:$HOME/dev/Odin/install
 PATH=$PATH:$HOME/dev/ols/install
 PATH=$HOME/.local/bin:$PATH
 PATH=$PATH:/usr/local/bin

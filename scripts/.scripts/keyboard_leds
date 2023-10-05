@@ -1,0 +1,5 @@
+#! /usr/bin/env sh
+
+set -x
+
+ite8291r3-ctl monocolor  --name green -b $1
