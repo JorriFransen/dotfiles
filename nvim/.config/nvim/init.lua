@@ -26,6 +26,7 @@ require('lazy').setup({
     'tpope/vim-fugitive',
     'mbbill/undotree',
     'skywind3000/asyncrun.vim',
+    { 'christoomey/vim-tmux-navigator', lazy = false },
 
     'Tetralux/odin.vim',
 
@@ -36,6 +37,7 @@ require('lazy').setup({
         end,
     },
 
+    -- Welcome screen
     {
         'goolord/alpha-nvim',
         dependencies = { 'nvim-tree/nvim-web-devicons' },
@@ -122,6 +124,7 @@ require('lazy').setup({
     -- Themes
     'rebelot/kanagawa.nvim',
     'EdenEast/nightfox.nvim',
+    { "folke/tokyonight.nvim", lazy = false, priority = 1000, opts = {}, },
 
     'nvim-tree/nvim-web-devicons',
 
@@ -141,6 +144,7 @@ require('lazy').setup({
         'lukas-reineke/indent-blankline.nvim',
         main = "ibl",
         opts = {},
+        cond = not vim.g.vscode;
     },
 
     -- Lsp stuff
@@ -152,7 +156,7 @@ require('lazy').setup({
 
             -- Useful status updates for LSP
             -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-            { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+            { 'j-hui/fidget.nvim', tag = 'legacy', event = 'LspAttach', opts = { } },
 
             'folke/neodev.nvim',
         },
@@ -212,11 +216,11 @@ vim.o.signcolumn = 'number'
 vim.o.termguicolors = true
 
 vim.o.updatetime = 100
-vim.o.timeoutlen = 250
+vim.o.timeoutlen = 350
 
 vim.o.completeopt = 'menuone,noselect'
 
-vim.cmd.colorscheme('kanagawa')
+vim.cmd.colorscheme('tokyonight-night')
 
 
 
@@ -228,10 +232,6 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Window navigation
-vim.keymap.set('n', '<leader>h', ':wincmd h<CR>', { noremap = true })
-vim.keymap.set('n', '<leader>l', ':wincmd l<CR>', { noremap = true })
-vim.keymap.set('n', '<leader>j', ':wincmd j<CR>', { noremap = true })
-vim.keymap.set('n', '<leader>k', ':wincmd k<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>wv', ':vsplit<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>ws', ':split<CR>', { noremap = true })
 
@@ -259,7 +259,7 @@ local telescope_dropdown = require('telescope.themes').get_dropdown { winblend =
 vim.keymap.set('n', '<leader>ff', telescope_fn.find_files, { noremap = true })
 vim.keymap.set('n', '<leader>bb', function () telescope_fn.buffers(telescope_dropdown) end, { noremap = true })
 vim.keymap.set('n', '<leader>rg', telescope_fn.live_grep, { noremap = true })
-vim.keymap.set('n', '<leader>gs', telescope_fn.grep_string, { noremap = true })
+vim.keymap.set('n', '<leader>*', telescope_fn.grep_string, { noremap = true })
 vim.keymap.set('n', '<leader>tr', telescope_fn.resume, { noremap = true })
 vim.keymap.set('n', '<leader>?', function() telescope_fn.oldfiles(telescope_dropdown) end, { noremap = true })
 vim.keymap.set('n', '<leader>/', function() telescope_fn.current_buffer_fuzzy_find(telescope_dropdown) end, { noremap = true })
@@ -277,10 +277,12 @@ vim.keymap.set('n', '<leader>gl', ':G log<CR>', { noremap = true })
 
 vim.keymap.set('n', '<leader>thh', ':set hls!<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>T', ':tabe<CR>:terminal<CR>i<CR>', { noremap = true, desc = "Open terminal in new tab"})
-vim.keymap.set({'n', 'i'}, '<C-h>', ':tabp<CR>', { noremap = true });
-vim.keymap.set({'n', 'i'}, '<C-l>', ':tabn<CR>', { noremap = true });
-vim.keymap.set('t', '<C-l>', '<C-\\><C-n>:tabp<CR>', { noremap = true });
-vim.keymap.set('t', '<C-h>', '<C-\\><C-n>:tabn<CR>', { noremap = true });
+vim.keymap.set('n', '<C-T><C-h>', ':tabp<CR>', { noremap = true });
+vim.keymap.set('i', '<C-T><C-h>', '<ESC>:tabp<CR>', { noremap = true });
+vim.keymap.set('n', '<C-T><C-l>', ':tabn<CR>', { noremap = true });
+vim.keymap.set('i', '<C-T><C-l>', '<ESC>:tabn<CR>', { noremap = true });
+vim.keymap.set('t', '<C-T><C-h>', '<C-\\><C-n>:tabp<CR>', { noremap = true });
+vim.keymap.set('t', '<C-T><C-l>', '<C-\\><C-n>:tabn<CR>', { noremap = true });
 
 vim.keymap.set('n', '<leader>dr', ":execute 'bd!' winbufnr(g:vimspector_session_windows.terminal) <bar> VimspectorReset <CR>", { noremap = true, silent = true });
 
@@ -336,8 +338,7 @@ require('lualine').setup {
         lualine_b = {
             'branch',
             'diff',
-            { 'diagnostics', sources = { 'nvim_lsp', 'coc'}, },
-            'g:coc_status'
+            { 'diagnostics', sources = { 'nvim_lsp'}, },
         },
 
         lualine_c = {'filename'},
@@ -462,6 +463,8 @@ end
 --  define the property 'filetypes' to the map in question.
 local servers = {
     clangd = {},
+    bashls = {},
+    vimls = {},
     -- gopls = {},
     -- pyright = {},
     -- rust_analyzer = {},
@@ -480,9 +483,14 @@ local servers = {
 }
 
 vim.keymap.set('n', '<leader>ga', ':ClangdSwitchSourceHeader<CR>');
-vim.keymap.set({'n', 'i'}, '<F1>', ':lua Compile()<CR>')
+vim.keymap.set('n', '<F1>', ':lua Compile()<CR>')
+vim.keymap.set('i', '<F1>', '<Esc>:lua Compile()<CR>')
 vim.keymap.set({'n'}, '<leader><F1>', ':lua EmitCompileCommands()<CR>')
 vim.keymap.set({'n', 'i'}, '<F2>', ':lua Clean()<CR>')
+
+vim.keymap.set('n', '<leader><F3>', ':lua Iwyu()<CR>')
+vim.keymap.set('n', '<leader>rr', ':lua Run()<CR>')
+vim.keymap.set('n', '<leader>rt', ':lua RunTests()<CR>')
 
 -- Setup neovim lua configuration
 require('neodev').setup()
@@ -491,7 +499,7 @@ require('neodev').setup()
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
--- Ensure the servers above are installed
+-- Ensure the servers above
 local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
@@ -567,3 +575,4 @@ cmp.setup {
 
 local ft =require('Comment.ft')
 ft.set('zc', { '//%s', '/*%s/*'})
+
