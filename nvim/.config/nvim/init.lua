@@ -26,6 +26,7 @@ require('lazy').setup({
     'tpope/vim-fugitive',
     'mbbill/undotree',
     'skywind3000/asyncrun.vim',
+    "nvim-lua/plenary.nvim",
     { 'christoomey/vim-tmux-navigator', lazy = false },
 
     'Tetralux/odin.vim',
@@ -134,10 +135,8 @@ require('lazy').setup({
         opts = { options = { section_separators = '', component_separators = '' }}
     },
 
-    -- Luatab tabline
-    {
-        'alvarosevilla95/luatab.nvim',
-    },
+    {'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
+    { "tiagovla/scope.nvim" },
 
     -- Adds indentation guides
     {
@@ -349,65 +348,14 @@ require('lualine').setup {
     extensions = {'quickfix', 'neo-tree'},
 }
 
-local ltab = require('luatab')
-ltab.setup({
-    title = function(bufnr)
-        local file = vim.fn.bufname(bufnr)
-        local buftype = vim.fn.getbufvar(bufnr, '&buftype')
-        local filetype = vim.fn.getbufvar(bufnr, '&filetype')
+require("scope").setup{}
 
-        if buftype == 'help' then
-            return 'help:' .. vim.fn.fnamemodify(file, ':t:r')
-        elseif buftype == 'quickfix' then
-            return 'quickfix'
-        elseif filetype == 'TelescopePrompt' then
-            return 'Telescope'
-        elseif filetype == 'git' then
-            return 'Git'
-        elseif filetype == 'fugitive' then
-            return 'Fugitive'
-        elseif file:sub(file:len()-2, file:len()) == 'FZF' then
-            return 'FZF'
-        elseif buftype == 'terminal' then
-            local _, mtch = string.match(file, "term:(.*):(%a+)")
-            return mtch ~= nil and mtch or vim.fn.fnamemodify(vim.env.SHELL, ':t')
-        elseif file == '' then
-            return '[No Name]'
-        else
-            return vim.fn.fnamemodify(file, ':p:.')
-        end
-    end,
-
-    modified = function(bufnr)
-        local filetype = vim.fn.getbufvar(bufnr, '&filetype')
-        if filetype == 'TelescopePrompt' then return '' end
-        return vim.fn.getbufvar(bufnr, '&modified') == 1 and '[+] ' or ''
-    end,
-
-    windowCount = function(index)
-        local nwins = 0
-        local success, wins = pcall(vim.api.nvim_tabpage_list_wins, index)
-        if success then
-            for _ in pairs(wins) do nwins = nwins + 1 end
-        end
-        return nwins > 1 and '[' .. nwins .. '] ' or ''
-    end,
-
-    cell = function(index)
-        local isSelected = vim.fn.tabpagenr() == index
-        local buflist = vim.fn.tabpagebuflist(index)
-        local winnr = vim.fn.tabpagewinnr(index)
-        local bufnr = buflist[winnr]
-        local hl = (isSelected and '%#TabLineSel#' or '%#TabLine#')
-
-        return hl .. '%' .. index .. 'T' .. ' ' ..
-            ltab.helpers.windowCount(index) ..
-            ltab.helpers.devicon(bufnr, isSelected) .. '%T' ..
-            ltab.helpers.title(bufnr) .. ' ' ..
-            ltab.helpers.modified(bufnr) ..
-            ltab.helpers.separator(index)
-    end,
-})
+require("bufferline").setup{
+    options = {
+        -- always_show_bufferline = false,
+    }
+}
+vim.o.showtabline = 1
 
 require('neo-tree').setup {
     filesystem = {
