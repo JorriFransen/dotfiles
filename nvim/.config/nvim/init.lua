@@ -31,6 +31,22 @@ require('lazy').setup({
 
     'Tetralux/odin.vim',
 
+    -- {
+    --     "folke/noice.nvim",
+    --     event = "VeryLazy",
+    --     opts = {
+    --         -- add any options here
+    --     },
+    --     dependencies = {
+    --         -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+    --         "MunifTanjim/nui.nvim",
+    --         -- OPTIONAL:
+    --         --   `nvim-notify` is only needed, if you want to use the notification view.
+    --         --   If not available, we use `mini` as the fallback
+    --         "rcarriga/nvim-notify",
+    --     }
+    -- },
+
     {
         'klen/nvim-config-local',
         config = function()
@@ -136,7 +152,6 @@ require('lazy').setup({
     },
 
     {'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
-    { "tiagovla/scope.nvim" },
 
     -- Adds indentation guides
     {
@@ -183,6 +198,24 @@ require('lazy').setup({
     }
 })
 
+-- require("noice").setup({
+--   lsp = {
+--     -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+--     override = {
+--       ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+--       ["vim.lsp.util.stylize_markdown"] = true,
+--       ["cmp.entry.get_documentation"] = true,
+--     },
+--   },
+--   -- you can enable a preset for easier configuration
+--   presets = {
+--     bottom_search = true, -- use a classic bottom cmdline for search
+--     command_palette = true, -- position the cmdline and popupmenu together
+--     long_message_to_split = true, -- long messages will be sent to a split
+--     inc_rename = false, -- enables an input dialog for inc-rename.nvim
+--     lsp_doc_border = false, -- add a border to hover docs and signature help
+--   },
+-- })
 
 vim.o.cursorline = true
 vim.o.mouse = 'a'
@@ -268,6 +301,8 @@ vim.keymap.set('n', '<leader>tr', telescope_fn.resume, { noremap = true })
 vim.keymap.set('n', '<leader>?', function() telescope_fn.oldfiles(telescope_dropdown) end, { noremap = true })
 vim.keymap.set('n', '<leader>/', function() telescope_fn.current_buffer_fuzzy_find(telescope_dropdown) end, { noremap = true })
 
+vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
+
 vim.keymap.set('n', '<leader>ut', ':UndotreeToggle<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>uf', ':UndotreeFocus<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>uc', ':UndotreeHide<CR>', { noremap = true })
@@ -288,7 +323,7 @@ vim.keymap.set('i', '<C-T><C-l>', '<ESC>:tabn<CR>', { noremap = true });
 vim.keymap.set('t', '<C-T><C-h>', '<C-\\><C-n>:tabp<CR>', { noremap = true });
 vim.keymap.set('t', '<C-T><C-l>', '<C-\\><C-n>:tabn<CR>', { noremap = true });
 
-vim.keymap.set('n', '<leader>dr', ":execute 'bd!' winbufnr(g:vimspector_session_windows.terminal) <bar> VimspectorReset<CR>", { noremap = true, silent = true });
+vim.keymap.set('n', '<leader>dr', ":execute 'bd!' winbufnr(g:vimspector_session_windows.terminal) <bar> VimspectorReset<CR>:execute 'set stal=1'<CR>", { noremap = true, silent = true });
 
 vim.keymap.set('n', '<leader>cd', ":execute empty(filter(getwininfo(), 'v:val.quickfix')) == 1 ? 'copen' : 'cclose'<CR>", { noremap = true, silent = true });
 vim.keymap.set('n', '<leader>en', ':cn<CR>')
@@ -334,7 +369,36 @@ local function ws_component()
     return ws_msg
 end
 
-require('lualine').setup {
+local function macro_component()
+    local rec_reg = vim.fn.reg_recording()
+
+    if rec_reg == "" then return ""
+    else return "Recording @" .. rec_reg end
+end
+
+local lualine = require('lualine')
+
+-- Hide the commandline
+vim.opt.cmdheight = 0
+
+-- Force refresh lualine when we start recording a macro
+vim.api.nvim_create_autocmd({ "RecordingEnter" }, {
+    callback = function()
+        lualine.refresh({place={"statusline"}})
+    end,
+})
+
+vim.api.nvim_create_autocmd({ "RecordingLeave" }, {
+    callback = function()
+        -- Wait for vim.fn.reg_recording to be purged
+        local timer = vim.loop.new_timer()
+        timer:start(50, 0, vim.schedule_wrap(function()
+            lualine.refresh({place={"statusline"}})
+        end))
+    end,
+})
+
+lualine.setup {
     options = { section_separators = '', component_separators = '' },
     sections = {
         lualine_a = { { 'mode', fmt = function(str) return string.lower(str) end } },
@@ -343,20 +407,20 @@ require('lualine').setup {
             'branch',
             'diff',
             { 'diagnostics', sources = { 'nvim_lsp'}, },
+            { macro_component },
         },
 
         lualine_c = {'filename'},
         lualine_x = {'encoding', 'fileformat', 'filetype'},
-        lualine_y = {'progress'},
+        lualine_y = {'searchcount', 'progress'},
         lualine_z = {'location', { ws_component, color = { bg = 'orange' } } }
     },
     extensions = {'quickfix', 'neo-tree'},
 }
 
-require("scope").setup{}
-
 require("bufferline").setup{
     options = {
+        mode = "tabs",
         always_show_bufferline = false,
     }
 }
@@ -441,9 +505,11 @@ vim.keymap.set('i', '<F1>', '<Esc>:lua Compile()<CR>')
 vim.keymap.set({'n'}, '<leader><F1>', ':lua EmitCompileCommands()<CR>')
 vim.keymap.set({'n', 'i'}, '<F2>', ':lua Clean()<CR>')
 
-vim.keymap.set('n', '<leader><F3>', ':lua Iwyu()<CR>')
+vim.keymap.set('n', '<F3>', ':lua Iwyu()<CR>')
 vim.keymap.set('n', '<leader>rr', ':lua Run()<CR>')
 vim.keymap.set('n', '<leader>rt', ':lua RunTests()<CR>')
+vim.keymap.set('n', '<leader>ror', ':lua RunSetOptions()<CR>')
+vim.keymap.set('n', '<leader>rot', ':lua RunTestsSetOptions()<CR>')
 
 -- Setup neovim lua configuration
 require('neodev').setup()
