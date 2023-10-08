@@ -77,7 +77,7 @@ alias sxiv='sxiv -pfa -sf -o'
 function svndiff() { diffuse -m $@ }
 function svnlog() { svn log $@ | less --quit-if-one-screen; }
 
-PATH=$PATH:$HOME/.scripts
+PATH=$PATH:$HOME/.local/scripts
 PATH=$PATH:$HOME/dev/ols/install
 PATH=$HOME/.local/bin:$PATH
 PATH=$PATH:/usr/local/bin
