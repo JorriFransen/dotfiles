@@ -114,12 +114,12 @@ require('lazy').setup({
     -- Detect tabstop and shiftwidth automatically
     'tpope/vim-sleuth',
 
-    -- 'Raimondi/delimitmate',
-    {
-        'windwp/nvim-autopairs',
-        event = "InsertEnter",
-        opts = {}
-    },
+    'Raimondi/delimitmate',
+    -- {
+    --     'windwp/nvim-autopairs',
+    --     event = "InsertEnter",
+    --     opts = {}
+    -- },
 
     'psliwka/vim-smoothie',
 
@@ -160,6 +160,8 @@ require('lazy').setup({
         opts = {},
         cond = not vim.g.vscode;
     },
+
+    { 'rhysd/vim-llvm' },
 
     -- Lsp stuff
     {
@@ -267,6 +269,13 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set('n', '<leader>wv', ':vsplit<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>ws', ':split<CR>', { noremap = true })
 
+-- Apply macro to visual selection
+-- vim.keymap.set('v', '@', ':normal @', { noremap = true });
+local function apply_macro_to_visual_range()
+     return ':norm @' .. vim.fn.getcharstr() .. '<CR>'
+end
+vim.keymap.set('x', '@', apply_macro_to_visual_range, { expr = true });
+
 -- [[ Telescope config ]] --
 require('telescope').setup {
     defaults = {
@@ -334,6 +343,14 @@ vim.keymap.set('n', '<leader>v', '<c-v>')
 
 
 vim.opt.listchars = { eol = '·', tab = '⍿·', trail = '×' }
+
+vim.cmd('hi Normal guibg=none ctermbg=none')
+
+-- Keep background transparent on colorscheme change
+vim.api.nvim_create_autocmd({ "ColorScheme" }, {
+    pattern = '*',
+    command = [[hi Normal guibg=none ctermbg=none]]
+})
 
 local ws_msg = ''
 local ws_timer = vim.loop.new_timer()
@@ -467,7 +484,7 @@ local on_attach = function(_, bufnr)
     nmap('gI', telescope_fn.lsp_implementations, "Goto definition")
 
     nmap('K', vim.lsp.buf.hover, "Hover documentation")
-    nmap('<C-k>', vim.lsp.buf.signature_help, "Signature documentation")
+    nmap('<C-s>', vim.lsp.buf.signature_help, "Signature documentation")
 end
 
 -- Enable the following language servers

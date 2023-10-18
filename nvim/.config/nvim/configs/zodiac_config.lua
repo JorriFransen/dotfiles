@@ -37,7 +37,7 @@ function RunTests()
     async_command('bin/zodiac_tests ' .. test_args)
 end
 
-local run_args = 'tests/main.zc'
+local run_args = 'tests/main.zc -o main.exe'
 function RunSetOptions()
     vim.ui.input({ prompt = "Run options: ", default = run_args },
                  function(input)
@@ -48,5 +48,5 @@ function RunSetOptions()
 end
 
 function Run()
-    async_command('bin/zodiac ' .. run_args)
+    async_command('bin/zodiac ' .. run_args .. ' && echo "\n=============== (running executable)" && ./main.exe')
 end
