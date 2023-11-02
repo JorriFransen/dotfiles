@@ -1,4 +1,9 @@
 
+-- Errorformat for asserts
+-- vim.opt.errorformat:prepend -- Can't get this to work (complaining about invalid %- in format)
+-- vim.opt.errorformat:prepend('[%.%#]%f:%l:%m%.%#,')
+vim.o.errorformat = '[%.%#]%f:%l:%m%.%#,' .. vim.o.errorformat
+
 local function async_command(command)
     vim.cmd.let('g:asyncrun_open = 14')
     vim.cmd.wa()
@@ -15,7 +20,7 @@ function Clean()
 end
 
 function EmitCompileCommands()
-    vim.api.nvim_exec('! ./.emit_compile_commands.sh', true)
+    async_command('./.emit_compile_commands.sh')
 end
 
 function Iwyu()
@@ -34,7 +39,7 @@ end
 
 function RunTests()
     -- print(Test_args)
-    async_command('bin/zodiac_tests ' .. test_args)
+    async_command('time bin/zodiac_tests ' .. test_args)
 end
 
 local run_args = 'tests/main.zc -o main.exe'
@@ -48,5 +53,5 @@ function RunSetOptions()
 end
 
 function Run()
-    async_command('bin/zodiac ' .. run_args .. ' && echo "\n=============== (running executable)" && ./main.exe')
+    async_command('time bin/zodiac ' .. run_args .. ' && time ./main.exe')
 end
