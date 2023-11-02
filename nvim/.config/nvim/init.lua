@@ -31,22 +31,6 @@ require('lazy').setup({
 
     'Tetralux/odin.vim',
 
-    -- {
-    --     "folke/noice.nvim",
-    --     event = "VeryLazy",
-    --     opts = {
-    --         -- add any options here
-    --     },
-    --     dependencies = {
-    --         -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-    --         "MunifTanjim/nui.nvim",
-    --         -- OPTIONAL:
-    --         --   `nvim-notify` is only needed, if you want to use the notification view.
-    --         --   If not available, we use `mini` as the fallback
-    --         "rcarriga/nvim-notify",
-    --     }
-    -- },
-
     {
         'klen/nvim-config-local',
         config = function()
@@ -63,33 +47,8 @@ require('lazy').setup({
         end
     },
 
-    {
-        'nvim-neo-tree/neo-tree.nvim',
-        branch = "v3.x",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-            "MunifTanjim/nui.nvim",
-        },
-    },
-
-    {
-        'puremourning/vimspector',
-        init = function()
-            vim.g.vimspector_enable_mappings = "HUMAN"
-        end,
-        cmd = { 'VimspectorInstall', 'VimspectorUpdate' },
-        ---@diagnostic disable: missing-fields
-	keys = {
-            { "<F5>" },
-            { "<F6>" },
-            { "<F8>" },
-            { "<F9>" },
-            { "<F10>" },
-            { "<F11>" },
-            { "<leader>di", "<Plug>VimspectorBalloonEval", mode = { "n", "x" } },
-	},
-    },
+    { 'mfussenegger/nvim-dap' },
+    { 'rcarriga/nvim-dap-ui' },
 
     {
         'numToStr/Comment.nvim',
@@ -151,7 +110,7 @@ require('lazy').setup({
         opts = { options = { section_separators = '', component_separators = '' }}
     },
 
-    {'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
+    { 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons' },
 
     -- Adds indentation guides
     {
@@ -172,7 +131,11 @@ require('lazy').setup({
 
             -- Useful status updates for LSP
             -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-            { 'j-hui/fidget.nvim', tag = 'legacy', event = 'LspAttach', opts = { } },
+            { 'j-hui/fidget.nvim', tag = 'legacy', event = 'LspAttach', opts = {
+                window = {
+                    blend = 0,
+                }
+            } },
 
             'folke/neodev.nvim',
         },
@@ -199,25 +162,6 @@ require('lazy').setup({
         }
     }
 })
-
--- require("noice").setup({
---   lsp = {
---     -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
---     override = {
---       ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
---       ["vim.lsp.util.stylize_markdown"] = true,
---       ["cmp.entry.get_documentation"] = true,
---     },
---   },
---   -- you can enable a preset for easier configuration
---   presets = {
---     bottom_search = true, -- use a classic bottom cmdline for search
---     command_palette = true, -- position the cmdline and popupmenu together
---     long_message_to_split = true, -- long messages will be sent to a split
---     inc_rename = false, -- enables an input dialog for inc-rename.nvim
---     lsp_doc_border = false, -- add a border to hover docs and signature help
---   },
--- })
 
 vim.o.cursorline = true
 vim.o.mouse = 'a'
@@ -253,6 +197,15 @@ vim.o.updatetime = 100
 vim.o.timeoutlen = 350
 
 vim.o.completeopt = 'menuone,noselect'
+
+---@diagnostic disable-next-line: missing-fields
+require('tokyonight').setup {
+    transparent = true,
+    styles = {
+        sidebars = "transparent",
+        floats = "transparent,"
+    },
+}
 
 vim.cmd.colorscheme('tokyonight-night')
 
@@ -316,9 +269,6 @@ vim.keymap.set('n', '<leader>ut', ':UndotreeToggle<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>uf', ':UndotreeFocus<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>uc', ':UndotreeHide<CR>', { noremap = true })
 
-vim.keymap.set('n', '<leader>nt', ':Neotree toggle left<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>nf', ':Neotree focus<CR>', { noremap = true, silent = true })
-
 vim.keymap.set('n', '<leader>gs', ':G<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>gp', ':G push<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>gl', ':G log<CR>', { noremap = true })
@@ -332,7 +282,7 @@ vim.keymap.set('i', '<C-T><C-l>', '<ESC>:tabn<CR>', { noremap = true });
 vim.keymap.set('t', '<C-T><C-h>', '<C-\\><C-n>:tabp<CR>', { noremap = true });
 vim.keymap.set('t', '<C-T><C-l>', '<C-\\><C-n>:tabn<CR>', { noremap = true });
 
-vim.keymap.set('n', '<leader>dr', ":execute 'bd!' winbufnr(g:vimspector_session_windows.terminal) <bar> VimspectorReset<CR>:execute 'set stal=1'<CR>", { noremap = true, silent = true });
+-- vim.keymap.set('n', '<leader>dr', ":execute 'bd!' winbufnr(g:vimspector_session_windows.terminal) <bar> VimspectorReset<CR>:execute 'set stal=1'<CR>", { noremap = true, silent = true });
 
 vim.keymap.set('n', '<leader>cd', ":execute empty(filter(getwininfo(), 'v:val.quickfix')) == 1 ? 'copen' : 'cclose'<CR>", { noremap = true, silent = true });
 vim.keymap.set('n', '<leader>en', ':cn<CR>')
@@ -351,6 +301,42 @@ vim.api.nvim_create_autocmd({ "ColorScheme" }, {
     pattern = '*',
     command = [[hi Normal guibg=none ctermbg=none]]
 })
+
+local dap = require("dap")
+local dapui = require("dapui")
+
+dapui.setup()
+
+dap.listeners.after.event_initialized["dapui_config"] = function()
+    dapui.open();
+end
+-- dap.listeners.before.event_terminated["dapui_config"] = function()
+--     dapui.close();
+-- end
+dap.listeners.before.event_exited["dapui_config"] = function()
+    dapui.close();
+end
+
+dap.adapters.lldb = {
+    type = "executable",
+    command = "/usr/bin/lldb-vscode",
+    name = "lldb"
+}
+
+dap.adapters.cppdbg = {
+    id = "cppdbg",
+    type = "executable",
+    command = "/home/jorri/.vscode-oss/extensions/ms-vscode.cpptools-1.14.4-linux-x64/debugAdapters/bin/OpenDebugAD7"
+}
+
+vim.keymap.set('n', '<F4>', function() require('dap').run_last() end)
+vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
+vim.keymap.set('n', '<F9>', function() require('dap').toggle_breakpoint() end)
+vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
+vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
+vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
+vim.keymap.set({'n', 'x'}, '<leader>di', function() require('dap.ui.widgets').hover() end, { noremap = true})
+vim.keymap.set({'n', 'x'}, '<leader>dr', function() dap.close() dapui.close() end, { noremap = true})
 
 local ws_msg = ''
 local ws_timer = vim.loop.new_timer()
@@ -432,26 +418,18 @@ lualine.setup {
         lualine_y = {'searchcount', 'progress'},
         lualine_z = {'location', { ws_component, color = { bg = 'orange' } } }
     },
-    extensions = {'quickfix', 'neo-tree'},
+    extensions = {'quickfix'},
 }
 
+---@diagnostic disable-next-line: missing-fields
 require("bufferline").setup{
+---@diagnostic disable-next-line: missing-fields
     options = {
         mode = "tabs",
         always_show_bufferline = false,
     }
 }
 vim.o.showtabline = 1
-
-require('neo-tree').setup {
-    filesystem = {
-        filtered_items = {
-            visible = true,
-            hide_dotfiles = true,
-            hide_gitignored = true,
-        }
-    }
-}
 
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })

@@ -55,3 +55,27 @@ end
 function Run()
     async_command('time bin/zodiac ' .. run_args .. ' && time ./main.exe')
 end
+
+local dap = require("dap")
+
+dap.configurations.cpp = {
+    {
+        name = "Zodiac",
+        type = "cppdbg",
+        request = "launch",
+        program = "bin/zodiac",
+        cwd = "${workspaceFolder}",
+        stopOnEntry = false,
+        args = { "tests/main.zc" },
+    },
+    {
+        name = "Zodiac Tests",
+        type = "lldb",
+        request = "launch",
+        program = "bin/zodiac",
+        cwd = "${workspaceFolder}",
+        stopOnEntry = false,
+        args = { "tests/main.zc" },
+    }
+}
+
