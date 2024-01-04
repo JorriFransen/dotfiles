@@ -38,7 +38,6 @@ function RunTestsSetOptions()
 end
 
 function RunTests()
-    -- print(Test_args)
     async_command('time bin/zodiac_tests ' .. test_args)
 end
 

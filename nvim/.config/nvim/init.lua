@@ -7,6 +7,10 @@ vim.wo.number = true
 vim.o.relativenumber = true
 vim.wo.relativenumber = true
 
+-- disable netrw at the very start of your init.lua
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -49,6 +53,26 @@ require('lazy').setup({
 
     { 'mfussenegger/nvim-dap' },
     { 'rcarriga/nvim-dap-ui' },
+    { 'theHamsta/nvim-dap-virtual-text' },
+
+    {
+        'nvim-treesitter/nvim-treesitter',
+        build = ":TSUpdate",
+        config = function ()
+            local configs = require("nvim-treesitter.configs")
+
+            ---@diagnostic disable-next-line: missing-fields
+            configs.setup({
+                ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "bash", "python" },
+                sync_install = false,
+                auto_install = true,
+                highlight = { enable = false },
+                indent = { enable = false }
+            })
+        end
+    },
+
+    { 'nvim-tree/nvim-tree.lua' },
 
     {
         'numToStr/Comment.nvim',
@@ -177,10 +201,12 @@ vim.o.scrolloff = 5
 vim.o.splitbelow = true
 vim.o.splitright = true
 
---vim.o.tabstop = 4
---vim.o.shiftwidth = 4
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
 vim.o.backspace = 'start,eol,indent'
 vim.o.expandtab = true
+
+vim.api.nvim_create_autocmd({ "Filetype" }, { pattern = 'asm', command = 'setlocal expandtab'})
 
 vim.o.wrap = true
 vim.o.breakindent = true
@@ -221,6 +247,14 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- Window navigation
 vim.keymap.set('n', '<leader>wv', ':vsplit<CR>', { noremap = true })
 vim.keymap.set('n', '<leader>ws', ':split<CR>', { noremap = true })
+
+require("nvim-tree").setup({
+    -- filters = {
+    --     git_ignored = false,
+    --     dotfiles = false
+    -- }
+})
+vim.keymap.set('n', '<leader>nt', ':NvimTreeToggle<CR>', { noremap = true });
 
 -- Apply macro to visual selection
 -- vim.keymap.set('v', '@', ':normal @', { noremap = true });
@@ -282,8 +316,6 @@ vim.keymap.set('i', '<C-T><C-l>', '<ESC>:tabn<CR>', { noremap = true });
 vim.keymap.set('t', '<C-T><C-h>', '<C-\\><C-n>:tabp<CR>', { noremap = true });
 vim.keymap.set('t', '<C-T><C-l>', '<C-\\><C-n>:tabn<CR>', { noremap = true });
 
--- vim.keymap.set('n', '<leader>dr', ":execute 'bd!' winbufnr(g:vimspector_session_windows.terminal) <bar> VimspectorReset<CR>:execute 'set stal=1'<CR>", { noremap = true, silent = true });
-
 vim.keymap.set('n', '<leader>cd', ":execute empty(filter(getwininfo(), 'v:val.quickfix')) == 1 ? 'copen' : 'cclose'<CR>", { noremap = true, silent = true });
 vim.keymap.set('n', '<leader>en', ':cn<CR>')
 vim.keymap.set('n', '<leader>ep', ':cp<CR>')
@@ -304,6 +336,7 @@ vim.api.nvim_create_autocmd({ "ColorScheme" }, {
 
 local dap = require("dap")
 local dapui = require("dapui")
+require("nvim-dap-virtual-text").setup({})
 
 dapui.setup()
 
@@ -329,14 +362,18 @@ dap.adapters.cppdbg = {
     command = "/home/jorri/.vscode-oss/extensions/ms-vscode.cpptools-1.14.4-linux-x64/debugAdapters/bin/OpenDebugAD7"
 }
 
+vim.keymap.set('n', '<leader>b', function() require('dap').toggle_breakpoint() end)
+vim.keymap.set('n', '<leader>B', function() require('dap').set_breakpoint(vim.fn.input("Breakpoint condition: ")) end)
 vim.keymap.set('n', '<F4>', function() require('dap').run_last() end)
 vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
-vim.keymap.set('n', '<F9>', function() require('dap').toggle_breakpoint() end)
 vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
 vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
 vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
 vim.keymap.set({'n', 'x'}, '<leader>di', function() require('dap.ui.widgets').hover() end, { noremap = true})
 vim.keymap.set({'n', 'x'}, '<leader>dr', function() dap.close() dapui.close() end, { noremap = true})
+
+local ibl = require("ibl")
+ibl.setup()
 
 local ws_msg = ''
 local ws_timer = vim.loop.new_timer()
@@ -505,6 +542,7 @@ vim.keymap.set('n', '<leader>rr', ':lua Run()<CR>')
 vim.keymap.set('n', '<leader>rt', ':lua RunTests()<CR>')
 vim.keymap.set('n', '<leader>ror', ':lua RunSetOptions()<CR>')
 vim.keymap.set('n', '<leader>rot', ':lua RunTestsSetOptions()<CR>')
+vim.keymap.set('n', '<leader>sbd', ':lua SetBuildDir()<CR>')
 
 -- Setup neovim lua configuration
 require('neodev').setup()
@@ -530,6 +568,7 @@ mason_lspconfig.setup_handlers {
         }
     end
 }
+
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
@@ -579,7 +618,7 @@ cmp.setup {
     sources = {
         { name = 'nvim_lsp' },
         -- { name = 'nvim_lsp_signature_help' },
-        { name = 'luasnip' },
+        -- { name = 'luasnip' },
     },
 }
 
