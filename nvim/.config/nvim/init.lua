@@ -32,6 +32,7 @@ require('lazy').setup({
     'skywind3000/asyncrun.vim',
     "nvim-lua/plenary.nvim",
     { 'christoomey/vim-tmux-navigator', lazy = false },
+    'stevearc/dressing.nvim',
 
     'Tetralux/odin.vim',
 
@@ -53,7 +54,7 @@ require('lazy').setup({
 
     { 'mfussenegger/nvim-dap' },
     { 'rcarriga/nvim-dap-ui' },
-    { 'theHamsta/nvim-dap-virtual-text' },
+    -- { 'theHamsta/nvim-dap-virtual-text' },
 
     {
         'nvim-treesitter/nvim-treesitter',
@@ -147,6 +148,7 @@ require('lazy').setup({
     { 'rhysd/vim-llvm' },
 
     -- Lsp stuff
+    { 'smjonas/inc-rename.nvim' },
     {
         'neovim/nvim-lspconfig',
         dependencies = {
@@ -336,7 +338,7 @@ vim.api.nvim_create_autocmd({ "ColorScheme" }, {
 
 local dap = require("dap")
 local dapui = require("dapui")
-require("nvim-dap-virtual-text").setup({})
+-- require("nvim-dap-virtual-text").setup({})
 
 dapui.setup()
 
@@ -419,7 +421,7 @@ end
 local lualine = require('lualine')
 
 -- Hide the commandline
-vim.opt.cmdheight = 0
+-- vim.opt.cmdheight = 0
 
 -- Force refresh lualine when we start recording a macro
 vim.api.nvim_create_autocmd({ "RecordingEnter" }, {
@@ -490,7 +492,13 @@ local on_attach = function(_, bufnr)
         vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
 
-    nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+    -- nmap('<leader>rn',
+    --     function()
+    --         vim.lsp.buf.rename()
+    --         vim.cmd('wa')
+    --     end,
+    --     '[R]e[n]ame')
+
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
     nmap('<leader>qf', ':lua vim.lsp.buf.code_action({apply=true})<CR>', '[C]ode [A]ction')
 
@@ -501,6 +509,35 @@ local on_attach = function(_, bufnr)
     nmap('K', vim.lsp.buf.hover, "Hover documentation")
     nmap('<C-s>', vim.lsp.buf.signature_help, "Signature documentation")
 end
+
+require("dressing").setup({
+    input = {
+        relative = "editor",
+
+        get_config = function(opts)
+            if opts.kind == "inc_rename" then
+                return {
+                    relative = 'cursor',
+                }
+            end
+        end
+    },
+
+
+})
+
+local function save_after_rename()
+    vim.cmd.wa();
+end
+
+require('inc_rename').setup {
+    post_hook = save_after_rename,
+    input_buffer_type = "dressing",
+}
+
+vim.keymap.set("n", "<leader>rn", function()
+    return ":IncRename " .. vim.fn.expand("<cword>")
+end, { expr = true})
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
