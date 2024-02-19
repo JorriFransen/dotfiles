@@ -15,8 +15,7 @@ local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
         "git",
-        "clone",
-        "--filter=blob:none",
+        "clone", "--filter=blob:none",
         "https://github.com/folke/lazy.nvim.git",
         "--branch=stable", -- latest stable release
         lazypath,
@@ -27,14 +26,73 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
 
-    'tpope/vim-fugitive',
+    {
+        "folke/noice.nvim",
+        event = "VeryLazy",
+        opts = {
+            lsp = {
+                -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+                override = {
+                    ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+                    ["vim.lsp.util.stylize_markdown"] = true,
+                    ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+                },
+                progress = {
+                    enabled = true,
+                    throttle = 1000 / 10,
+                },
+            },
+            -- you can enable a preset for easier configuration
+            presets = {
+                lsp_doc_border = false, -- add a border to hover docs and signature help
+            },
+            views = {
+                mini = {
+                    reverse = false,
+                    position = { row = 1, col = "100%" },
+                    border = { style = "none", padding = { 1, 1 }, },
+                    win_options = {
+                        winhighlight = "NormalFloat:NormalFloat,FLoatBorder:FloatBorder",
+                        winblend = 1
+                    },
+                },
+                cmdline_popup = {
+                    position = { row = 10, col = "50%", },
+                    size = { width = 60, height = "auto" },
+                    border = { style = "none", padding = { 2, 3 }, },
+                    win_options = {
+                        -- winhighlight = "NormalFloat:NormalFloat,FLoatBorder:FloatBorder",
+                        winhighlight = {
+                            NormalFloat = "NormalFloat",
+                            FloatBorder = "FloatBorder",
+                            IncSearch = "",
+                            CurSearch = "",
+                            Search = "",
+                        },
+                    },
+                },
+            },
+            routes = {
+                -- Hide search virtual text
+                { filter = { event = "msg_show", kind = "search_count", }, opts = { skip = true }, },
+            },
+        },
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+            -- "rcarriga/nvim-notify",
+        }
+    },
+
+    { 'tpope/vim-fugitive', },
+
     'mbbill/undotree',
-    'skywind3000/asyncrun.vim',
+
+    { 'skywind3000/asyncrun.vim', },
+
     "nvim-lua/plenary.nvim",
     { 'christoomey/vim-tmux-navigator', lazy = false },
-    'stevearc/dressing.nvim',
 
-    'Tetralux/odin.vim',
+    { 'Tetralux/odin.vim', },
 
     {
         'klen/nvim-config-local',
@@ -52,8 +110,8 @@ require('lazy').setup({
         end
     },
 
-    { 'mfussenegger/nvim-dap' },
-    { 'rcarriga/nvim-dap-ui' },
+    { 'mfussenegger/nvim-dap', },
+    { 'rcarriga/nvim-dap-ui', },
     -- { 'theHamsta/nvim-dap-virtual-text' },
 
     {
@@ -64,7 +122,7 @@ require('lazy').setup({
 
             ---@diagnostic disable-next-line: missing-fields
             configs.setup({
-                ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "bash", "python" },
+                ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "bash", "python", "regex", "markdown_inline" },
                 sync_install = false,
                 auto_install = true,
                 highlight = { enable = false },
@@ -73,7 +131,7 @@ require('lazy').setup({
         end
     },
 
-    { 'nvim-tree/nvim-tree.lua' },
+    { 'nvim-tree/nvim-tree.lua', },
 
     {
         'numToStr/Comment.nvim',
@@ -125,7 +183,7 @@ require('lazy').setup({
     -- Themes
     'rebelot/kanagawa.nvim',
     'EdenEast/nightfox.nvim',
-    { "folke/tokyonight.nvim", lazy = false, priority = 1000, opts = {}, },
+    { "folke/tokyonight.nvim", lazy = false, priority = 1000, },
 
     'nvim-tree/nvim-web-devicons',
 
@@ -145,25 +203,17 @@ require('lazy').setup({
         cond = not vim.g.vscode;
     },
 
-    { 'rhysd/vim-llvm' },
+    { 'rhysd/vim-llvm', },
 
     -- Lsp stuff
-    { 'smjonas/inc-rename.nvim' },
     {
         'neovim/nvim-lspconfig',
         dependencies = {
             { 'williamboman/mason.nvim', config = true },
             'williamboman/mason-lspconfig.nvim',
 
-            -- Useful status updates for LSP
-            -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-            { 'j-hui/fidget.nvim', tag = 'legacy', event = 'LspAttach', opts = {
-                window = {
-                    blend = 0,
-                }
-            } },
-
             'folke/neodev.nvim',
+
         },
     },
     {
@@ -176,12 +226,12 @@ require('lazy').setup({
             -- Adds LSP completion capabilities
             'hrsh7th/cmp-nvim-lsp',
             -- 'hrsh7th/cmp-nvim-lsp-signature-help',
-            {
-                'ray-x/lsp_signature.nvim',
-                event = "VeryLazy",
-                opts = {},
-                config = function(_, opts) require'lsp_signature'.setup(opts) end,
-            },
+            -- {
+            --     'ray-x/lsp_signature.nvim',
+            --     event = "VeryLazy",
+            --     opts = {},
+            --     config = function(_, opts) require'lsp_signature'.setup(opts) end,
+            -- },
 
             -- Adds a number of user-friendly snippets
             'rafamadriz/friendly-snippets',
@@ -230,14 +280,12 @@ vim.o.completeopt = 'menuone,noselect'
 require('tokyonight').setup {
     transparent = true,
     styles = {
-        sidebars = "transparent",
-        floats = "transparent,"
+        sidebars = "dark",
+        floats = "dark"
     },
 }
 
 vim.cmd.colorscheme('tokyonight-night')
-
-
 
 -- vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('i', '{<CR>', '{<CR>}<Esc>O', { noremap = true })
@@ -247,8 +295,8 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Window navigation
-vim.keymap.set('n', '<leader>wv', ':vsplit<CR>', { noremap = true })
-vim.keymap.set('n', '<leader>ws', ':split<CR>', { noremap = true })
+vim.keymap.set('n', '<leader>wv', function() vim.cmd('vsplit') end, { noremap = true })
+vim.keymap.set('n', '<leader>ws', function() vim.cmd('split') end, { noremap = true })
 
 require("nvim-tree").setup({
     -- filters = {
@@ -256,7 +304,7 @@ require("nvim-tree").setup({
     --     dotfiles = false
     -- }
 })
-vim.keymap.set('n', '<leader>nt', ':NvimTreeToggle<CR>', { noremap = true });
+vim.keymap.set('n', '<leader>nt', function() vim.cmd('NvimTreeToggle') end, { noremap = true });
 
 -- Apply macro to visual selection
 -- vim.keymap.set('v', '@', ':normal @', { noremap = true });
@@ -301,46 +349,140 @@ vim.keymap.set('n', '<leader>/', function() telescope_fn.current_buffer_fuzzy_fi
 
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
 
-vim.keymap.set('n', '<leader>ut', ':UndotreeToggle<CR>', { noremap = true })
-vim.keymap.set('n', '<leader>uf', ':UndotreeFocus<CR>', { noremap = true })
-vim.keymap.set('n', '<leader>uc', ':UndotreeHide<CR>', { noremap = true })
+vim.keymap.set('n', '<leader>ut', function() vim.cmd('UndotreeToggle') end, { noremap = true })
+vim.keymap.set('n', '<leader>uf', function() vim.cmd('UndotreeFocus') end, { noremap = true })
+vim.keymap.set('n', '<leader>uc', function() vim.cmd('UndotreeHide') end, { noremap = true })
 
-vim.keymap.set('n', '<leader>gs', ':G<CR>', { noremap = true })
-vim.keymap.set('n', '<leader>gp', ':G push<CR>', { noremap = true })
-vim.keymap.set('n', '<leader>gl', ':G log<CR>', { noremap = true })
+vim.keymap.set('n', '<leader>gs', function() vim.cmd('G') end, { noremap = true })
+vim.keymap.set('n', '<leader>gp', function() vim.cmd('G push') end, { noremap = true })
+vim.keymap.set('n', '<leader>gl', function() vim.cmd('G log') end, { noremap = true })
 
-vim.keymap.set('n', '<leader>thh', ':set hls!<CR>', { noremap = true })
-vim.keymap.set('n', '<leader>T', ':tabe<CR>:terminal<CR>i<CR>', { noremap = true, desc = "Open terminal in new tab"})
-vim.keymap.set('n', '<C-T><C-h>', ':tabp<CR>', { noremap = true });
-vim.keymap.set('i', '<C-T><C-h>', '<ESC>:tabp<CR>', { noremap = true });
-vim.keymap.set('n', '<C-T><C-l>', ':tabn<CR>', { noremap = true });
-vim.keymap.set('i', '<C-T><C-l>', '<ESC>:tabn<CR>', { noremap = true });
+vim.keymap.set('n', '<leader>thh', function() vim.cmd('set hls!') end, { noremap = true })
+vim.keymap.set('n', '<leader>T', function() vim.cmd('tabe') vim.cmd('terminal') vim.cmd('startinsert') end, { noremap = true, desc = "Open terminal in new tab"})
+vim.keymap.set('n', '<C-T><C-h>', function() vim.cmd('tabp') end, { noremap = true });
+vim.keymap.set('i', '<C-T><C-h>', function() vim.cmd('stopinsert') vim.cmd('tabp') end, { noremap = true });
+vim.keymap.set('n', '<C-T><C-l>', function() vim.cmd('tabn') end, { noremap = true });
+vim.keymap.set('i', '<C-T><C-l>', function() vim.cmd('stopinsert') vim.cmd('tabn') end, { noremap = true });
 vim.keymap.set('t', '<C-T><C-h>', '<C-\\><C-n>:tabp<CR>', { noremap = true });
 vim.keymap.set('t', '<C-T><C-l>', '<C-\\><C-n>:tabn<CR>', { noremap = true });
 
 vim.keymap.set('n', '<leader>cd', ":execute empty(filter(getwininfo(), 'v:val.quickfix')) == 1 ? 'copen' : 'cclose'<CR>", { noremap = true, silent = true });
-vim.keymap.set('n', '<leader>en', ':cn<CR>')
-vim.keymap.set('n', '<leader>ep', ':cp<CR>')
-vim.keymap.set('n', '<leader>ef', ':cfirst<CR>');
+vim.keymap.set('n', '<leader>en', function() vim.cmd('cn') end)
+vim.keymap.set('n', '<leader>ep', function() vim.cmd('cp') end)
+vim.keymap.set('n', '<leader>ef', function() vim.cmd('cfirst') end);
 
 vim.keymap.set('n', '<leader>v', '<c-v>')
 
 
 vim.opt.listchars = { eol = '·', tab = '⍿·', trail = '×' }
 
-vim.cmd('hi Normal guibg=none ctermbg=none')
-
--- Keep background transparent on colorscheme change
-vim.api.nvim_create_autocmd({ "ColorScheme" }, {
-    pattern = '*',
-    command = [[hi Normal guibg=none ctermbg=none]]
-})
+-- vim.cmd('hi Normal guibg=none ctermbg=none')
+--
+-- -- Keep background transparent on colorscheme change
+-- vim.api.nvim_create_autocmd({ "ColorScheme" }, {
+--     pattern = '*',
+--     command = [[hi Normal guibg=none ctermbg=none]]
+-- })
 
 local dap = require("dap")
 local dapui = require("dapui")
 -- require("nvim-dap-virtual-text").setup({})
 
-dapui.setup()
+dapui.setup({
+    controls = {
+      element = "repl",
+      enabled = true,
+      icons = {
+        disconnect = "",
+        pause = "",
+        play = "",
+        run_last = "",
+        step_back = "",
+        step_into = "",
+        step_out = "",
+        step_over = "",
+        terminate = ""
+      }
+    },
+    element_mappings = {
+        stacks = {
+            edit = "e",
+            expand = "o",
+            open = { "<CR>", "<2-LeftMouse>" },
+            remove = "d",
+            repl = "r",
+            toggle = "t"
+        },
+    },
+    expand_lines = true,
+    floating = {
+      border = "single",
+      mappings = {
+        close = { "q", "<Esc>" }
+      }
+    },
+    force_buffers = true,
+    icons = {
+      collapsed = "",
+      current_frame = "",
+      expanded = ""
+    },
+    layouts = { {
+        elements = {
+          {
+            id = "scopes",
+            size = 0.4
+          },
+          -- {
+          --   id = "breakpoints",
+          --   size = 0.2
+          -- },
+          {
+            id = "watches",
+            size = 0.3
+          },
+          {
+            id = "stacks",
+            size = 0.3
+          },
+        },
+        position = "left",
+        size = 40
+      }, {
+        elements = { {
+            id = "repl",
+            size = 0.5
+          }, {
+            id = "console",
+            size = 0.5
+          } },
+        position = "bottom",
+        size = 10
+      } },
+    mappings = {
+      edit = "e",
+      expand = { "<CR>", "<2-LeftMouse>" },
+      open = "o",
+      remove = "d",
+      repl = "r",
+      toggle = "t"
+    },
+    render = {
+      indent = 1,
+      max_value_lines = 100
+    }
+  }
+)
+--
+-- sign for breakpoints
+vim.api.nvim_set_hl(0, 'DapBreakpoint', { ctermbg=0, fg='#ff0000', bg='#31353f' })
+vim.api.nvim_set_hl(0, 'DapStopped', { ctermbg=0, fg='#00ff00', bg='#31353f' })
+
+vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "DapBreakpoint" })
+vim.fn.sign_define("DapBreakpointCondition", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "DapBreakpoint" })
+vim.fn.sign_define("DapLogPoint", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "DapBreakpoint" })
+vim.fn.sign_define("DapBreakpointRejected", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "DapBreakpoint" })
+vim.fn.sign_define("DapStopped", { text = "", texthl = "DapStopped", linehl = "", numhl = "DapStopped" })
 
 dap.listeners.after.event_initialized["dapui_config"] = function()
     dapui.open();
@@ -366,12 +508,24 @@ dap.adapters.cppdbg = {
 
 vim.keymap.set('n', '<leader>b', function() require('dap').toggle_breakpoint() end)
 vim.keymap.set('n', '<leader>B', function() require('dap').set_breakpoint(vim.fn.input("Breakpoint condition: ")) end)
+vim.keymap.set('n', '<leader>ds', function()
+    local bufnr = require('dapui').elements.stacks.buffer();
+    local windows = vim.api.nvim_list_wins();
+    for _,winid in ipairs(windows) do
+        if vim.api.nvim_win_get_buf(winid) == bufnr then
+            vim.api.nvim_set_current_win(winid)
+        end
+    end
+end)
+---@diagnostic disable-next-line: missing-fields
+vim.keymap.set('n', '<leader>db', function() require('dapui').float_element("breakpoints", {enter=true}) end)
 vim.keymap.set('n', '<F4>', function() require('dap').run_last() end)
 vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
 vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
 vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
 vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
-vim.keymap.set({'n', 'x'}, '<leader>di', function() require('dap.ui.widgets').hover() end, { noremap = true})
+---@diagnostic disable-next-line: missing-fields
+vim.keymap.set({'n', 'x'}, '<leader>di', function() require('dapui').eval(nil, {enter=true}) end, { noremap = true})
 vim.keymap.set({'n', 'x'}, '<leader>dr', function() dap.close() dapui.close() end, { noremap = true})
 
 local ibl = require("ibl")
@@ -454,7 +608,7 @@ lualine.setup {
 
         lualine_c = {'filename'},
         lualine_x = {'encoding', 'fileformat', 'filetype'},
-        lualine_y = {'searchcount', 'progress'},
+        lualine_y = {'searchcount' },
         lualine_z = {'location', { ws_component, color = { bg = 'orange' } } }
     },
     extensions = {'quickfix'},
@@ -475,6 +629,107 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnos
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
+local function nui_lsp_rename()
+
+    local Input = require("nui.input")
+    local event = require("nui.utils.autocmd").event
+
+    local curr_name = vim.fn.expand("<cword>")
+    local params = vim.lsp.util.make_position_params()
+
+    local function on_submit(new_name)
+    if not new_name or #new_name == 0 or curr_name == new_name then
+      -- do nothing if `new_name` is empty or not changed.
+      return
+    end
+
+    -- add `newName` property to `params`.
+    -- this is needed for making `textDocument/rename` request.
+    params.newName = new_name
+
+    -- send the `textDocument/rename` request to LSP server
+    vim.lsp.buf_request(0, "textDocument/rename", params, function(_, result, ctx, _)
+      if not result then
+        -- do nothing if server returns empty result
+        return
+      end
+
+      -- the `result` contains all the places we need to update the
+      -- name of the identifier. so we apply those edits.
+      local client = vim.lsp.get_client_by_id(ctx.client_id)
+      vim.lsp.util.apply_workspace_edit(result, client.offset_encoding)
+
+      -- after the edits are applied, the files are not saved automatically.
+      -- let's remind ourselves to save those...
+      -- local total_files = vim.tbl_count(result.changes)
+      -- print(
+      --   string.format(
+      --     "Changed %s file%s. To save them run ':wa'",
+      --     total_files,
+      --     total_files > 1 and "s" or ""
+      --   )
+      -- )
+      vim.cmd.wa();
+    end)
+
+
+  end
+
+  local popup_options = {
+    -- border for the window
+    border = {
+      style = "none",
+      -- text = {
+      --   top = "Rename",
+      --   top_align = "left"
+      -- },
+
+      padding = { 1, 2 },
+    },
+    -- highlight for the window.
+    win_options = {
+        winhighlight = "NormalFloat:NormalFloat,FLoatBorder:FloatBorder",
+        -- winhighlight = "Normal:Normal",
+    },
+    -- place the popup window relative to the
+    -- buffer position of the identifier
+    relative = {
+      type = "buf",
+      position = {
+        -- this is the same `params` we got earlier
+        row = params.position.line,
+        col = params.position.character,
+      },
+    },
+    -- position the popup window on the line below identifier
+    position = {
+      row = 1,
+      col = 0,
+    },
+    -- 25 cells wide, should be enough for most identifier names
+    size = {
+      width = 25,
+      height = 1,
+    },
+  }
+
+  local input = Input(popup_options, {
+    -- set the default value to current name
+    default_value = curr_name,
+    -- pass the `on_submit` callback function we wrote earlier
+    on_submit = on_submit,
+    prompt = "",
+  })
+
+  input:mount()
+
+  -- close on <esc> in normal mode
+  input:map("n", "<esc>", input.input_props.on_close, { noremap = true })
+
+  -- close when cursor leaves the buffer
+  input:on(event.BufLeave, input.input_props.on_close, { once = true })
+end
+
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
@@ -492,12 +747,13 @@ local on_attach = function(_, bufnr)
         vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
 
-    -- nmap('<leader>rn',
-    --     function()
-    --         vim.lsp.buf.rename()
-    --         vim.cmd('wa')
-    --     end,
-    --     '[R]e[n]ame')
+    nmap('<leader>rn',
+        function()
+            -- vim.lsp.buf.rename()
+            -- vim.cmd('wa')
+            nui_lsp_rename()
+        end,
+        '[R]e[n]ame')
 
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
     nmap('<leader>qf', ':lua vim.lsp.buf.code_action({apply=true})<CR>', '[C]ode [A]ction')
@@ -509,35 +765,6 @@ local on_attach = function(_, bufnr)
     nmap('K', vim.lsp.buf.hover, "Hover documentation")
     nmap('<C-s>', vim.lsp.buf.signature_help, "Signature documentation")
 end
-
-require("dressing").setup({
-    input = {
-        relative = "editor",
-
-        get_config = function(opts)
-            if opts.kind == "inc_rename" then
-                return {
-                    relative = 'cursor',
-                }
-            end
-        end
-    },
-
-
-})
-
-local function save_after_rename()
-    vim.cmd.wa();
-end
-
-require('inc_rename').setup {
-    post_hook = save_after_rename,
-    input_buffer_type = "dressing",
-}
-
-vim.keymap.set("n", "<leader>rn", function()
-    return ":IncRename " .. vim.fn.expand("<cword>")
-end, { expr = true})
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -568,18 +795,18 @@ local servers = {
     },
 }
 
-vim.keymap.set('n', '<leader>ga', ':ClangdSwitchSourceHeader<CR>');
-vim.keymap.set('n', '<F1>', ':lua Compile()<CR>')
-vim.keymap.set('i', '<F1>', '<Esc>:lua Compile()<CR>')
-vim.keymap.set({'n'}, '<leader><F1>', ':lua EmitCompileCommands()<CR>')
-vim.keymap.set({'n', 'i'}, '<F2>', ':lua Clean()<CR>')
-
-vim.keymap.set('n', '<F3>', ':lua Iwyu()<CR>')
-vim.keymap.set('n', '<leader>rr', ':lua Run()<CR>')
-vim.keymap.set('n', '<leader>rt', ':lua RunTests()<CR>')
-vim.keymap.set('n', '<leader>ror', ':lua RunSetOptions()<CR>')
-vim.keymap.set('n', '<leader>rot', ':lua RunTestsSetOptions()<CR>')
-vim.keymap.set('n', '<leader>sbd', ':lua SetBuildDir()<CR>')
+vim.keymap.set('n', '<leader>ga', function() vim.cmd('ClangdSwitchSourceHeader') end);
+vim.keymap.set('n', '<F1>', function() Compile() end)
+vim.keymap.set('i', '<F1>', function() vim.cmd('stopinsert') Compile() end)
+vim.keymap.set('n', '<leader><F1>', function() EmitCompileCommands() end)
+vim.keymap.set('n', '<F2>', function() Clean() end)
+vim.keymap.set('i', '<F2>', function() vim.cmd('stopinsert') Clean() end)
+vim.keymap.set('n', '<F3>', function() Iwyu() end)
+vim.keymap.set('n', '<leader>rr', function() Run() end)
+vim.keymap.set('n', '<leader>rt', function() RunTests() end)
+vim.keymap.set('n', '<leader>ror', function() RunSetOptions() end)
+vim.keymap.set('n', '<leader>rot', function() RunTestsSetOptions() end)
+vim.keymap.set('n', '<leader>sbd', function() SetBuildDir() end)
 
 -- Setup neovim lua configuration
 require('neodev').setup()
@@ -594,7 +821,7 @@ local mason_lspconfig = require 'mason-lspconfig'
 mason_lspconfig.setup {
     ensure_installed = vim.tbl_keys(servers),
 }
-
+--
 mason_lspconfig.setup_handlers {
     function(server_name)
         require('lspconfig')[server_name].setup {
@@ -624,6 +851,8 @@ cmp.setup {
     mapping = cmp.mapping.preset.insert {
         -- ['<Tab>'] = cmp.mapping.select_next_item(),
         -- ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+
+
         ['<C-n>'] = cmp.mapping.select_next_item(),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
         ['<C-d>'] = cmp.mapping.scroll_docs(-4),
@@ -638,10 +867,11 @@ cmp.setup {
                 cmp.select_next_item()
             elseif luasnip.expand_or_locally_jumpable() then
                 luasnip.expand_or_jump()
-            else
+           else
                 fallback()
             end
         end, { 'i', 's' }),
+
         ['<S-Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
                 cmp.select_prev_item()
