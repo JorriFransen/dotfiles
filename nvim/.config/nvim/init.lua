@@ -26,62 +26,62 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
 
-    {
-        "folke/noice.nvim",
-        event = "VeryLazy",
-        opts = {
-            lsp = {
-                -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-                override = {
-                    ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-                    ["vim.lsp.util.stylize_markdown"] = true,
-                    ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
-                },
-                progress = {
-                    enabled = true,
-                    throttle = 1000 / 10,
-                },
-            },
-            -- you can enable a preset for easier configuration
-            presets = {
-                lsp_doc_border = false, -- add a border to hover docs and signature help
-            },
-            views = {
-                mini = {
-                    reverse = false,
-                    position = { row = 1, col = "100%" },
-                    border = { style = "none", padding = { 1, 1 }, },
-                    win_options = {
-                        winhighlight = "NormalFloat:NormalFloat,FLoatBorder:FloatBorder",
-                        winblend = 1
-                    },
-                },
-                cmdline_popup = {
-                    position = { row = 10, col = "50%", },
-                    size = { width = 60, height = "auto" },
-                    border = { style = "none", padding = { 2, 3 }, },
-                    win_options = {
-                        -- winhighlight = "NormalFloat:NormalFloat,FLoatBorder:FloatBorder",
-                        winhighlight = {
-                            NormalFloat = "NormalFloat",
-                            FloatBorder = "FloatBorder",
-                            IncSearch = "",
-                            CurSearch = "",
-                            Search = "",
-                        },
-                    },
-                },
-            },
-            routes = {
-                -- Hide search virtual text
-                { filter = { event = "msg_show", kind = "search_count", }, opts = { skip = true }, },
-            },
-        },
-        dependencies = {
-            "MunifTanjim/nui.nvim",
-            -- "rcarriga/nvim-notify",
-        }
-    },
+    -- {
+    --     "folke/noice.nvim",
+    --     event = "VeryLazy",
+    --     opts = {
+    --         lsp = {
+    --             -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+    --             override = {
+    --                 ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+    --                 ["vim.lsp.util.stylize_markdown"] = true,
+    --                 ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+    --             },
+    --             progress = {
+    --                 enabled = true,
+    --                 throttle = 1000 / 10,
+    --             },
+    --         },
+    --         -- you can enable a preset for easier configuration
+    --         presets = {
+    --             lsp_doc_border = false, -- add a border to hover docs and signature help
+    --         },
+    --         views = {
+    --             mini = {
+    --                 reverse = false,
+    --                 position = { row = 1, col = "100%" },
+    --                 border = { style = "none", padding = { 1, 1 }, },
+    --                 win_options = {
+    --                     winhighlight = "NormalFloat:NormalFloat,FLoatBorder:FloatBorder",
+    --                     winblend = 1
+    --                 },
+    --             },
+    --             cmdline_popup = {
+    --                 position = { row = 10, col = "50%", },
+    --                 size = { width = 60, height = "auto" },
+    --                 border = { style = "none", padding = { 2, 3 }, },
+    --                 win_options = {
+    --                     -- winhighlight = "NormalFloat:NormalFloat,FLoatBorder:FloatBorder",
+    --                     winhighlight = {
+    --                         NormalFloat = "NormalFloat",
+    --                         FloatBorder = "FloatBorder",
+    --                         IncSearch = "",
+    --                         CurSearch = "",
+    --                         Search = "",
+    --                     },
+    --                 },
+    --             },
+    --         },
+    --         routes = {
+    --             -- Hide search virtual text
+    --             { filter = { event = "msg_show", kind = "search_count", }, opts = { skip = true }, },
+    --         },
+    --     },
+    --     dependencies = {
+    --         "MunifTanjim/nui.nvim",
+    --         -- "rcarriga/nvim-notify",
+    --     }
+    -- },
 
     { 'tpope/vim-fugitive', },
 
@@ -213,6 +213,8 @@ require('lazy').setup({
     { "L3MON4D3/LuaSnip" },
     { "hrsh7th/nvim-cmp" },
     { "hrsh7th/cmp-nvim-lsp" },
+    { "hrsh7th/cmp-buffer" },
+    { "hrsh7th/cmp-path" },
     { "neovim/nvim-lspconfig" },
 })
 
@@ -738,8 +740,7 @@ require("neodev").setup()
 
 local lspconfig = require("lspconfig")
 
-local lsp_capabilities = vim.lsp.protocol.make_client_capabilities()
-lsp_capabilities = require("cmp_nvim_lsp").default_capabilities()
+local lsp_capabilities = require("cmp_nvim_lsp").default_capabilities()
 local luasnip = require("luasnip")
 
 --  This function gets run when an LSP connects to a particular buffer.
@@ -788,26 +789,60 @@ mason_lspconfig.setup_handlers {
 }
 
 local cmp = require("cmp") -- nvim-cmp
+local cmp_types = require("cmp.types")
+
 cmp.setup({
     snippet = {
         expand = function(args)
             luasnip.lsp_expand(args.body)
         end,
     },
+    -- sources = cmp.config.sources({ { name = "nvim_lsp"} }),
     sources = {
-        { name = "nvim_lsp"},
-        { name = "buffer" },
-
+        { name = "nvim_lsp", },
+        { name = "buffer", }
     },
 
     mapping = cmp.mapping.preset.insert({
         ['<C-d>'] = cmp.mapping.scroll_docs(-4), -- Up
         ['<C-f>'] = cmp.mapping.scroll_docs(4), -- Down
-        ['<C-j>'] = cmp.mapping.select_next_item(),
-        ['<Tab>'] = cmp.mapping.select_next_item(),
-        ['<C-k>'] = cmp.mapping.select_prev_item(),
-        ['<S-Tab'] = cmp.mapping.select_prev_item(),
         -- ['<CR>'] = cmp.mapping.complete(), -- doesn't seem to do anything?
+
+        ['<C-j>'] = {
+          i = function()
+            if cmp.visible() then
+              cmp.select_next_item({ behavior = cmp_types.cmp.SelectBehavior.Insert })
+            else
+              cmp.complete()
+            end
+          end,
+        },
+        ['<C-k>'] = {
+          i = function()
+            if cmp.visible() then
+              cmp.select_prev_item({ behavior = cmp_types.cmp.SelectBehavior.Insert })
+            else
+              cmp.complete()
+            end
+          end,
+        },
+
+        ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_next_item()
+           else
+                fallback()
+            end
+        end, { 'i', 's' }),
+
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_prev_item()
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+
         ['<CR>'] = cmp.mapping.confirm {
           behavior = cmp.ConfirmBehavior.Replace,
           select = true,
@@ -815,6 +850,7 @@ cmp.setup({
     }),
 
 })
+
 
 local ft = require('Comment.ft')
 ft.set('zc', { '//%s', '/*%s/*'})
