@@ -37,6 +37,7 @@ set updatetime=100 "For coc and vim-gitgutter
 call plug#begin()
 
     " Visual
+    Plug 'jacoborus/tender.vim'
     Plug 'gruvbox-community/gruvbox'
     Plug 'rebelot/kanagawa.nvim'
     Plug 'EdenEast/nightfox.nvim'
@@ -61,7 +62,9 @@ call plug#begin()
     Plug 'nvim-telescope/telescope.nvim'
     " Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
     Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+
     Plug 'puremourning/vimspector'
+
     Plug 'tpope/vim-fugitive'
     Plug 'christoomey/vim-conflicted'
 
@@ -85,6 +88,8 @@ call plug#begin()
 
 
 call plug#end()
+
+let asmsyntax="nasm"
 
 " autocmd User CocNvimInit call CocAction('runCommand', 'git.toggleGutters')
 
@@ -116,9 +121,9 @@ ENDNF
 
 
 " colorscheme gruvbox
-" colorscheme kanagawa
+colorscheme kanagawa
 " colorscheme carbonfox
-colorscheme terafox
+" colorscheme terafox
 
 " hi Normal guibg=NONE ctermbg=NONE
 
@@ -142,6 +147,8 @@ nnoremap <leader>gs :Telescope grep_string<CR>
 nnoremap <leader>tr :Telescope resume<CR>
 
 nnoremap <leader>ut :UndotreeToggle<CR>
+nnoremap <leader>uf :UndotreeFocus<CR>
+nnoremap <leader>uc :UndotreeHide<CR>
 
 nnoremap <leader>gs :G<CR>
 nnoremap <leader>gp :G push<CR>
@@ -162,13 +169,12 @@ noremap <C-h> :tabp<CR>
 noremap <C-l> :tabn<CR>
 tnoremap <C-h> <C-\><C-n>:tabp<CR>
 tnoremap <C-l> <C-\><C-n>:tabn<CR>
-nnoremap <F1> :call Compile()<CR>
-inoremap <F1> <esc>: call Compile()<CR>
-nnoremap <F2> :call Clean()<CR>
-inoremap <F2> <esc>: call Clean()<CR>
-nnoremap <leader><F1> :call EmitCompileCommands()<CR>
+nnoremap <F1> :wa<CR>:make!<CR>
+inoremap <F1> <esc>:wa<CR>:make!<CR>
+nnoremap <F2> :make clean<CR>
+inoremap <F2> <esc>:make clean<CR>
 nnoremap <leader>dl :call vimspector#Launch(1)<CR>
-nnoremap <leader>dr :VimspectorReset<CR>
+nnoremap <leader>dr :execute 'bd!' winbufnr(g:vimspector_session_windows.terminal) <bar> VimspectorReset<CR>
 nmap <Leader>di <Plug>VimspectorBalloonEval
 xmap <Leader>di <Plug>VimspectorBalloonEval
 nnoremap <leader>cd :call ToggleQuickfix()<CR>
@@ -176,6 +182,11 @@ nnoremap <leader>en :cn<cr>
 nnoremap <C-j> :cn<cr>
 nnoremap <leader>ep :cp<cr>
 nnoremap <C-k> :cp<cr>
+nnoremap <leader>ef :cfirst <cr>
+nnoremap <leader>dn :lnext<cr>
+nnoremap <leader>dp :lprev<cr>
+nnoremap <leader>df :lfirst<cr>
+nnoremap <leader>cdq :lclose<cr>
 
 noremap <leader>ga :CocCommand clangd.switchSourceHeader<CR>
 noremap <leader>gsv :CocCommand clangd.switchSourceHeader vsplit<CR>
@@ -185,6 +196,7 @@ noremap <leader>cr :CocRestart<cr>
 noremap <leader>v <c-v>
 
 noremap <leader>nt :Neotree toggle left<CR>
+noremap <leader>nf :Neotree focus<CR>
 
 let g:vimspector_enable_mappings = 'HUMAN'
 
@@ -274,7 +286,7 @@ ENDLL
 
 lua << ENDLUATAB
 local ltab = require('luatab')
-ltab.setup({ 
+ltab.setup({
     title = function(bufnr)
         local file = vim.fn.bufname(bufnr)
         local buftype = vim.fn.getbufvar(bufnr, '&buftype')
@@ -334,6 +346,18 @@ ltab.setup({
 })
 ENDLUATAB
 
+lua << ENDNEOTREE
+require('neo-tree').setup {
+    filesystem = {
+        filtered_items = {
+            visible = true,
+            hide_dotfiles = true,
+            hide_gitignored = true,
+        }
+    }
+}
+ENDNEOTREE
+
 " Hide statusline when using fzf
 autocmd! FileType fzf set laststatus=0 noshowmode noruler | autocmd BufLeave <buffer> set laststatus=2 showkmode ruler
 
@@ -383,6 +407,7 @@ autocmd! FileType fzf set laststatus=0 noshowmode noruler | autocmd BufLeave <bu
     " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
     nmap <silent> [g <Plug>(coc-diagnostic-prev)
     nmap <silent> ]g <Plug>(coc-diagnostic-next)
+    nmap <silent> <leader>cld :CocDiagnostics<CR>
 
     " GoTo code navigation.
     nmap <silent> gd <Plug>(coc-definition)
@@ -434,6 +459,11 @@ lua << EOF
 -- You dont need to set any of these options. These are the default ones. Only
 -- the loading is important
 require('telescope').setup {
+  pickers = {
+    colorscheme = {
+      enable_preview = true
+    }
+  },
   defaults = {
     extensions = {
       fzf = {
