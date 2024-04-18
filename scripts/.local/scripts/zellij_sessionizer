@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+if [[ $# -eq 1 ]]; then
+    selected=$1
+else
+    selected=$(fd -L . ~/dev ~/dev/dotfiles ~/dev/dotfiles/scripts/.local ~/.config  -d 1 -t d | fzf)
+fi
+
+if [[ -z $selected ]]; then
+    exit 0
+fi
+
+selected_name=$(basename "$selected" | tr . _)
+# tmux_running=$(pgrep tmux)
+
+
+if [[ -z $ZELLIJ ]]; then
+    cd $selected
+    zellij delete-session $selected_name
+    zellij attach $selected_name -c
+    exit 0
+fi
+
+zellij action new-pane
+zellij action write-chars "cd $selected" && zellij action write 10
