@@ -98,7 +98,6 @@ hook global InsertCompletionShow .* %{
 }
 
 single-key-mode r
-evaluate-commands %sh{ [ -f .kakrc.kak ] && echo "source .kakrc.kak" }
 
 evaluate-commands %sh{kak-lsp --kakoune -s $kak_session}
 hook global WinSetOption filetype=(c|cpp) %{
@@ -125,3 +124,25 @@ map global object f '<a-semicolon>lsp-object Function Method<ret>' -docstring 'L
 map global object t '<a-semicolon>lsp-object Class Interface Struct<ret>' -docstring 'LSP class interface or struct'
 map global object d '<a-semicolon>lsp-diagnostic-object --include-warnings<ret>' -docstring 'LSP errors and warnings'
 map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
+
+
+declare-option str projectconfig_identifier ""
+declare-option str projectconfig_path ""
+
+hook -group projectconfig global KakBegin .* %{
+    evaluate-commands %sh{
+        name=$(basename $(pwd))
+        echo "set-option global projectconfig_identifier ${name}"
+        echo "try %{ rename-session ${name} } catch %{ rename-session ${name}-${kak_session} }"
+
+        config_path=${kak_config}/projectconfig/${name}.kak
+        if [ -f ${config_path} ]; then
+            echo "set-option global projectconfig_path ${config_path}"
+            echo "define-command open-projectconfig -docstring 'open projectconfig' %{ edit %opt{projectconfig_path} }"
+
+        fi
+
+        echo "try %{ source ${config_path} }"
+    }
+}
+
