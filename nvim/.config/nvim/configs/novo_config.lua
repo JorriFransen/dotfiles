@@ -68,12 +68,12 @@ local dap = require("dap")
 dap.configurations.cpp = {
     {
         name = "Novo",
-        type = "cppdbg",
+        type = "gdb",
         request = "launch",
         program = "build/novo",
         cwd = "${workspaceFolder}",
         stopOnEntry = false,
-        args = { "test/test.no", },
+        args = { "test/test.no", "-vb" },
     },
     -- {
     --     name = "Zodiac Tests",

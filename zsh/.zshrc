@@ -46,12 +46,14 @@ gpgconf --launch gpg-agent
 
 gpg-connect-agent updatestartuptty /bye >/dev/null
 
-EDITOR=vim
-if [ $(command -v nvim) ]; then
-    EDITOR=nvim
-    alias vim='nvim'
-fi
+alias k=kak
+export EDITOR=kak
+# if [ $(command -v nvim) ]; then
+#     EDITOR=nvim
+#     alias vim='nvim'
+# fi
 export EDITOR
+export SUDO_EDITOR=$EDITOR
 
 alias gnvim='gnvim --disable-ext-cmdline --disable-ext-tabline'
 autoload -U compinit
@@ -67,8 +69,8 @@ bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
-# bindkey -s '^f' "tmux_sessionizer\n"
-bindkey -s '^f' "zellij_sessionizer\n"
+bindkey -s '^f' "tmux_sessionizer\n"
+# bindkey -s '^f' "zellij_sessionizer\n"
 
 alias ls='ls --color'
 alias sxiv='sxiv -pfa -sf -o'
@@ -85,6 +87,7 @@ PATH=$PATH:$HOME/dev/ols/install
 PATH=$HOME/.local/bin:$PATH
 PATH=$PATH:/usr/local/bin
 PATH=$PATH:$WATCOM/binl
+PATH=$PATH:/opt/kakoune/bin
 
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.

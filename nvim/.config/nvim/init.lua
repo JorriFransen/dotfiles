@@ -110,8 +110,7 @@ require('lazy').setup({
         end
     },
 
-    { 'mfussenegger/nvim-dap', },
-    { 'rcarriga/nvim-dap-ui', },
+    { 'rcarriga/nvim-dap-ui', dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
     -- { 'theHamsta/nvim-dap-virtual-text' },
 
     {
@@ -463,15 +462,20 @@ vim.fn.sign_define("DapLogPoint", { text = "", texthl = "DapBreakpoint", line
 vim.fn.sign_define("DapBreakpointRejected", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "DapBreakpoint" })
 vim.fn.sign_define("DapStopped", { text = "", texthl = "DapStopped", linehl = "", numhl = "DapStopped" })
 
-dap.listeners.after.event_initialized["dapui_config"] = function()
-    dapui.open();
-end
--- dap.listeners.before.event_terminated["dapui_config"] = function()
+-- dap.listeners.after.event_initialized["dapui_config"] = function()
+--     dapui.open();
+-- end
+-- -- dap.listeners.before.event_terminated["dapui_config"] = function()
+-- --     dapui.close();
+-- -- end
+-- dap.listeners.before.event_exited["dapui_config"] = function()
 --     dapui.close();
 -- end
-dap.listeners.before.event_exited["dapui_config"] = function()
-    dapui.close();
-end
+
+dap.listeners.before.attach.dapui_config = function() dapui.open() end
+dap.listeners.before.launch.dapui_config = function() dapui.open() end
+dap.listeners.before.event_terminated.dapui_config = function() dapui.close() end
+dap.listeners.before.event_exited.dapui_config = function() dapui.close() end
 
 dap.adapters.lldb = {
     type = "executable",
@@ -483,6 +487,12 @@ dap.adapters.cppdbg = {
     id = "cppdbg",
     type = "executable",
     command = "/home/jorri/.vscode-oss/extensions/ms-vscode.cpptools-1.14.4-linux-x64/debugAdapters/bin/OpenDebugAD7"
+}
+
+dap.adapters.gdb = {
+    type = "executable",
+    command = "gdb",
+    args = { "-i", "dap" },
 }
 
 vim.keymap.set('n', '<leader>b', function() require('dap').toggle_breakpoint() end)
