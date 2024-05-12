@@ -1,8 +1,5 @@
 set global startup_info_version 20230805
 
-colorscheme tokyo-night-dark
-# colorscheme github
-
 hook global ModuleLoaded tmux %{ source "%val{config}/tmux.kak" }
 
 
@@ -145,4 +142,7 @@ hook -group projectconfig global KakBegin .* %{
         echo "try %{ source ${config_path} }"
     }
 }
+
+colorscheme tokyo-night-dark
+# colorscheme github
 
