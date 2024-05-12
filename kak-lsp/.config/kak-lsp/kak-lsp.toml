@@ -27,6 +27,7 @@ args = ["start"]
 filetypes = ["c", "cpp"]
 roots = ["compile_commands.json", ".clangd", ".git", ".hg"]
 command = "clangd"
+args = ["--all-scopes-completion", "--background-index", "--clang-tidy", "--completion-style=detailed", "--malloc-trim"]
 
 [language_server.clojure-lsp]
 filetypes = ["clojure"]
