@@ -1,5 +1,5 @@
 declare-option str      novo_build_dir "build"
-declare-option str-list novo_run_args  "test/test.no" "-v" "-b" "&& ./a.out"
+declare-option str-list novo_run_args "-vt" "../tests/test.no && ./test"
 declare-option str-list novo_test_args ""
 
 define-command -override novo-build %{
@@ -16,7 +16,7 @@ define-command -override novo-clean %{
 
 define-command -override novo-run %{
     write-all
-    set global makecmd "%opt{novo_build_dir}/novo %opt{novo_run_args}"
+    set global makecmd "cd %opt{novo_build_dir} && ./novo %opt{novo_run_args}"
     make
 }
 

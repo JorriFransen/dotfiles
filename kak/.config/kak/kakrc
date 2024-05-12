@@ -136,6 +136,7 @@ hook -group projectconfig global KakBegin .* %{
         if [ -f ${config_path} ]; then
             echo "set-option global projectconfig_path ${config_path}"
             echo "define-command open-projectconfig -docstring 'open projectconfig' %{ edit %opt{projectconfig_path} }"
+            echo "define-command source-projectconfig -docstring 'source projectconfig' %{ source %opt{projectconfig_path} }"
 
         fi
 
