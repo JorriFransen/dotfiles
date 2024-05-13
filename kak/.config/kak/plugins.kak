@@ -12,7 +12,7 @@ bundle-noload kak-bundle https://github.com/jdugan6240/kak-bundle
 bundle kakoune-palette 'https://github.com/Delapouite/kakoune-palette'
 # bundle kak-ansi 'https://github.com/eraserhd/kak-ansi'
 bundle active-window.kak 'https://github.com/greenfork/active-window.kak'
-bundle explain-shell.kak 'https://github.com/ath3/explain-shell.kak'
+# bundle explain-shell.kak 'https://github.com/ath3/explain-shell.kak'
 
 bundle kakoune-smooth-scroll 'https://github.com/caksoylar/kakoune-smooth-scroll' %{
     set-option global scroll_keys_normal <c-b> <c-d> <c-u> <pageup> <pagedown> ( ) m M <a-semicolon> <percent> n <a-n> N <a-N> u U
@@ -21,10 +21,8 @@ bundle kakoune-smooth-scroll 'https://github.com/caksoylar/kakoune-smooth-scroll
     hook global WinCreate [^*].* %{ hook -once window WinDisplay .* %{ smooth-scroll-enable } }
 }
 
-
-
-bundle luar https://github.com/gustavo-hms/luar %{
-    require-module luar
-    set-option global luar_interpreter luajit
+# bundle auto-pairs.kak 'https://github.com/alexherbo2/auto-pairs.kak' %{
+bundle auto-pairs.kak 'git clone -b user-mode-semicolon-fix https://github.com/jorrifransen/auto-pairs.kak' %{
+    enable-auto-pairs
 }
 
