@@ -122,6 +122,12 @@ map global object d '<a-semicolon>lsp-diagnostic-object --include-warnings<ret>'
 map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
 
 
+define-command -hidden append-remove-whitespace -docstring "Remove trailing whitespace and enter insert mode after selections" %{
+    try %{ execute-keys -draft "xs\h+$<ret>d" }
+    execute-keys "A"
+}
+map global normal A ':append-remove-whitespace<ret>'
+
 declare-option str projectconfig_identifier ""
 declare-option str projectconfig_path ""
 
