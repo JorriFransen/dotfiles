@@ -2,7 +2,6 @@ set global startup_info_version 20230805
 
 hook global ModuleLoaded tmux %{ source "%val{config}/tmux.kak" }
 
-
 # Custom commands
 define-command open-config -docstring "open kakrc" %{ edit "%val{config}/kakrc" }
 define-command write-all-kill -docstring "write-all-kill call write-all followed by kill" %{
@@ -22,7 +21,7 @@ define-command single-key-mode -params 1 %{
 }
 
 define-command find -docstring "Find files" -params 1 %{ edit %arg{1} }
-complete-command -menu find shell-script-candidates %{ fd --type f --hidden }
+complete-command -menu find shell-script-candidates %{ fd --type f }
 alias global f find
 
 # Key mapping
