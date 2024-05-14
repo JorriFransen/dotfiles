@@ -48,7 +48,7 @@ map global e P ':jump-previous *make*<ret>' -docstring "Jump to previous error (
 source "%val{config}/hlsearch.kak"
 source "%val{config}/novo.kak"
 
-# # Plugins
+# Plugins
 source "%val{config}/plugins.kak"
 
 # Line numbers
@@ -124,7 +124,7 @@ map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP er
 
 define-command -hidden append-remove-whitespace -docstring "Remove trailing whitespace and enter insert mode after selections" %{
     try %{ execute-keys -draft "xs\h+$<ret>d" }
-    execute-keys "A"
+    execute-keys -with-hooks "A"
 }
 map global normal A ':append-remove-whitespace<ret>'
 
