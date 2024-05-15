@@ -1,29 +1,29 @@
 declare-option str      novo_build_dir "build"
-declare-option str-list novo_run_args "-vt" "../tests/test.no && ./test"
+declare-option str-list novo_run_args "-v" "../tests/test.no && ./test"
 declare-option str-list novo_test_args ""
 
 define-command -override novo-build %{
     write-all
-    set global makecmd "meson compile -C %opt{novo_build_dir}"
-    make
+    set global runcmd "meson compile -C %opt{novo_build_dir}"
+    run
 }
 
 define-command -override novo-clean %{
     write-all
-    set global makecmd "meson compile -C %opt{novo_build_dir} --clean"
-    make
+    set global runcmd "meson compile -C %opt{novo_build_dir} --clean"
+    run
 }
 
 define-command -override novo-run %{
     write-all
-    set global makecmd "cd %opt{novo_build_dir} && ./novo %opt{novo_run_args}"
-    make
+    set global runcmd "cd %opt{novo_build_dir} && ./novo %opt{novo_run_args}"
+    run
 }
 
 define-command -override novo-test %{
     write-all
-    set global makecmd "meson test -C %opt{novo_build_dir} %opt{novo_test_args}"
-    make
+    set global runcmd "meson test -C %opt{novo_build_dir} %opt{novo_test_args}"
+    run
 }
 
 map global normal <F1> %{:novo-build<ret>} -docstring "Build novo"

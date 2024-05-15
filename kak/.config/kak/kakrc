@@ -18,6 +18,7 @@ alias global wqa write-all-quit
 define-command single-key-mode -params 1 %{
     declare-user-mode %arg{1}
     map global user %arg{1} ":enter-user-mode %arg{1}<ret>" -docstring "%arg{1} mode"
+
 }
 
 define-command find -docstring "Find files" -params 1 %{ edit %arg{1} }
@@ -37,8 +38,8 @@ map global user g ':enter-user-mode Goto<ret>' -docstring "Goto mode"
 map global Goto a ':alt<ret>' -docstring "Alternative file"
 
 single-key-mode e
-map global e n ':make-next-error<ret>' -docstring "Jump to next error (source)"
-map global e p ':make-previous-error<ret>' -docstring "Jump to previous error (source)"
+map global e n ':run-next-error<ret>' -docstring "Jump to next error (source)"
+map global e p ':run-previous-error<ret>' -docstring "Jump to previous error (source)"
 map global e N ':jump-next *make*<ret>' -docstring "Jump to next error (*make*)"
 map global e P ':jump-previous *make*<ret>' -docstring "Jump to previous error (*make*)"
 
@@ -48,6 +49,7 @@ map global e P ':jump-previous *make*<ret>' -docstring "Jump to previous error (
 source "%val{config}/hlsearch.kak"
 source "%val{config}/novo.kak"
 source "%val{config}/trail-white.kak"
+source "%val{config}/run.kak"
 
 # Plugins
 source "%val{config}/plugins.kak"
