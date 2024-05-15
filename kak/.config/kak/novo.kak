@@ -29,8 +29,8 @@ add-highlighter shared/novo/code/ regex "#" 0:meta
 add-highlighter shared/novo/code/ regex "-?([0-9_]*\.(?!0[xXbB]))?\b([0-9_]+|0[xX][0-9a-fA-F_]*\.?[0-9a-fA-F_]+|0[bb][01_]+)([ep]-?[0-9_]+)?[fFlLuUi]*\b" 0:value
 
 evaluate-commands %sh{
-    keywords="return|if|else|for|while|break|continue"
-    directives="foreign"
+    keywords="return|if|else|for|while|break|continue|struct|enum"
+    directives="foreign|import"
     types="void|bool|string|cstring|cchar|u8|u16|u32|u64|s8|s16|s32|s64|int|r32|r64"
     values="true|false|null"
 
