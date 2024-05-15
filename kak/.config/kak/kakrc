@@ -47,6 +47,7 @@ map global e P ':jump-previous *make*<ret>' -docstring "Jump to previous error (
 # Modules
 source "%val{config}/hlsearch.kak"
 source "%val{config}/novo.kak"
+source "%val{config}/trail-white.kak"
 
 # Plugins
 source "%val{config}/plugins.kak"
@@ -54,11 +55,6 @@ source "%val{config}/plugins.kak"
 # Line numbers
 hook global WinCreate .* %{
     add-highlighter window/number-line number-lines -relative -hlcursor -separator ' '
-}
-
-# Highlight trailing whitespace
-hook global WinSetOption filetype=(kak|rust|python|go|javascript|typescript|c|cpp|novo) %{
-    add-highlighter window/trail-white regex '\h+$' 0:yellow,yellow
 }
 
 define-command highlight-cursorline %{
