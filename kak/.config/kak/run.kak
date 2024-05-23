@@ -1,5 +1,5 @@
 declare-option str runcmd "make"
-declare-option regex run_error_pattern "[\w|: ]*\.\./([\w|/|\.]*):(\d+):(?:(\d+):)?([^\n]+)"
+declare-option regex run_error_pattern "[\w|: ]*(?:\.\./)?([\w|/|\.]*):(\d+):(?:(\d+):)?([^\n]+)"
 declare-option -hidden int run_current_error_line
 
 define-command -params .. run %{
@@ -44,7 +44,8 @@ define-command -hidden run-open-error -params 4 %{
 
 define-command run-jump %{
     evaluate-commands -save-regs a/ %{
-        execute-keys "xs%opt{run_error_pattern}<ret>"
+        set-register / %opt{run_error_pattern}
+        execute-keys "xs<ret>"
         set-option buffer run_current_error_line %val{cursor_line}
         run-open-error "%reg{1}" "%reg{2}" "%reg{3}" "%reg{4}"
     }
