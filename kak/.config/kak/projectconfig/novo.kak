@@ -1,6 +1,7 @@
-declare-option str      novo_build_dir "build"
-declare-option str-list novo_run_args "-v" "../tests/test.no && ./test"
-declare-option str-list novo_test_args ""
+declare-option str      novo_build_dir     "build"
+declare-option str-list novo_run_args      "../tests/test.no" "-v" "-k" "-b"
+declare-option str      novo_run_args_post "&& ./test"
+declare-option str-list novo_test_args     ""
 
 define-command -override novo-build %{
     write-all
@@ -16,7 +17,7 @@ define-command -override novo-clean %{
 
 define-command -override novo-run %{
     write-all
-    set global runcmd "cd %opt{novo_build_dir} && ./novo %opt{novo_run_args}"
+    set global runcmd "cd %opt{novo_build_dir} && ./novo %opt{novo_run_args} %opt{novo_run_args_post}"
     run
 }
 
