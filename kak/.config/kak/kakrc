@@ -1,5 +1,7 @@
 set global startup_info_version 20230805
 
+set -add global ui_options terminal_assistant=none
+
 hook global ModuleLoaded tmux %{ source "%val{config}/tmux.kak" }
 
 # Custom commands
