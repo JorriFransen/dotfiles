@@ -26,8 +26,12 @@ complete-command -menu find shell-script-candidates %{ fd --type f }
 alias global f find
 
 # Key mapping
-map global user f ':find ' -docstring "Find files"
-map global user b ':buffer ' -docstring "Open buffers"
+map global user F ':find ' -docstring "Find files"
+map global user B ':buffer ' -docstring "Open buffers"
+map global user G ':fzf-grep<ret>' -docstring "Fzf grep all files"
+map global user f ':fzf-files<ret>' -docstring "Fzf files"
+map global user b ':fzf-buffers<ret>' -docstring "Fzf buffers"
+
 map global user <semicolon> ':comment-line<ret>' -docstring "Comment selection"
 map global user h ':hlsearch-toggle<ret>' -docstring "Toggle search highlighter"
 
@@ -50,6 +54,7 @@ source "%val{config}/hlsearch.kak"
 source "%val{config}/novo.kak"
 source "%val{config}/trail-white.kak"
 source "%val{config}/run.kak"
+source "%val{config}/fzf.kak"
 
 # Plugins
 source "%val{config}/plugins.kak"
