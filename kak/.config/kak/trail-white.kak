@@ -9,8 +9,9 @@ define-command trail-white-highlight-enable -hidden %{
     evaluate-commands %sh{
         if [ $kak_opt_highlight_trailing_whitespace = "true" ]; then
             echo try %{ add-highlighter window/trail-white regex '\h+$' 0:yellow,yellow }
+            # echo try %{ add-highlighter window/trail-white show-whitespaces -only-trailing }
         else
-            echo nop
+            echo trail-white-highlight-disable
         fi;
     }
 }

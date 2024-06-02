@@ -7,6 +7,7 @@ define-command -params .. run %{
 
         output=$(mktemp -d "${TMPDIR:-/tmp}"/kak-run.XXXXXXXX)/fifo
         mkfifo ${output}
+        # ( eval echo Running command: "${kak_opt_runcmd}" > ${output})
         ( eval "${kak_opt_runcmd}" "$@" > ${output} 2>&1 & ) > /dev/null 2>&1 < /dev/null
 
         printf %s\\n "evaluate-commands  %{

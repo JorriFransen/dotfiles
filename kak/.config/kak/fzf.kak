@@ -24,14 +24,14 @@ define-command fzf -docstring "fzf" -params ..4 %{ evaluate-commands %sh{
     fi
 
     if [[ -n "$sel" ]]; then
-        printf "%s '%s'\n" "${kakcmd}" "${sel}"
+        printf "%s "%s"\n" "${kakcmd}" "${sel}"
     fi
 
-    msg="cmd=\"$cmd\"
-kakcmd=\"$kakcmd\"
-fzf_args=\"$fzf_args ${preview}\"
-sel=\"$sel\""
-    printf "%s\n" "info -title 'fzf' %{'$msg'}"
+#     msg="cmd=\"$cmd\"
+# kakcmd=\"$kakcmd\"
+# fzf_args=\"$fzf_args ${preview}\"
+# sel=\"$sel\""
+#     printf "%s\n" "info -title 'fzf' %{'$msg'}"
 
 } }
 
@@ -51,7 +51,12 @@ $buffers"
     printf "%s\n" "fzf %{printf %s\n $buffers} %{buffer} %{-p 50%} %{}"
 } }
 
-define-command open-grep-match -params .. %{ evaluate-commands %sh{
+declare-option str ogm ""
+
+define-command open-grep-match -params .. %{
+
+    set-option global ogm "%arg{@}"
+    evaluate-commands %sh{
 
     cmd=$(echo $@ | sed -E 's/([^:]+):([^:]+):.*/edit -existing \1; execute-keys \2gvc/')
     printf "%s\n" "${cmd}"

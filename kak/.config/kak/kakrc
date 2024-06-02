@@ -1,4 +1,4 @@
-set global startup_info_version 20230805
+set global startup_info_version 20240518
 
 set -add global ui_options terminal_assistant=none
 
