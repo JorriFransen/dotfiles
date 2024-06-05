@@ -52,6 +52,7 @@ map global e P ':jump-previous *make*<ret>' -docstring "Jump to previous error (
 # map global normal / '/(?i)'
 
 # Modules
+# Modules
 source "%val{config}/hlsearch.kak"
 source "%val{config}/novo.kak"
 source "%val{config}/trail-white.kak"
@@ -154,11 +155,11 @@ hook -group projectconfig global KakBegin .* %{
     }
 }
 
-hook global RegisterModified '"' %{ nop %sh{
-    printf %s "$kak_main_reg_dquote" | wl-copy > /dev/null 2>&1 &
-} }
-map global normal P '!wl-paste -n<ret>'
-map global normal p '<a-!>wl-paste -n<ret>'
+define-command get-clipboard %{ set-register dquote %sh{ eval wl-paste -n } }
+define-command set-clipboard %{ nop %sh{ printf %s "$kak_main_reg_dquote" | wl-copy > /dev/null 2>&1 & } }
+hook -group clipboard global WinCreate        .*  %{ get-clipboard }
+hook -group clipboard global FocusIn          .*  %{ get-clipboard }
+hook -group clipboard global RegisterModified '"' %{ set-clipboard}
 
 colorscheme tokyo-night-dark
 # colorscheme github
