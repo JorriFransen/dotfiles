@@ -26,6 +26,6 @@ bundle auto-pairs.kak 'git clone -b user-mode-semicolon-fix https://github.com/j
     enable-auto-pairs
 }
 
-bundle kakboard 'https://github.com/lePerdu/kakboard' %{
-    hook global WinCreate .* %{ kakboard-enable }
-}
+# bundle kakboard 'https://github.com/lePerdu/kakboard' %{
+    # hook global WinCreate .* %{ kakboard-enable }
+# }
