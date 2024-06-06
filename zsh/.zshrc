@@ -90,5 +90,11 @@ PATH=$PATH:$WATCOM/binl
 PATH=$PATH:/opt/kakoune/bin
 
 
+source $HOME/dev/zsh-nix-shell/nix-shell.plugin.zsh
+source $HOME/dev/nix-zsh-completions/nix-zsh-completions.plugin.zsh
+fpath=($HOME/dev/nix-zsh-completions $fpath)
+autoload -U compinit && compinit
+
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
