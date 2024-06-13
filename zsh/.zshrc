@@ -19,7 +19,6 @@ if [ -z "$XDG_CONFIG_HOME" ]; then
 fi
 
 source $XDG_CONFIG_HOME/zsh/antigen.zsh
-
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
 antigen theme romkatv/powerlevel10k
@@ -28,9 +27,12 @@ antigen apply
 # Setup fzf
 if [ -f ~/.fzf.zsh ]; then
     source ~/.fzf.zsh
-else
+elif [ -f /usr/share/fzf/completion.zsh ]; then
     [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
     [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
+else
+    source $(fzf-share)/completion.zsh
+    source $(fzf-share)/key-bindings.zsh
 fi
 
 # Overwrite ctrl-T binding from fzf to ctrl-x,ctrl-t
@@ -95,6 +97,8 @@ source $HOME/dev/nix-zsh-completions/nix-zsh-completions.plugin.zsh
 fpath=($HOME/dev/nix-zsh-completions $fpath)
 autoload -U compinit && compinit
 
+if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
