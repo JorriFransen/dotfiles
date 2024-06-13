@@ -205,8 +205,6 @@ require('lazy').setup({
     { 'rhysd/vim-llvm', },
 
     -- Lsp stuff
-    { "williamboman/mason.nvim" },
-    { "williamboman/mason-lspconfig.nvim" },
     { "folke/neodev.nvim" },
     { "saadparwaiz1/cmp_luasnip" },
     { "L3MON4D3/LuaSnip" },
@@ -733,19 +731,6 @@ vim.keymap.set('n', '<leader>rot', function() RunTestsSetOptions() end)
 vim.keymap.set('n', '<leader>sbd', function() SetBuildDir() end)
 
 
-local servers = {
-    clangd = {},
-    bashls = {},
-    vimls = {},
-    lua_ls = {},
-}
-
-require("mason").setup()
-local mason_lspconfig = require("mason-lspconfig")
-mason_lspconfig.setup({
-    ensure_installed = vim.tbl_keys(servers),
-})
-
 require("neodev").setup()
 
 local lspconfig = require("lspconfig")
@@ -787,16 +772,27 @@ local on_attach = function(_, bufnr)
     nmap('K', vim.lsp.buf.hover, "Hover documentation")
     nmap('<C-s>', vim.lsp.buf.signature_help, "Signature documentation")
 end
-mason_lspconfig.setup_handlers {
-    function(server_name)
-        lspconfig[server_name].setup {
-            capabilities = lsp_capabilities,
-            on_attach = on_attach,
-            settings = servers[server_name],
-            filetypes = (servers[server_name] or {}).filetypes,
-        }
-    end
+
+lspconfig.clangd.setup {
+    capabilities = lsp_capabilities,
+    on_attach = on_attach,
 }
+
+lspconfig.lua_ls.setup {
+    capabilities = lsp_capabilities,
+    on_attach = on_attach,
+}
+
+-- lspconfig.nixd.setup {
+--     capabilities = lsp_capabilities,
+--     on_attach = on_attach,
+-- }
+
+lspconfig.nil_ls.setup {
+    capabilities = lsp_capabilities,
+    on_attach = on_attach,
+}
+
 
 local cmp = require("cmp") -- nvim-cmp
 local cmp_types = require("cmp.types")
