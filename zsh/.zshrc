@@ -10,10 +10,6 @@ setopt autocd extendedglob nomatch
 bindkey -v
 export KEYTIMEOUT=1
 
-HISTFILE=~/.config/zsh/zsh_hist
-HISTSIZE=1000
-SAVEHIST=10000
-
 if [ -z "$XDG_CONFIG_HOME" ]; then
     XDG_CONFIG_HOME="$HOME/.config"
 fi
@@ -98,7 +94,8 @@ fpath=($HOME/dev/nix-zsh-completions $fpath)
 autoload -U compinit && compinit
 
 if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
-. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+    . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
