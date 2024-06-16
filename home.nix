@@ -64,6 +64,7 @@
     pkgs.meson
     pkgs.gdb
     pkgs.cmake
+    pkgs.ninja
     pkgs.nil
 
     pkgs.tree
@@ -73,7 +74,7 @@
   ];
 
   programs = {
-    
+
     zsh = {
       enable = true;
       shellAliases = {
@@ -107,7 +108,7 @@
 
     vscode = {
         enable = true;
-        package = pkgs.vscodium-fhs;
+        package = pkgs.vscodium.fhsWithPackages (ps: with ps; [ gdb ]);
     };
   };
 
