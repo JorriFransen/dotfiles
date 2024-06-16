@@ -51,10 +51,10 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  specialisation = {
-    nvidia = {
-      configuration = {
-        system.nixos.tags = [ "nvidia" ];
+  # specialisation = {
+    # nvidia = {
+      # configuration = {
+        # system.nixos.tags = [ "nvidia" ];
 
         # Enable OpenGL
         hardware.opengl = {
@@ -82,9 +82,9 @@
           };
         };
         services.xserver.videoDrivers = [ "nvidia" ];
-      };
-    };
-  };
+      # };
+    # };
+  # };
 
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
