@@ -1,15 +1,7 @@
 { outputs, config, lib, pkgs, pkgs-unstable, ... }:
 
-let
-  nur-no-pkgs = import (builtins.fetchTarball {
-      url = "https://github.com/nix-community/NUR/archive/f7c97149b8b5d0bf7943702577eabb530f7b5f4d.tar.gz";
-      sha256 = "05fvjqx9i9dssd2baaycrm4wrpw88xsaz5pddn8fg4whimrvsn96";
-    }) {
-      # inherit pkgs;
-    };
-in
-
 {
+
   nixpkgs.config = {
     allowUnfree = true;
   };
