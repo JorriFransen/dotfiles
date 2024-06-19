@@ -4,6 +4,16 @@
 
 { config, pkgs, ... }:
 
+let
+  lock-false = {
+      Value = false;
+      Status = "locked";
+  };
+  lock-true = {
+      Value = true;
+      Status = "locked";
+  };
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -51,6 +61,15 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  nixpkgs.config.packageOverrides = pkgs: {
+    nur = import (builtins.fetchTarball {
+      url = "https://github.com/nix-community/NUR/archive/f7c97149b8b5d0bf7943702577eabb530f7b5f4d.tar.gz";
+      sha256 = "05fvjqx9i9dssd2baaycrm4wrpw88xsaz5pddn8fg4whimrvsn96";
+    }) {
+      inherit pkgs;
+    };
+  };
+
   # specialisation = {
     # nvidia = {
       # configuration = {
@@ -65,8 +84,8 @@
         hardware.nvidia = {
           modesetting.enable = true;
           powerManagement.enable = true;
-          powerManagement.finegrained = true;
-          open = false;
+          powerManagement.finegrained = false;
+          open = true;
           nvidiaSettings = true;
           package = config.boot.kernelPackages.nvidiaPackages.stable;
           prime = {
@@ -137,11 +156,58 @@
     isNormalUser = true;
     description = "Jorri Fransen";
     extraGroups = [ "networkmanager" "wheel" "libvirt" ];
-    packages = with pkgs; [
-    ];
+    # packages = with pkgs; [
+    # ];
   };
 
-  programs.firefox.enable = true;
+  programs.firefox = {
+    enable = false;
+    package = (pkgs.firefox.override { nativeMessagingHosts = [ pkgs.passff-host ]; });
+    # package = (pkgs.firefox.override { })
+    nativeMessagingHosts.packages = [
+      pkgs.passff-host
+    ];
+    # nativeMessagingHosts.passff = true;
+    policies = {
+      DisableTelemetry = true;
+      DisableFirefoxStudies = true;
+      EnableTrackingProtection = {
+          Value = true;
+          Locked = true;
+          Cryptomining = true;
+          Fingerprinting = true;
+      };
+      DisablePocket = true;
+      DisableFirefoxAccounts = true;
+      DisableAccounts = true;
+      DisableFirefoxScreenshots = true;
+      OverrideFirstRunPage = "";
+      OverridePostUpdatePage = "";
+      DontCheckDefaultBrowser = true;
+
+      Preferences = { 
+        "browser.contentblocking.category" = { Value = "strict"; Status = "locked"; };
+        "extensions.pocket.enabled" = lock-false;
+        "extensions.screenshots.disabled" = lock-true;
+        "browser.topsites.contile.enabled" = lock-false;
+        "browser.formfill.enable" = lock-false;
+        "browser.search.suggest.enabled" = lock-false;
+        "browser.search.suggest.enabled.private" = lock-false;
+        "browser.urlbar.suggest.searches" = lock-false;
+        "browser.urlbar.showSearchSuggestionsFirst" = lock-false;
+        "browser.newtabpage.activity-stream.feeds.section.topstories" = lock-false;
+        "browser.newtabpage.activity-stream.feeds.snippets" = lock-false;
+        "browser.newtabpage.activity-stream.section.highlights.includePocket" = lock-false;
+        "browser.newtabpage.activity-stream.section.highlights.includeBookmarks" = lock-false;
+        "browser.newtabpage.activity-stream.section.highlights.includeDownloads" = lock-false;
+        "browser.newtabpage.activity-stream.section.highlights.includeVisited" = lock-false;
+        "browser.newtabpage.activity-stream.showSponsored" = lock-false;
+        "browser.newtabpage.activity-stream.system.showSponsored" = lock-false;
+        "browser.newtabpage.activity-stream.showSponsoredTopSites" = lock-false;
+      }; 
+    };
+  };
+
   programs.zsh.enable = true;
 
   programs.steam = {

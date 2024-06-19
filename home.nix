@@ -1,8 +1,10 @@
-{ inputs, lib, config, pkgs, pkgs-unstable, system, ... }:
+{ config, lib, pkgs, pkgs-unstable,  ... }:
 
 {
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+  };
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -41,8 +43,6 @@
     (pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
     pkgs.brave
     pkgs.steam-run
-    pkgs.fd
-    pkgs.fzf
     pkgs-unstable.gitkraken
     pkgs.htop
     pkgs.btop
@@ -59,6 +59,10 @@
 
     pkgs.lazygit
 
+    pkgs.fd
+    pkgs.fzf
+    pkgs.ripgrep
+    pkgs.bat
     pkgs.clang-tools
     pkgs.clang
     pkgs.meson
@@ -71,6 +75,8 @@
     pkgs.unzip
 
     pkgs.nix-search-cli
+    pkgs.zeal
+
   ];
 
   programs = {
@@ -81,6 +87,10 @@
         code = "codium";
       };
       initExtra = lib.fileContents ./zsh/.zshrc;
+    };
+
+    foot = {
+      enable = true;
     };
 
     password-store = {
@@ -109,6 +119,26 @@
     vscode = {
         enable = true;
         package = pkgs.vscodium.fhsWithPackages (ps: with ps; [ gdb ]);
+    };
+
+    firefox = {
+      enable = true;
+      package = (pkgs.firefox.override { nativeMessagingHosts = [ pkgs.passff-host ]; });
+      nativeMessagingHosts = [ pkgs.passff-host ];
+      profiles = {
+        default = {
+          id = 0;
+          name = "default";
+          isDefault = true;
+          settings = {
+            "extensions.autoDisableScopes" = 0;
+          };
+          extensions = with config.nur.repos.rycee.firefox-addons; [
+            vimium-c
+            passff
+          ];
+        };
+      };
     };
   };
 
