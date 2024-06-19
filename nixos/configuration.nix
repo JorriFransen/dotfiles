@@ -1,8 +1,5 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, pkgs-unstable, ... }:
 
 let
   lock-false = {
@@ -13,7 +10,9 @@ let
       Value = true;
       Status = "locked";
   };
+
 in
+
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -25,6 +24,17 @@ in
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
+  };
+
+  nixpkgs = {
+    config.packageOverrides = pkgs: {
+      nur = import (builtins.fetchTarball {
+        url = "https://github.com/nix-community/NUR/archive/f7c97149b8b5d0bf7943702577eabb530f7b5f4d.tar.gz";
+        sha256 = "05fvjqx9i9dssd2baaycrm4wrpw88xsaz5pddn8fg4whimrvsn96";
+      }) {
+        inherit pkgs;
+      };
+    };
   };
 
   # Bootloader.
@@ -39,11 +49,8 @@ in
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-
-  # Set your time zone.
   time.timeZone = "Europe/Amsterdam";
 
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
   i18n.extraLocaleSettings = {
@@ -56,18 +63,6 @@ in
     LC_PAPER = "nl_NL.UTF-8";
     LC_TELEPHONE = "nl_NL.UTF-8";
     LC_TIME = "nl_NL.UTF-8";
-  };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  nixpkgs.config.packageOverrides = pkgs: {
-    nur = import (builtins.fetchTarball {
-      url = "https://github.com/nix-community/NUR/archive/f7c97149b8b5d0bf7943702577eabb530f7b5f4d.tar.gz";
-      sha256 = "05fvjqx9i9dssd2baaycrm4wrpw88xsaz5pddn8fg4whimrvsn96";
-    }) {
-      inherit pkgs;
-    };
   };
 
   # specialisation = {
@@ -146,28 +141,33 @@ in
     General.Experimental = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+  # List packages installed in system profile. To search, run:
+  # $ nix search wget
+  environment.systemPackages = with pkgs; [
+    zsh
+    pinentry-qt
 
+    killall
+    git
+    kitty
+    tmux
+    kakoune
+    nix-search-cli
+    htop
+
+    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+
+  ];
+
+  programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.jorri = {
-    isNormalUser = true;
-    description = "Jorri Fransen";
-    extraGroups = [ "networkmanager" "wheel" "libvirt" ];
-    # packages = with pkgs; [
-    # ];
-  };
-
   programs.firefox = {
-    enable = false;
-    package = (pkgs.firefox.override { nativeMessagingHosts = [ pkgs.passff-host ]; });
-    # package = (pkgs.firefox.override { })
+    enable = true;
+    # package = (pkgs.firefox.override { nativeMessagingHosts = [ pkgs.passff-host ]; });
     nativeMessagingHosts.packages = [
       pkgs.passff-host
     ];
-    # nativeMessagingHosts.passff = true;
     policies = {
       DisableTelemetry = true;
       DisableFirefoxStudies = true;
@@ -208,23 +208,11 @@ in
     };
   };
 
-  programs.zsh.enable = true;
-
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
   };
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    zsh
-    pinentry-qt
-
-    killall
-    git
-  ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -234,16 +222,22 @@ in
     enableSSHSupport = true;
   };
 
-  # List services that you want to enable:
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.jorri = {
+    isNormalUser = true;
+    description = "Jorri Fransen";
+    extraGroups = [ "networkmanager" "wheel" "libvirt" ];
+  };
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  home-manager = {
+    extraSpecialArgs = {
+        inherit pkgs pkgs-unstable;
+    };
+    users = {
+      jorri = import ../home.nix;
+    };
+  };
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

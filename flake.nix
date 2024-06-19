@@ -16,44 +16,52 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nur.url = "github:nix-community/NUR";
+    # nur.url = "github:nix-community/NUR";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, nur, ... }@inputs:
+  outputs = { ... }@inputs:
     let
-      inherit (self) outputs;
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import inputs.nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; };
+      pkgs-unstable = import inputs.nixpkgs-unstable { system = "x86_64-linux"; config.allowUnfree = true; };
     in {
 
       nixosConfigurations = {
-        slimbook = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs outputs; };
-          modules = [ ./nixos/configuration.nix ];
-        };
-      };
 
-      homeConfigurations."jorri" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-
-        # Specify your home configuration modules here, for example,
-        # the path to your home.nix.
-        modules = [
-            ./home.nix
-            nur.nixosModules.nur
-        ];
-
-        # Optionally use extraSpecialArgs
-        # to pass through arguments to home.nix
-
-        extraSpecialArgs = {
-          inherit system;
-
-          pkgs-unstable = import nixpkgs-unstable {
-            inherit system;
-            config.allowUnfree = true;
+        slimbook = inputs.nixpkgs.lib.nixosSystem {
+          specialArgs = {
+            inherit inputs pkgs pkgs-unstable;
           };
+          modules = [
+            inputs.home-manager.nixosModules.home-manager
+            ./nixos/configuration.nix
+          ];
         };
+
       };
+
+     
+    #   homeConfigurations."jorri" = home-manager.lib.homeManagerConfiguration {
+    #     inherit pkgs;
+
+    #     # Specify your home configuration modules here, for example,
+    #     # the path to your home.nix.
+    #     modules = [
+    #         ./home.nix
+    #         nur.nixosModules.nur
+    #     ];
+
+    #     # Optionally use extraSpecialArgs
+    #     # to pass through arguments to home.nix
+
+    #     extraSpecialArgs = {
+    #       inherit system;
+
+    #       pkgs-unstable = import nixpkgs-unstable {
+    #         inherit system;
+    #         config.allowUnfree = true;
+    #       };
+    #     };
+    #   };
     };
 }

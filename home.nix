@@ -1,57 +1,39 @@
-{ config, lib, pkgs, pkgs-unstable,  ... }:
+{ outputs, config, lib, pkgs, pkgs-unstable, ... }:
+
+let
+  nur-no-pkgs = import (builtins.fetchTarball {
+      url = "https://github.com/nix-community/NUR/archive/f7c97149b8b5d0bf7943702577eabb530f7b5f4d.tar.gz";
+      sha256 = "05fvjqx9i9dssd2baaycrm4wrpw88xsaz5pddn8fg4whimrvsn96";
+    }) {
+      # inherit pkgs;
+    };
+in
 
 {
-
   nixpkgs.config = {
     allowUnfree = true;
   };
 
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
   home.username = "jorri";
   home.homeDirectory = "/home/jorri";
 
-  # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
-  # introduces backwards incompatible changes.
-  #
-  # You should not change this value, even if you update Home Manager. If you do
-  # want to update the value, then make sure to first check the Home Manager
-  # release notes.
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
   home.packages = [
-    # # Adds the 'hello' command to your environment. It prints a friendly
-    # # "Hello, world!" when run.
-    # pkgs.hello
-
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
-
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
 
     (pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+
     pkgs.brave
     pkgs.steam-run
     pkgs-unstable.gitkraken
-    pkgs.htop
     pkgs.btop
     pkgs.ivpn
     pkgs.ivpn-service
-    pkgs.kitty
     pkgs.stow
-    pkgs.tmux
     pkgs.wget
+    pkgs.git
+    pkgs.kitty
+    pkgs.tmux
     pkgs.wl-clipboard
 
     pkgs.kakoune
@@ -74,7 +56,6 @@
     pkgs.tree
     pkgs.unzip
 
-    pkgs.nix-search-cli
     pkgs.zeal
 
   ];
@@ -87,10 +68,6 @@
         code = "codium";
       };
       initExtra = lib.fileContents ./zsh/.zshrc;
-    };
-
-    foot = {
-      enable = true;
     };
 
     password-store = {
@@ -133,10 +110,10 @@
           settings = {
             "extensions.autoDisableScopes" = 0;
           };
-          extensions = with config.nur.repos.rycee.firefox-addons; [
-            vimium-c
-            passff
-          ];
+          # extensions = with nur-no-pkgs.repos.rycee.firefox-addons; [
+            # vimium-c
+            # passff
+          # ];
         };
       };
     };
