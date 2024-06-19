@@ -1,5 +1,5 @@
 {
-  description = "Home Manager configuration of jorri";
+  description = "My nix config";
 
   inputs = {
 
@@ -19,18 +19,26 @@
     nur.url = "github:nix-community/NUR";
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, home-manager, nur, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, nur, ... }@inputs:
     let
+      inherit (self) outputs;
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
     in {
+
+      nixosConfigurations = {
+        slimbook = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs outputs; };
+          modules = [ ./nixos/configuration.nix ];
+        };
+      };
+
       homeConfigurations."jorri" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
 
         # Specify your home configuration modules here, for example,
         # the path to your home.nix.
         modules = [
-            # { nixpkgs.config.allowUnfree = true; }
             ./home.nix
             nur.nixosModules.nur
         ];
