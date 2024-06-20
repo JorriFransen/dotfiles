@@ -1,5 +1,5 @@
 
-{ config, pkgs, pkgs-unstable, ... }:
+{ config, pkgs, ... }:
 
 let
   lock-false = {
@@ -102,6 +102,10 @@ in
 
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.displayManager.sddm.settings = {
+      General.GreeterEnvironment = "QT_SCREEN_SCALE_FACTORS=1,QT_FONT_DPI=92";
+  };
   services.displayManager.defaultSession = "plasma";
   services.desktopManager.plasma6.enable = true;
 
@@ -141,20 +145,24 @@ in
     General.Experimental = true;
   };
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    konsole
+    oxygen
+    plasma-browser-integration
+  ];
+
   environment.systemPackages = with pkgs; [
     zsh
     pinentry-qt
 
     killall
     git
-    kitty
-    tmux
-    kakoune
     nix-search-cli
     htop
 
+    tmux
+    kitty
+    kakoune
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
   ];

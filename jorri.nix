@@ -1,4 +1,4 @@
-{ outputs, config, lib, pkgs, pkgs-unstable, nur-no-pkgs, ... }:
+{ lib, pkgs, pkgs-unstable, nur-no-pkgs, ... }:
 
 {
 
@@ -49,7 +49,7 @@
     pkgs.unzip
 
     pkgs.zeal
-
+    pkgs.nextcloud-client
   ];
 
   programs = {
@@ -108,6 +108,13 @@
           ];
         };
       };
+    };
+  };
+
+  services = {
+    nextcloud-client = {
+      enable = false;
+      startInBackground = false;
     };
   };
 
