@@ -1,4 +1,4 @@
-{ outputs, config, lib, pkgs, pkgs-unstable, ... }:
+{ outputs, config, lib, pkgs, pkgs-unstable, nur-no-pkgs, ... }:
 
 {
 
@@ -93,7 +93,7 @@
     firefox = {
       enable = true;
       package = (pkgs.firefox.override { nativeMessagingHosts = [ pkgs.passff-host ]; });
-      nativeMessagingHosts = [ pkgs.passff-host ];
+      # nativeMessagingHosts = [ pkgs.passff-host ];
       profiles = {
         default = {
           id = 0;
@@ -102,10 +102,10 @@
           settings = {
             "extensions.autoDisableScopes" = 0;
           };
-          # extensions = with nur-no-pkgs.repos.rycee.firefox-addons; [
-            # vimium-c
-            # passff
-          # ];
+          extensions = with nur-no-pkgs.repos.rycee.firefox-addons; [
+            vimium-c
+            passff
+          ];
         };
       };
     };

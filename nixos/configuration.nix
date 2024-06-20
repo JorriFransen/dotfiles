@@ -229,15 +229,11 @@ in
     extraGroups = [ "networkmanager" "wheel" "libvirt" ];
   };
 
-  home-manager = {
-    extraSpecialArgs = {
-        inherit pkgs pkgs-unstable;
-    };
-    users = {
-      jorri = import ../home.nix;
-    };
+  users.users.work= {
+    isNormalUser = true;
+    description = "Work account";
+    extraGroups = [ "networkmanager" "wheel" "libvirt" ];
   };
-
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
