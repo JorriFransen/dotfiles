@@ -41,7 +41,7 @@
     pkgs.clang
     pkgs.meson
     pkgs.gdb
-    pkgs.cmake
+    pkgs.gnumake
     pkgs.ninja
     pkgs.nil
 
@@ -50,6 +50,8 @@
 
     pkgs.zeal
     pkgs.nextcloud-client
+
+    pkgs.feh
   ];
 
   programs = {
@@ -58,6 +60,7 @@
       enable = true;
       shellAliases = {
         code = "codium";
+        ssh = "kitty +kitten ssh";
       };
       initExtra = lib.fileContents ./zsh/.zshrc;
     };
