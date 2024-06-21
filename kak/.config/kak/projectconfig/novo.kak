@@ -1,6 +1,6 @@
 declare-option str      novo_build_dir     "build"
-declare-option str-list novo_run_args      "../tests/test.no" "-v" "-k"
-declare-option str      novo_run_args_post "&& ./test"
+declare-option str-list novo_run_args      "../tests/arrays.no" "-v" "-k"
+declare-option str      novo_run_args_post "&& ./arrays"
 declare-option str-list novo_test_args     ""
 
 define-command -override novo-build %{
