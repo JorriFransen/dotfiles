@@ -52,6 +52,7 @@
     pkgs.nextcloud-client
 
     pkgs.feh
+    pkgs.virt-manager
   ];
 
   programs = {

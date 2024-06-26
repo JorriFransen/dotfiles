@@ -26,17 +26,6 @@ in
     '';
   };
 
-  nixpkgs = {
-    config.packageOverrides = pkgs: {
-      nur = import (builtins.fetchTarball {
-        url = "https://github.com/nix-community/NUR/archive/f7c97149b8b5d0bf7943702577eabb530f7b5f4d.tar.gz";
-        sha256 = "05fvjqx9i9dssd2baaycrm4wrpw88xsaz5pddn8fg4whimrvsn96";
-      }) {
-        inherit pkgs;
-      };
-    };
-  };
-
   hardware.cpu.amd.updateMicrocode = true;
 
   # Bootloader.
@@ -81,18 +70,18 @@ in
         hardware.nvidia = {
           modesetting.enable = true;
           powerManagement.enable = true;
-          powerManagement.finegrained = true;
+          # powerManagement.finegrained = true;
           open = false;
           nvidiaSettings = true;
           package = config.boot.kernelPackages.nvidiaPackages.stable;
           prime = {
             amdgpuBusId = "PCI:6:0:0";
             nvidiaBusId = "PCI:1:0:0";
-            offload = {
-              enable = true;
-              enableOffloadCmd = true;
-            };
-            # sync.enable = true;
+            # offload = {
+            #   enable = true;
+            #   enableOffloadCmd = true;
+            # };
+            sync.enable = true;
             # reverseSync.enable = true;
             # allowExternalGpu = true;
           };
@@ -236,14 +225,16 @@ in
   users.users.jorri = {
     isNormalUser = true;
     description = "Jorri Fransen";
-    extraGroups = [ "networkmanager" "wheel" "libvirt" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirt" "libvirtd"];
   };
 
   users.users.work= {
     isNormalUser = true;
     description = "Work account";
-    extraGroups = [ "networkmanager" "wheel" "libvirt" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirt" "libvirtd"];
   };
+
+  virtualisation.libvirtd.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
