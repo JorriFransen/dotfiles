@@ -52,7 +52,9 @@
     pkgs.nextcloud-client
 
     pkgs.feh
+
     pkgs.virt-manager
+    pkgs.virtiofsd
   ];
 
   programs = {
@@ -112,6 +114,65 @@
           ];
         };
       };
+    };
+
+    chromium = {
+      enable = true;
+      package = pkgs.ungoogled-chromium;
+      extensions =
+      let
+        createSourceExtensionFor = browserVersion: { id, sha256, url, version}:
+          {
+            inherit id;
+            crxPath = builtins.fetchurl {
+              name = "${id}.crx";
+              inherit url;
+              inherit sha256;
+            };
+            inherit version;
+          };
+        createChromiumExtensionFor = browserVersion: { id, sha256, version }:
+          {
+            inherit id;
+            crxPath = builtins.fetchurl {
+              url = "https://clients2.google.com/service/update2/crx?response=redirect&acceptformat=crx2,crx3&prodversion=${browserVersion}&x=id%3D${id}%26installsource%3Dondemand%26uc";
+              name = "${id}.crx";
+              inherit sha256;
+            };
+            inherit version;
+          };
+        createSourceExtension = createSourceExtensionFor (lib.versions.major pkgs.ungoogled-chromium.version);
+        createChromiumExtension = createChromiumExtensionFor (lib.versions.major pkgs.ungoogled-chromium.version);
+      in
+      [
+        # # nix-prefetch-url --name arst.crx 'https://clients2.google.com/service/...
+        (createSourceExtension {  # Web Store
+          url = "https://github.com/NeverDecaf/chromium-web-store/releases/download/v1.5.4.3/Chromium.Web.Store.crx";
+          id = "ocaahdebbfolfmndjeplogmgcagdmblk";
+          sha256 = "1j3ppn6j0aaqwyj5dyl8hdmjxia66dz1b4xn69h1ybpiz6p1r840";
+          version = "1.5.4.3";
+        })
+        (createChromiumExtension { # ublock origin
+          id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";
+          sha256 = "01kk94l38qqp2rbyylswjs8q25kcjaqvvh5b8088xria5mbrhskl";
+          version = "1.58.0";
+        })
+        (createChromiumExtension { # vimium-c
+          id = "hfjbmagddngcpeloejdejnfgbamkjaeg";
+          sha256 = "1rd810ra5a15qv9fvpp99lbjdv6d909nrn45m1572xhx5dwqg4r3";
+          version = "1.99.99";
+        })
+        (createChromiumExtension { # dark reader
+          id = "eimadpbcbfnmbkopoojfekhnkhdbieeh";
+          sha256 = "14dxg1pf7y0ka5rfpwzl6nr4y5hnxwy0cdn3498ffkz1mcs6jmay";
+          version = "4.9.86";
+        })
+        (createChromiumExtension { # chrome-pass
+          id = "oblajhnjmknenodebpekmkliopipoolo";
+          sha256 = "0wlhkrn19af4kgbm7vv9acqfjmgfd1986ilk3q0x71smr0b95anx";
+          version = "0.5.1";
+        })
+      ];
     };
   };
 
