@@ -111,6 +111,7 @@
           extensions = with nur-no-pkgs.repos.rycee.firefox-addons; [
             vimium-c
             passff
+            darkreader
           ];
         };
       };
@@ -118,7 +119,10 @@
 
     chromium = {
       enable = true;
-      package = pkgs.ungoogled-chromium;
+      package = (pkgs.ungoogled-chromium.override {
+        commandLineArgs = [ "--extension-mime-request-handling=always-prompt-for-install" ];
+      });
+      commandLineArgs = [ "--extension-mime-request-handling=always-prompt-for-install" ];
       extensions =
       let
         createSourceExtensionFor = browserVersion: { id, sha256, url, version}:
@@ -145,7 +149,7 @@
         createChromiumExtension = createChromiumExtensionFor (lib.versions.major pkgs.ungoogled-chromium.version);
       in
       [
-        # # nix-prefetch-url --name arst.crx 'https://clients2.google.com/service/...
+        # nix-prefetch-url --name arst.crx 'https://clients2.google.com/service/...
         (createSourceExtension {  # Web Store
           url = "https://github.com/NeverDecaf/chromium-web-store/releases/download/v1.5.4.3/Chromium.Web.Store.crx";
           id = "ocaahdebbfolfmndjeplogmgcagdmblk";
@@ -165,7 +169,7 @@
         (createChromiumExtension { # dark reader
           id = "eimadpbcbfnmbkopoojfekhnkhdbieeh";
           sha256 = "14dxg1pf7y0ka5rfpwzl6nr4y5hnxwy0cdn3498ffkz1mcs6jmay";
-          version = "4.9.86";
+          version = "4.9.87";
         })
         (createChromiumExtension { # chrome-pass
           id = "oblajhnjmknenodebpekmkliopipoolo";
@@ -174,6 +178,7 @@
         })
       ];
     };
+
   };
 
   services = {
