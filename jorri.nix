@@ -121,6 +121,7 @@
       enable = true;
       package = (pkgs.ungoogled-chromium.override {
         commandLineArgs = [ "--extension-mime-request-handling=always-prompt-for-install" ];
+        enableWideVine = true;
       });
       commandLineArgs = [ "--extension-mime-request-handling=always-prompt-for-install" ];
       extensions =
