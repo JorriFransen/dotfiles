@@ -55,6 +55,8 @@
 
     pkgs.virt-manager
     pkgs.virtiofsd
+
+    pkgs.obsidian
   ];
 
   programs = {
