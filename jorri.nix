@@ -58,8 +58,6 @@
 
     pkgs.obsidian
 
-    pkgs.kdePackages.kdeconnect-kde
-
     pkgs.mpv
   ];
 
@@ -192,10 +190,6 @@
     nextcloud-client = {
       enable = false;
       startInBackground = false;
-    };
-
-    kdeconnect = {
-      enable = false;
     };
   };
 
