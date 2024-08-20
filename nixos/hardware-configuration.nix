@@ -13,6 +13,8 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
+  boot.supportedFilesystems = [ "ntfs" ];
+
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/031cb00c-9327-483f-81a6-a66c21e6f8f2";
       fsType = "ext4";

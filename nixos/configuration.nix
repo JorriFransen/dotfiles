@@ -36,6 +36,14 @@ in
   networking.networkmanager.enable = true;
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
+  # networking.firewall.enable = false;
+  networking.firewall = {
+    allowedTCPPorts = [ 445 137 138 139 34445 ];
+    allowedUDPPorts = [ 137 138 139 ];
+  # for samba discovery
+    extraCommands = ''iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns'';
+  };
+
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
@@ -107,7 +115,14 @@ in
   };
 
   # Enable CUPS to print documents.
-  # services.printing.enable = true;
+  services.printing =  {
+    enable = true;
+    drivers = [ pkgs.hplipWithPlugin ];
+  };
+
+  services.pcscd.enable = true;
+  services.udev.packages = [ pkgs.yubikey-personalization ];
+
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -116,6 +131,7 @@ in
     package = pkgs.pulseaudioFull;
   };
   security.rtkit.enable = true;
+
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -156,6 +172,25 @@ in
     kakoune
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
+    cifs-utils
+    samba
+    kdePackages.kdenetwork-filesharing
+
+    hplip
+
+    yubico-pam
+    yubikey-manager
+    yubikey-manager-qt
+    yubikey-agent
+    yubikey-personalization
+    yubikey-personalization-gui
+    yubico-piv-tool
+    yubikey-touch-detector
+    yubioath-flutter
+
+    pam_u2f
+    cfssl
+    pcsctools
   ];
 
   programs.zsh.enable = true;
@@ -225,7 +260,7 @@ in
   users.users.jorri = {
     isNormalUser = true;
     description = "Jorri Fransen";
-    extraGroups = [ "networkmanager" "wheel" "libvirt" "libvirtd"];
+    extraGroups = [ "networkmanager" "wheel" "video" "libvirt" "libvirtd"];
   };
 
   users.users.work= {

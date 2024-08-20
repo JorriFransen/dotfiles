@@ -6,6 +6,9 @@
     allowUnfree = true;
   };
 
+  # Let Home Manager install and manage itself.
+  programs.home-manager.enable = true;
+
   home.username = "jorri";
   home.homeDirectory = "/home/jorri";
 
@@ -59,6 +62,12 @@
     pkgs.obsidian
 
     pkgs.mpv
+    pkgs.jftui
+    pkgs.browserpass
+    pkgs.rofi-pass
+
+    pkgs.dig
+
   ];
 
   programs = {
@@ -67,14 +76,14 @@
       enable = true;
       shellAliases = {
         code = "codium";
-        ssh = "kitty +kitten ssh";
+        # ssh = "kitty +kitten ssh";
       };
       initExtra = lib.fileContents ./zsh/.zshrc;
     };
 
     password-store = {
       enable = true;
-      package = pkgs.pass.withExtensions (exts: [ exts.pass-otp ]);
+      package = pkgs.pass-wayland.withExtensions (exts: [ exts.pass-otp ]);
       settings = {
           PASSWORD_STORE_DIR = "/home/jorri/.password-store";
       };
@@ -98,6 +107,10 @@
     vscode = {
         enable = true;
         package = pkgs.vscodium.fhsWithPackages (ps: with ps; [ gdb ]);
+    };
+
+    browserpass = {
+      enable = true;
     };
 
     firefox = {
@@ -164,23 +177,33 @@
         (createChromiumExtension { # ublock origin
           id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";
           sha256 = "01kk94l38qqp2rbyylswjs8q25kcjaqvvh5b8088xria5mbrhskl";
-          version = "1.58.0";
+          version = "1.59.0";
         })
         (createChromiumExtension { # vimium-c
           id = "hfjbmagddngcpeloejdejnfgbamkjaeg";
           sha256 = "1rd810ra5a15qv9fvpp99lbjdv6d909nrn45m1572xhx5dwqg4r3";
-          version = "1.99.99";
+          version = "2.11.3";
         })
         (createChromiumExtension { # dark reader
           id = "eimadpbcbfnmbkopoojfekhnkhdbieeh";
           sha256 = "14dxg1pf7y0ka5rfpwzl6nr4y5hnxwy0cdn3498ffkz1mcs6jmay";
-          version = "4.9.87";
+          version = "4.9.88";
         })
-        (createChromiumExtension { # chrome-pass
-          id = "oblajhnjmknenodebpekmkliopipoolo";
-          sha256 = "0wlhkrn19af4kgbm7vv9acqfjmgfd1986ilk3q0x71smr0b95anx";
-          version = "0.5.1";
+        (createChromiumExtension { # browserpass
+          id = "naepdomgkenhinolocfifgehidddafch";
+          sha256 = "1sd3a061lf7n3z3nc8pmcl0impdr25kzwlhh648m72k30l4nb1ik";
+          version = "3.8.0";
         })
+        (createChromiumExtension { # Forever pinned
+          id = "nigigpmchbpkjjgncmpiggfnikllldlh";
+          sha256 = "0qyvlksz17hvif1x42qphdayaj4372bfc14nh7yzd084qfz3lcn8";
+          version = "0.29";
+        })
+        # (createChromiumExtension { # chrome-pass
+        #   id = "oblajhnjmknenodebpekmkliopipoolo";
+        #   sha256 = "0wlhkrn19af4kgbm7vv9acqfjmgfd1986ilk3q0x71smr0b95anx";
+        #   version = "0.5.1";
+        # })
       ];
     };
 
@@ -230,6 +253,28 @@
     # EDITOR = "emacs";
   };
 
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
+  systemd.user.enable = true;
+  systemd.user.sockets.yubikey-touch-detector = {
+    Unit.Description = "Unix socket activation for YubiKey touch detector service";
+    Socket = {
+      ListenStream = "%t/yubikey-touch-detector.socket";
+      RemoveOnStop = true;
+    };
+    Install.WantedBy = [ "sockets.target" ];
+  };
+
+  systemd.user.services.yubikey-touch-detector = {
+    Unit = {
+      Description = "Detects when your YubiKey is waiting for a touch";
+      Requires = "yubikey-touch-detector.socket";
+    };
+    Service = {
+      ExecStart = "${lib.getExe pkgs.yubikey-touch-detector} --libnotify";
+      EnvironmentFile = "-%E/yubikey-touch-detector/service.conf";
+    };
+    Install = {
+      Also = "yubikey-touch-detector.socket";
+      WantedBy = [ "default.target" ];
+    };
+  };
 }
