@@ -38,10 +38,27 @@ in
 
   # networking.firewall.enable = false;
   networking.firewall = {
+    # for samba discovery
     allowedTCPPorts = [ 445 137 138 139 34445 ];
     allowedUDPPorts = [ 137 138 139 ];
-  # for samba discovery
-    extraCommands = ''iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns'';
+
+    # Wireguard home tunnel
+    logReversePathDrops = true;
+
+
+
+    # First line is for smb, rest if for wg home tunnel
+    extraCommands = ''
+        iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns
+        ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --sport 45611 -j RETURN
+        ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --dport 45611 -j RETURN
+    '';
+
+    # wireguard tunnel
+    extraStopCommands = ''
+     ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --sport 45611 -j RETURN || true
+     ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport 45611 -j RETURN || true
+   '';
   };
 
   # Configure network proxy if necessary
