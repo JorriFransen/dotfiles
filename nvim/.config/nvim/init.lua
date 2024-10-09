@@ -784,6 +784,11 @@ lspconfig.lua_ls.setup {
     on_attach = on_attach,
 }
 
+lspconfig.zls.setup {
+    capabilities = lsp_capabilities,
+    on_attach = on_attach,
+}
+
 -- lspconfig.nixd.setup {
 --     capabilities = lsp_capabilities,
 --     on_attach = on_attach,
