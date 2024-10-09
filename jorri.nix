@@ -68,6 +68,8 @@
 
     pkgs.dig
 
+    pkgs.pavucontrol
+
   ];
 
   programs = {
