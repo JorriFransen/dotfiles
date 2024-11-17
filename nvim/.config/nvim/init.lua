@@ -26,74 +26,16 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
 
-    {
-        "folke/noice.nvim",
-        event = "VeryLazy",
-        opts = {
-            lsp = {
-                -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-                override = {
-                    ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-                    ["vim.lsp.util.stylize_markdown"] = true,
-                    ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
-                },
-                progress = {
-                    enabled = true,
-                    throttle = 1000 / 10,
-                },
-            },
-            -- you can enable a preset for easier configuration
-            presets = {
-                lsp_doc_border = false, -- add a border to hover docs and signature help
-            },
-            views = {
-                mini = {
-                    reverse = false,
-                    position = { row = 1, col = "100%" },
-                    border = { style = "none", padding = { 1, 1 }, },
-                    win_options = {
-                        winhighlight = "NormalFloat:NormalFloat,FLoatBorder:FloatBorder",
-                        winblend = 1
-                    },
-                },
-                cmdline_popup = {
-                    position = { row = 10, col = "50%", },
-                    size = { width = 60, height = "auto" },
-                    border = { style = "none", padding = { 2, 3 }, },
-                    win_options = {
-                        -- winhighlight = "NormalFloat:NormalFloat,FLoatBorder:FloatBorder",
-                        winhighlight = {
-                            NormalFloat = "NormalFloat",
-                            FloatBorder = "FloatBorder",
-                            IncSearch = "",
-                            CurSearch = "",
-                            Search = "",
-                        },
-                    },
-                },
-            },
-            routes = {
-                -- Hide search virtual text
-                { filter = { event = "msg_show", kind = "search_count", }, opts = { skip = true }, },
-            },
-        },
-        dependencies = {
-            "MunifTanjim/nui.nvim",
-            -- "rcarriga/nvim-notify",
-        }
-    },
-
     { 'tpope/vim-fugitive', },
 
     'mbbill/undotree',
-    'dkendal/nvim-rc',
 
     { 'skywind3000/asyncrun.vim', },
 
     "nvim-lua/plenary.nvim",
     { 'christoomey/vim-tmux-navigator', lazy = false },
 
-    { 'Tetralux/odin.vim', },
+    -- { 'Tetralux/odin.vim', },
 
     {
         'klen/nvim-config-local',
@@ -112,7 +54,7 @@ require('lazy').setup({
     },
 
     { 'rcarriga/nvim-dap-ui', dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
-    -- { 'theHamsta/nvim-dap-virtual-text' },
+    { 'theHamsta/nvim-dap-virtual-text' },
 
     {
         'nvim-treesitter/nvim-treesitter',
