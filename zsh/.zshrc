@@ -44,16 +44,13 @@ gpgconf --launch gpg-agent
 
 gpg-connect-agent updatestartuptty /bye >/dev/null
 
-alias k=kak
-export EDITOR=kak
-# if [ $(command -v nvim) ]; then
-#     EDITOR=nvim
-#     alias vim='nvim'
-# fi
+if [ $(command -v nvim) ]; then
+    EDITOR=nvim
+    alias vim='nvim'
+fi
 export EDITOR
 export SUDO_EDITOR=$EDITOR
 
-alias gnvim='gnvim --disable-ext-cmdline --disable-ext-tabline'
 autoload -U compinit
 zstyle ':completion:*' menu select
 zmodload zsh/complist
@@ -81,12 +78,11 @@ function svnlog() { svn log $@ | less --quit-if-one-screen; }
 export WATCOM=/opt/watcom
 
 PATH=$PATH:$HOME/.local/scripts
-PATH=$PATH:$HOME/dev/ols/install
-PATH=$HOME/.local/bin:$PATH
+PATH=$PATH:$HOME/.local/opt/zig
 PATH=$PATH:/usr/local/bin
 PATH=$PATH:$WATCOM/binl
-PATH=$PATH:/opt/kakoune/bin
 
+alias zigup='zigup --install-dir $HOME/.local/opt/zig/installs'
 
 source $HOME/dev/zsh-nix-shell/nix-shell.plugin.zsh
 source $HOME/dev/nix-zsh-completions/nix-zsh-completions.plugin.zsh
