@@ -1,35 +1,44 @@
-#/wat Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+if [ ! -d "$ZINIT_HOME" ]; then
+   mkdir -p "$(dirname $ZINIT_HOME)"
+   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
+source "${ZINIT_HOME}/zinit.zsh"
+
+zinit ice depth=1; zinit light romkatv/powerlevel10k
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-
 setopt autocd extendedglob nomatch
 bindkey -v
 export KEYTIMEOUT=1
 
-if [ -z "$XDG_CONFIG_HOME" ]; then
-    XDG_CONFIG_HOME="$HOME/.config"
-fi
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-autosuggestions
+zinit light Aloxaf/fzf-tab
 
-source $XDG_CONFIG_HOME/zsh/antigen.zsh
-antigen bundle zsh-users/zsh-syntax-highlighting
-antigen bundle zsh-users/zsh-autosuggestions
-antigen theme romkatv/powerlevel10k
-antigen apply
+# zinit snippet OMZL::git.zsh
+# zinit snippet OMZP::git
+# zinit snippet OMZP::command-not-found
 
-# Setup fzf
-if [ -f ~/.fzf.zsh ]; then
-    source ~/.fzf.zsh
-elif [ -f /usr/share/fzf/completion.zsh ]; then
-    [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
-    [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
-else
-    source $(fzf-share)/completion.zsh
-    source $(fzf-share)/key-bindings.zsh
-fi
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+zmodload zsh/complist
+# compinit
+_comp_options+=(globdots)
+zinit cdreplay -q
+
+eval "$(fzf --zsh)"
 
 # Overwrite ctrl-T binding from fzf to ctrl-x,ctrl-t
 bindkey -r '^T'
@@ -38,7 +47,7 @@ bindkey '^X^T' fzf-file-widget
 # Setup autosuggestions
 bindkey '^ ' autosuggest-accept
 bindkey '^H' autosuggest-clear
-
+#
 export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 gpgconf --launch gpg-agent
 
@@ -51,12 +60,6 @@ fi
 export EDITOR
 export SUDO_EDITOR=$EDITOR
 
-autoload -U compinit
-zstyle ':completion:*' menu select
-zmodload zsh/complist
-compinit
-_comp_options+=(globdots)
-
 # Use vim keys in tab complete menu:
 bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'k' vi-up-line-or-history
@@ -64,34 +67,14 @@ bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
-bindkey -s '^f' "tmux_sessionizer\n"
-# bindkey -s '^f' "zellij_sessionizer\n"
-
-alias ls='ls --color'
-alias sxiv='sxiv -pfa -sf -o'
-
-
-# function svndiff() { svn diff $@ | colordiff | less --quit-if-one-screen -R; }
-function svndiff() { diffuse -m $@ }
-function svnlog() { svn log $@ | less --quit-if-one-screen; }
-
-export WATCOM=/opt/watcom
-
 PATH=$PATH:$HOME/.local/scripts
 PATH=$PATH:$HOME/.local/opt/zig
 PATH=$PATH:/usr/local/bin
-PATH=$PATH:$WATCOM/binl
 
 alias zigup='zigup --install-dir $HOME/.local/opt/zig/installs'
 
-source $HOME/dev/zsh-nix-shell/nix-shell.plugin.zsh
-source $HOME/dev/nix-zsh-completions/nix-zsh-completions.plugin.zsh
-fpath=($HOME/dev/nix-zsh-completions $fpath)
-autoload -U compinit && compinit
+bindkey -s '^f' "tmux_sessionizer\n"
 
 if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
     . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
 fi
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
