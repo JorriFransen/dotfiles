@@ -176,7 +176,7 @@
         (createChromiumExtension { # ublock origin
           id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";
           sha256 = "01kk94l38qqp2rbyylswjs8q25kcjaqvvh5b8088xria5mbrhskl";
-          version = "1.59.0";
+          version = "1.61.2";
         })
         (createChromiumExtension { # vimium-c
           id = "hfjbmagddngcpeloejdejnfgbamkjaeg";
@@ -186,7 +186,7 @@
         (createChromiumExtension { # dark reader
           id = "eimadpbcbfnmbkopoojfekhnkhdbieeh";
           sha256 = "14dxg1pf7y0ka5rfpwzl6nr4y5hnxwy0cdn3498ffkz1mcs6jmay";
-          version = "4.9.88";
+          version = "4.9.96";
         })
         (createChromiumExtension { # browserpass
           id = "naepdomgkenhinolocfifgehidddafch";
