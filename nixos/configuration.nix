@@ -185,7 +185,7 @@ in
     htop
 
     tmux
-    kitty
+    wezterm
     kakoune
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 

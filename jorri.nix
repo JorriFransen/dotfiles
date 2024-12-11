@@ -27,7 +27,7 @@
     pkgs.stow
     pkgs.wget
     pkgs.git
-    pkgs.kitty
+    pkgs.wezterm
     pkgs.tmux
     pkgs.wl-clipboard
 
@@ -78,6 +78,13 @@
         # ssh = "kitty +kitten ssh";
       };
       initExtra = lib.fileContents ./zsh/.zshrc;
+    };
+
+    wezterm = {
+      enable = true;
+      enableZshIntegration = true;
+      enableBashIntegration = true;
+      extraConfig = lib.fileContents ./wezterm/.wezterm.lua;
     };
 
     password-store = {
