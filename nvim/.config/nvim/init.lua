@@ -23,7 +23,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- vim.g.zig_fmt_autosave = false
+vim.g.zig_fmt_autosave = false
 
 require('lazy').setup({
 
