@@ -20,7 +20,7 @@ in
     ];
 
   nix = {
-    package = pkgs.nixFlakes;
+    package = pkgs.nixVersions.stable;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
@@ -87,10 +87,10 @@ in
         # system.nixos.tags = [ "nvidia" ];
 
         # Enable OpenGL
-        hardware.opengl = {
+        hardware.graphics = {
           enable = true;
-          driSupport = true;
-          driSupport32Bit = true;
+          # driSupport = true;
+          # driSupport32Bit = true;
         };
         hardware.nvidia = {
           modesetting.enable = true;
@@ -98,7 +98,7 @@ in
           # powerManagement.finegrained = true;
           open = false;
           nvidiaSettings = true;
-          package = config.boot.kernelPackages.nvidiaPackages.stable;
+          package = config.boot.kernelPackages.nvidiaPackages.production;
           prime = {
             amdgpuBusId = "PCI:6:0:0";
             nvidiaBusId = "PCI:1:0:0";
@@ -142,7 +142,6 @@ in
 
 
   # Enable sound with pipewire.
-  sound.enable = true;
   hardware.pulseaudio = {
     enable = false;
     package = pkgs.pulseaudioFull;
@@ -185,8 +184,6 @@ in
     htop
 
     tmux
-    wezterm
-    kakoune
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
     cifs-utils
@@ -236,7 +233,7 @@ in
       OverridePostUpdatePage = "";
       DontCheckDefaultBrowser = true;
 
-      Preferences = { 
+      Preferences = {
         "browser.contentblocking.category" = { Value = "strict"; Status = "locked"; };
         "extensions.pocket.enabled" = lock-false;
         "extensions.screenshots.disabled" = lock-true;

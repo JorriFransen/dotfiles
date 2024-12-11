@@ -1,9 +1,11 @@
-{ lib, pkgs, pkgs-unstable, nur-no-pkgs, ... }:
+{ lib, pkgs, pkgs-unstable, nur-no-pkgs, inputs, ... }:
 
 {
 
-  nixpkgs.config = {
-    allowUnfree = true;
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+    };
   };
 
   # Let Home Manager install and manage itself.
@@ -27,7 +29,8 @@
     pkgs.stow
     pkgs.wget
     pkgs.git
-    pkgs.wezterm
+    pkgs.kitty
+
     pkgs.tmux
     pkgs.wl-clipboard
 
@@ -66,7 +69,6 @@
     pkgs.dig
 
     pkgs.pavucontrol
-
   ];
 
   programs = {
@@ -85,6 +87,7 @@
       enableZshIntegration = true;
       enableBashIntegration = true;
       extraConfig = lib.fileContents ./wezterm/.wezterm.lua;
+      package = inputs.wezterm.packages."${pkgs.system}".default;
     };
 
     password-store = {
@@ -100,6 +103,7 @@
       vimAlias = true;
       extraLuaConfig = lib.fileContents ./nvim/.config/nvim/init.lua;
 
+      # package = pkgs.neovim-nightly;
       extraPackages = [
         pkgs.unzip
         pkgs.fd

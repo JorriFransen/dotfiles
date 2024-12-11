@@ -23,6 +23,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- vim.g.zig_fmt_autosave = false
 
 require('lazy').setup({
 
@@ -53,8 +54,8 @@ require('lazy').setup({
         end
     },
 
-    { 'rcarriga/nvim-dap-ui', dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
-    { 'theHamsta/nvim-dap-virtual-text' },
+    -- { 'rcarriga/nvim-dap-ui', dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
+    -- { 'theHamsta/nvim-dap-virtual-text' },
 
     {
         'nvim-treesitter/nvim-treesitter',
@@ -123,8 +124,6 @@ require('lazy').setup({
     },
 
     -- Themes
-    'rebelot/kanagawa.nvim',
-    'EdenEast/nightfox.nvim',
     { "folke/tokyonight.nvim", lazy = false, priority = 1000, },
 
     'nvim-tree/nvim-web-devicons',
@@ -294,169 +293,6 @@ vim.keymap.set('n', '<leader>v', '<c-v>')
 
 
 vim.opt.listchars = { eol = '·', tab = '⍿·', trail = '×' }
-
--- vim.cmd('hi Normal guibg=none ctermbg=none')
---
--- -- Keep background transparent on colorscheme change
--- vim.api.nvim_create_autocmd({ "ColorScheme" }, {
---     pattern = '*',
---     command = [[hi Normal guibg=none ctermbg=none]]
--- })
-
-local dap = require("dap")
-local dapui = require("dapui")
--- require("nvim-dap-virtual-text").setup({})
-
-dapui.setup({
-    controls = {
-      element = "repl",
-      enabled = true,
-      icons = {
-        disconnect = "",
-        pause = "",
-        play = "",
-        run_last = "",
-        step_back = "",
-        step_into = "",
-        step_out = "",
-        step_over = "",
-        terminate = ""
-      }
-    },
-    element_mappings = {
-        stacks = {
-            edit = "e",
-            expand = "o",
-            open = { "<CR>", "<2-LeftMouse>" },
-            remove = "d",
-            repl = "r",
-            toggle = "t"
-        },
-    },
-    expand_lines = true,
-    floating = {
-      border = "single",
-      mappings = {
-        close = { "q", "<Esc>" }
-      }
-    },
-    force_buffers = true,
-    icons = {
-      collapsed = "",
-      current_frame = "",
-      expanded = ""
-    },
-    layouts = { {
-        elements = {
-          {
-            id = "scopes",
-            size = 0.4
-          },
-          -- {
-          --   id = "breakpoints",
-          --   size = 0.2
-          -- },
-          {
-            id = "watches",
-            size = 0.3
-          },
-          {
-            id = "stacks",
-            size = 0.3
-          },
-        },
-        position = "left",
-        size = 40
-      }, {
-        elements = { {
-            id = "repl",
-            size = 0.5
-          }, {
-            id = "console",
-            size = 0.5
-          } },
-        position = "bottom",
-        size = 10
-      } },
-    mappings = {
-      edit = "e",
-      expand = { "<CR>", "<2-LeftMouse>" },
-      open = "o",
-      remove = "d",
-      repl = "r",
-      toggle = "t"
-    },
-    render = {
-      indent = 1,
-      max_value_lines = 100
-    }
-  }
-)
---
--- sign for breakpoints
-vim.api.nvim_set_hl(0, 'DapBreakpoint', { ctermbg=0, fg='#ff0000', bg='#31353f' })
-vim.api.nvim_set_hl(0, 'DapStopped', { ctermbg=0, fg='#00ff00', bg='#31353f' })
-
-vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "DapBreakpoint" })
-vim.fn.sign_define("DapBreakpointCondition", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "DapBreakpoint" })
-vim.fn.sign_define("DapLogPoint", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "DapBreakpoint" })
-vim.fn.sign_define("DapBreakpointRejected", { text = "", texthl = "DapBreakpoint", linehl = "", numhl = "DapBreakpoint" })
-vim.fn.sign_define("DapStopped", { text = "", texthl = "DapStopped", linehl = "", numhl = "DapStopped" })
-
--- dap.listeners.after.event_initialized["dapui_config"] = function()
---     dapui.open();
--- end
--- -- dap.listeners.before.event_terminated["dapui_config"] = function()
--- --     dapui.close();
--- -- end
--- dap.listeners.before.event_exited["dapui_config"] = function()
---     dapui.close();
--- end
-
-dap.listeners.before.attach.dapui_config = function() dapui.open() end
-dap.listeners.before.launch.dapui_config = function() dapui.open() end
-dap.listeners.before.event_terminated.dapui_config = function() dapui.close() end
-dap.listeners.before.event_exited.dapui_config = function() dapui.close() end
-
-dap.adapters.lldb = {
-    type = "executable",
-    command = "/usr/bin/lldb-vscode",
-    name = "lldb"
-}
-
-dap.adapters.cppdbg = {
-    id = "cppdbg",
-    type = "executable",
-    command = "/home/jorri/.vscode-oss/extensions/ms-vscode.cpptools-1.14.4-linux-x64/debugAdapters/bin/OpenDebugAD7"
-}
-
-dap.adapters.gdb = {
-    type = "executable",
-    command = "gdb",
-    args = { "-i", "dap" },
-}
-
-vim.keymap.set('n', '<leader>b', function() require('dap').toggle_breakpoint() end)
-vim.keymap.set('n', '<leader>B', function() require('dap').set_breakpoint(vim.fn.input("Breakpoint condition: ")) end)
-vim.keymap.set('n', '<leader>ds', function()
-    local bufnr = require('dapui').elements.stacks.buffer();
-    local windows = vim.api.nvim_list_wins();
-    for _,winid in ipairs(windows) do
-        if vim.api.nvim_win_get_buf(winid) == bufnr then
-            vim.api.nvim_set_current_win(winid)
-        end
-    end
-end)
----@diagnostic disable-next-line: missing-fields
-vim.keymap.set('n', '<leader>db', function() require('dapui').float_element("breakpoints", {enter=true}) end)
-vim.keymap.set('n', '<F4>', function() require('dap').run_last() end)
-vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
-vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
-vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
-vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
----@diagnostic disable-next-line: missing-fields
-vim.keymap.set({'n', 'x'}, '<leader>di', function() require('dapui').eval(nil, {enter=true}) end, { noremap = true})
-vim.keymap.set({'n', 'x'}, '<leader>dr', function() dap.close() dapui.close() end, { noremap = true})
 
 local ibl = require("ibl")
 ibl.setup()
