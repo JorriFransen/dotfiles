@@ -81,42 +81,31 @@ in
     LC_TIME = "nl_NL.UTF-8";
   };
 
-  # specialisation = {
-    # nvidia = {
-      # configuration = {
-        # system.nixos.tags = [ "nvidia" ];
 
-      hardware.opengl.driSupport32Bit = true;
-
-        # Enable OpenGL
-        hardware.graphics = {
-          enable = true;
-          # driSupport = true;
-          # driSupport32Bit = true;
-        };
-        hardware.nvidia = {
-          modesetting.enable = true;
-          powerManagement.enable = true;
-          # powerManagement.finegrained = true;
-          open = true;
-          nvidiaSettings = true;
-          package = config.boot.kernelPackages.nvidiaPackages.production;
-          prime = {
-            amdgpuBusId = "PCI:6:0:0";
-            nvidiaBusId = "PCI:1:0:0";
-            # offload = {
-            #   enable = true;
-            #   enableOffloadCmd = true;
-            # };
-            sync.enable = true;
-            # reverseSync.enable = true;
-            # allowExternalGpu = true;
-          };
-        };
-        services.xserver.videoDrivers = [ "nvidia" ];
-      # };
-    # };
-  # };
+  hardware = {
+    graphics.enable = true;
+    graphics.enable32Bit = true;
+    nvidia = {
+      modesetting.enable = true;
+      powerManagement.enable = true;
+      # powerManagement.finegrained = true;
+      open = false;
+      nvidiaSettings = true;
+      # package = config.boot.kernelPackages.nvidiaPackages.production;
+      prime = {
+        amdgpuBusId = "PCI:6:0:0";
+        nvidiaBusId = "PCI:1:0:0";
+        # offload = {
+        #   enable = true;
+        #   enableOffloadCmd = true;
+        # };
+        sync.enable = true;
+        # reverseSync.enable = true;
+        # allowExternalGpu = true;
+      };
+    };
+  };
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
@@ -254,7 +243,7 @@ in
         "browser.newtabpage.activity-stream.showSponsored" = lock-false;
         "browser.newtabpage.activity-stream.system.showSponsored" = lock-false;
         "browser.newtabpage.activity-stream.showSponsoredTopSites" = lock-false;
-      }; 
+      };
     };
   };
 
