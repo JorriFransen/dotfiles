@@ -86,6 +86,8 @@ in
       # configuration = {
         # system.nixos.tags = [ "nvidia" ];
 
+      hardware.opengl.driSupport32Bit = true;
+
         # Enable OpenGL
         hardware.graphics = {
           enable = true;
@@ -96,7 +98,7 @@ in
           modesetting.enable = true;
           powerManagement.enable = true;
           # powerManagement.finegrained = true;
-          open = false;
+          open = true;
           nvidiaSettings = true;
           package = config.boot.kernelPackages.nvidiaPackages.production;
           prime = {
@@ -118,7 +120,7 @@ in
 
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
-  # services.displayManager.sddm.wayland.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
   # services.displayManager.sddm.settings = {
   #     General.GreeterEnvironment = "QT_SCREEN_SCALE_FACTORS=1,QT_FONT_DPI=92";
   # };
