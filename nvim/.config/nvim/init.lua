@@ -535,9 +535,9 @@ local on_attach = function(_, bufnr)
 
     nmap('<leader>rn',
         function()
-            -- vim.lsp.buf.rename()
-            -- vim.cmd('wa')
-            nui_lsp_rename()
+            vim.lsp.buf.rename()
+            vim.cmd('wa')
+            -- nui_lsp_rename()
         end,
         '[R]e[n]ame')
 
