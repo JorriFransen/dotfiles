@@ -1,10 +1,13 @@
-local config = wezterm.config_builder();
+local wezterm = require 'wezterm'
 
 return {
     color_scheme = 'tokyonight_night',
     colors = { background = '#1a1b26' },
     window_background_opacity = 0.95,
-    -- font = wezterm.font('Hack'),
+    font = wezterm.font('JetBrains Mono', {}),
+    font_size = 13.5,
+
+    audible_bell = "Disabled",
 
     use_fancy_tab_bar = false,
     hide_tab_bar_if_only_one_tab = true,
@@ -14,6 +17,5 @@ return {
     -- freetype_load_target = "HorizontalLcd"
     freetype_render_target = "HorizontalLcd",
 
-    -- This makes fullscreen work on wayland...
     enable_wayland = false
 }
