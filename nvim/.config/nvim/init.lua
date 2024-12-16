@@ -12,7 +12,7 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
     vim.fn.system({
         "git",
         "clone", "--filter=blob:none",
@@ -36,7 +36,8 @@ require('lazy').setup({
     "nvim-lua/plenary.nvim",
     { 'christoomey/vim-tmux-navigator', lazy = false },
 
-    -- { 'Tetralux/odin.vim', },
+    -- 'Tetralux/odin.vim',
+    'tikhomirov/vim-glsl',
 
     {
         'klen/nvim-config-local',
@@ -298,10 +299,11 @@ local ibl = require("ibl")
 ibl.setup()
 
 local ws_msg = ''
-local ws_timer = vim.loop.new_timer()
+local ws_timer = vim.uv.new_timer()
 local ws_buf = -1
 local ws_should_update = true
 
+---@cast ws_timer -nil
 ws_timer:start(2000, 2000, function()
     ws_should_update = true
     ws_buf = -1
@@ -312,8 +314,8 @@ local function ws_component()
     if ws_should_update or ws_buf ~= bufnr then
         ws_should_update = false
         ws_buf = bufnr;
-        local ft = vim.api.nvim_buf_get_option(bufnr, 'filetype')
-        local bt = vim.api.nvim_buf_get_option(bufnr, 'buftype')
+        local ft = vim.api.nvim_get_option_value('filetype', { buf = bufnr})
+        local bt = vim.api.nvim_get_option_value('buftype', { buf = bufnr})
 
         if ft == 'TelescopePrompt' or
            ft == "fugitive" or
@@ -353,7 +355,8 @@ vim.api.nvim_create_autocmd({ "RecordingEnter" }, {
 vim.api.nvim_create_autocmd({ "RecordingLeave" }, {
     callback = function()
         -- Wait for vim.fn.reg_recording to be purged
-        local timer = vim.loop.new_timer()
+        local timer = vim.uv.new_timer()
+        ---@cast timer -nil
         timer:start(50, 0, vim.schedule_wrap(function()
             lualine.refresh({place={"statusline"}})
         end))
@@ -394,107 +397,6 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous dia
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
-
-local function nui_lsp_rename()
-
-    local Input = require("nui.input")
-    local event = require("nui.utils.autocmd").event
-
-    local curr_name = vim.fn.expand("<cword>")
-    local params = vim.lsp.util.make_position_params()
-
-    local function on_submit(new_name)
-    if not new_name or #new_name == 0 or curr_name == new_name then
-      -- do nothing if `new_name` is empty or not changed.
-      return
-    end
-
-    -- add `newName` property to `params`.
-    -- this is needed for making `textDocument/rename` request.
-    params.newName = new_name
-
-    -- send the `textDocument/rename` request to LSP server
-    vim.lsp.buf_request(0, "textDocument/rename", params, function(_, result, ctx, _)
-      if not result then
-        -- do nothing if server returns empty result
-        return
-      end
-
-      -- the `result` contains all the places we need to update the
-      -- name of the identifier. so we apply those edits.
-      local client = vim.lsp.get_client_by_id(ctx.client_id)
-      vim.lsp.util.apply_workspace_edit(result, client.offset_encoding)
-
-      -- after the edits are applied, the files are not saved automatically.
-      -- let's remind ourselves to save those...
-      -- local total_files = vim.tbl_count(result.changes)
-      -- print(
-      --   string.format(
-      --     "Changed %s file%s. To save them run ':wa'",
-      --     total_files,
-      --     total_files > 1 and "s" or ""
-      --   )
-      -- )
-      vim.cmd.wa();
-    end)
-
-
-  end
-
-  local popup_options = {
-    -- border for the window
-    border = {
-      style = "none",
-      -- text = {
-      --   top = "Rename",
-      --   top_align = "left"
-      -- },
-
-      padding = { 1, 2 },
-    },
-    -- highlight for the window.
-    win_options = {
-        winhighlight = "NormalFloat:NormalFloat,FLoatBorder:FloatBorder",
-        -- winhighlight = "Normal:Normal",
-    },
-    -- place the popup window relative to the
-    -- buffer position of the identifier
-    relative = {
-      type = "buf",
-      position = {
-        -- this is the same `params` we got earlier
-        row = params.position.line,
-        col = params.position.character,
-      },
-    },
-    -- position the popup window on the line below identifier
-    position = {
-      row = 1,
-      col = 0,
-    },
-    -- 25 cells wide, should be enough for most identifier names
-    size = {
-      width = 25,
-      height = 1,
-    },
-  }
-
-  local input = Input(popup_options, {
-    -- set the default value to current name
-    default_value = curr_name,
-    -- pass the `on_submit` callback function we wrote earlier
-    on_submit = on_submit,
-    prompt = "",
-  })
-
-  input:mount()
-
-  -- close on <esc> in normal mode
-  input:map("n", "<esc>", input.input_props.on_close, { noremap = true })
-
-  -- close when cursor leaves the buffer
-  input:on(event.BufLeave, input.input_props.on_close, { once = true })
-end
 
 vim.keymap.set('n', '<leader>ga', function() vim.cmd('ClangdSwitchSourceHeader') end);
 vim.keymap.set('n', '<F1>', function() Compile() end)
@@ -561,9 +463,22 @@ lspconfig.lua_ls.setup {
     capabilities = lsp_capabilities,
     on_attach = on_attach,
     settings = {
-        Lua = { diagnostics = {
-            globals = { "vim" },
-        },},
+        Lua = {
+            diagnostics = {
+                -- globals = { "vim" },
+            },
+            workspace = {
+                library = {
+                    vim.env.VIMRUNTIME,
+                    "${3rd}/luv/library",
+                    "${3rd}/wezterm/library",
+                },
+                -- library = vim.api.nvim_get_runtime_file("", true),
+            },
+            telemetry = {
+                enable = false,
+            },
+        },
     },
 }
 
@@ -652,7 +567,7 @@ ft.set('zc', { '//%s', '/*%s/*'})
 
 local chars = { '_', '.', ':', ',', ';', '|', '/', '\\', '*', '+', '%', '`', '?' }
 for _,char in ipairs(chars) do
-    for _idx,mode in ipairs({ 'x', 'o' }) do
+    for _,mode in ipairs({ 'x', 'o' }) do
         vim.api.nvim_set_keymap(mode, "i" .. char, string.format(':<C-u>silent! normal! f%sF%slvt%s<CR>', char, char, char), { noremap = true, silent = true })
         vim.api.nvim_set_keymap(mode, "a" .. char, string.format(':<C-u>silent! normal! f%sF%svf%s<CR>', char, char, char), { noremap = true, silent = true })
     end
