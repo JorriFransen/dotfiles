@@ -13,7 +13,7 @@ local function n_map(key, fn)
 end
 
 local build_options = " "
-function Default_Build_Options() build_options = " -Dvulkan_verbose=true " end
+function Default_Build_Options() build_options = " " end
 function Set_Build_Options()
    vim.ui.input({prompt = "build_options=", default=string.sub(build_options, 2, string.len(build_options) - 1)},
       function(input) if input then build_options = " " .. input .. " " end end)
@@ -39,5 +39,7 @@ n_map('<leader>dbo', Default_Build_Options)
 n_map('<leader>sro', Set_Run_Options)
 n_map('<leader>dro', Default_Run_Options)
 
-vim.api.nvim_create_autocmd("BufWritePost", { pattern = '*.zig', command = 'silent !zig fmt <afile>'})
+local localzigfmt = vim.api.nvim_create_augroup("localzigfmt", {});
+vim.api.nvim_create_autocmd("BufWritePost", { group = localzigfmt,
+                             pattern = '*.zig', command = 'silent !zig fmt <afile>'})
 
