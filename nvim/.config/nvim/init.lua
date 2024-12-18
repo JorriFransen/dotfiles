@@ -75,7 +75,7 @@ require('lazy').setup({
         end
     },
 
-    { 'nvim-tree/nvim-tree.lua', },
+    -- { 'nvim-tree/nvim-tree.lua', },
 
     {
         'numToStr/Comment.nvim',
