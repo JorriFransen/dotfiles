@@ -75,8 +75,6 @@ require('lazy').setup({
         end
     },
 
-    -- { 'nvim-tree/nvim-tree.lua', },
-
     {
         'numToStr/Comment.nvim',
         opts = {
@@ -126,8 +124,6 @@ require('lazy').setup({
 
     -- Themes
     { "folke/tokyonight.nvim", lazy = false, priority = 1000, },
-
-    'nvim-tree/nvim-web-devicons',
 
     -- Lualine statusline
     {
@@ -217,13 +213,6 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set('n', '<leader>wv', function() vim.cmd('vsplit') end, { noremap = true })
 vim.keymap.set('n', '<leader>ws', function() vim.cmd('split') end, { noremap = true })
 
-require("nvim-tree").setup({
-    -- filters = {
-    --     git_ignored = false,
-    --     dotfiles = false
-    -- }
-})
-vim.keymap.set('n', '<leader>nt', function() vim.cmd('NvimTreeToggle') end, { noremap = true });
 
 -- Apply macro to visual selection
 -- vim.keymap.set('v', '@', ':normal @', { noremap = true });
