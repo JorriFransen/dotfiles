@@ -1,11 +1,15 @@
 local wezterm = require 'wezterm'
 
 return {
+    font_size = 13.5,
+    font = wezterm.font('JetBrains Mono', {}),
+    window_background_opacity = 0.95,
+
+    initial_cols = 160,
+    initial_rows = 45,
+
     color_scheme = 'tokyonight_night',
     colors = { background = '#1a1b26' },
-    window_background_opacity = 0.95,
-    font = wezterm.font('JetBrains Mono', {}),
-    font_size = 13.5,
 
     audible_bell = "Disabled",
 
