@@ -122,11 +122,11 @@ in
     variant = "";
   };
 
-  # Enable CUPS to print documents.
-  services.printing =  {
-    enable = true;
-    drivers = [ pkgs.hplipWithPlugin ];
-  };
+  # # Enable CUPS to print documents.
+  # services.printing =  {
+  #   enable = true;
+  #   drivers = [ pkgs.hplipWithPlugin ];
+  # };
 
   services.pcscd.enable = true;
   services.udev.packages = [ pkgs.yubikey-personalization ];
@@ -181,7 +181,7 @@ in
     samba
     kdePackages.kdenetwork-filesharing
 
-    hplip
+    # hplip
 
     yubico-pam
     yubikey-manager
