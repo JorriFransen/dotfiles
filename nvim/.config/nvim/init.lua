@@ -7,10 +7,6 @@ vim.wo.number = true
 vim.o.relativenumber = true
 vim.wo.relativenumber = true
 
--- disable netrw at the very start of your init.lua
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
-
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
     vim.fn.system({
@@ -35,6 +31,7 @@ require('lazy').setup({
 
     "nvim-lua/plenary.nvim",
     { 'christoomey/vim-tmux-navigator', lazy = false },
+    { 'RyanMillerC/better-vim-tmux-resizer' },
 
     -- 'Tetralux/odin.vim',
     'tikhomirov/vim-glsl',
@@ -64,9 +61,9 @@ require('lazy').setup({
         config = function ()
             local configs = require("nvim-treesitter.configs")
 
-            ---@diagnostic disable-next-line: missing-fields
+            -- ---@diagnostic disable-next-line: missing-fields
             configs.setup({
-                ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "bash", "python", "regex", "markdown_inline" },
+                ensure_installed = { "zig", "c", "cpp", "lua", "vim", "vimdoc", "bash", "python", "regex", "markdown_inline" },
                 sync_install = false,
                 auto_install = true,
                 highlight = { enable = false },
@@ -213,6 +210,15 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set('n', '<leader>wv', function() vim.cmd('vsplit') end, { noremap = true })
 vim.keymap.set('n', '<leader>ws', function() vim.cmd('split') end, { noremap = true })
 
+vim.keymap.set('n', '<c-h>', function() vim.cmd('TmuxNavigateLeft') end, {noremap = true})
+vim.keymap.set('n', '<c-l>', function() vim.cmd('TmuxNavigateRight') end, {noremap = true})
+vim.keymap.set('n', '<c-k>', function() vim.cmd('TmuxNavigateUp') end, {noremap = true})
+vim.keymap.set('n', '<c-j>', function() vim.cmd('TmuxNavigateDown') end, {noremap = true})
+
+vim.keymap.set('n', '<m-h>', function() vim.cmd('TmuxResizeLeft') end, {noremap = true})
+vim.keymap.set('n', '<m-l>', function() vim.cmd('TmuxResizeRight') end, {noremap = true})
+vim.keymap.set('n', '<m-k>', function() vim.cmd('TmuxResizeUp') end, {noremap = true})
+vim.keymap.set('n', '<m-j>', function() vim.cmd('TmuxResizeDown') end, {noremap = true})
 
 -- Apply macro to visual selection
 -- vim.keymap.set('v', '@', ':normal @', { noremap = true });
@@ -255,7 +261,7 @@ vim.keymap.set('n', '<leader>tr', telescope_fn.resume, { noremap = true })
 vim.keymap.set('n', '<leader>?', function() telescope_fn.oldfiles(telescope_dropdown) end, { noremap = true })
 vim.keymap.set('n', '<leader>/', function() telescope_fn.current_buffer_fuzzy_find(telescope_dropdown) end, { noremap = true })
 
-vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
+-- vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
 
 vim.keymap.set('n', '<leader>ut', function() vim.cmd('UndotreeToggle') end, { noremap = true })
 vim.keymap.set('n', '<leader>uf', function() vim.cmd('UndotreeFocus') end, { noremap = true })

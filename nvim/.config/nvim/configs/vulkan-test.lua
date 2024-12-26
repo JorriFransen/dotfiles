@@ -12,7 +12,7 @@ local function n_map(key, fn)
    vim.keymap.set('n', key, fn)
 end
 
-local build_options = " "
+local build_options
 function Default_Build_Options() build_options = " " end
 function Set_Build_Options()
    vim.ui.input({prompt = "build_options=", default=string.sub(build_options, 2, string.len(build_options) - 1)},
@@ -20,8 +20,8 @@ function Set_Build_Options()
 end
 Default_Build_Options()
 
-local run_options = " "
-function Default_Run_Options() run_options = " --glfw-window-api x11 " end
+local run_options
+function Default_Run_Options() run_options = " " end
 function Set_Run_Options()
    vim.ui.input({prompt = "run_options=", default=string.sub(run_options, 2, string.len(run_options) - 1)},
       function(input) if input then run_options = " " .. input .. " " end end)
