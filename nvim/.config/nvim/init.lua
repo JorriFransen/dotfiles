@@ -261,7 +261,7 @@ vim.keymap.set('n', '<leader>tr', telescope_fn.resume, { noremap = true })
 vim.keymap.set('n', '<leader>?', function() telescope_fn.oldfiles(telescope_dropdown) end, { noremap = true })
 vim.keymap.set('n', '<leader>/', function() telescope_fn.current_buffer_fuzzy_find(telescope_dropdown) end, { noremap = true })
 
--- vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
+vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
 
 vim.keymap.set('n', '<leader>ut', function() vim.cmd('UndotreeToggle') end, { noremap = true })
 vim.keymap.set('n', '<leader>uf', function() vim.cmd('UndotreeFocus') end, { noremap = true })
