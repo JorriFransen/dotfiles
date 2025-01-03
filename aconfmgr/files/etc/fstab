@@ -1,0 +1,9 @@
+# /dev/nvme1n1p2 LABEL=root
+UUID=39bbca15-25f9-4841-951a-30f56e855413	/         	ext4      	rw,relatime	0 1
+
+# /dev/nvme0n1p1
+UUID=D618-53AA      	/boot     	vfat      	rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro	0 2
+
+# /dev/nvme0n1p5 LABEL=home
+UUID=43c459ac-c270-4da4-95f2-8c80edec0f22	/home     	ext4      	rw,relatime	0 2
+
