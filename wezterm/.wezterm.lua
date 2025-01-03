@@ -7,8 +7,10 @@ config.font_size = 13.5
 config.font = wezterm.font('JetBrains Mono', {})
 config.window_background_opacity = 0.95
 
-config.initial_cols = 160
-config.initial_rows = 45
+-- config.initial_cols = 80
+-- config.initial_rows = 24
+config.initial_cols = 120
+config.initial_rows = 35
 
 config.color_scheme = 'tokyonight_night'
 config.colors = { background = '#1a1b26' }

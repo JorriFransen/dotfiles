@@ -3,7 +3,7 @@
 if [[ $# -eq 1 ]]; then
     selected=$1
 else
-    selected=$(fd -L . ~/dev ~/.config/home-manager  -d 1 -t d | fzf)
+    selected=$(fd -L . ~/dev -d 1 -t d | fzf)
 fi
 
 if [[ -z $selected ]]; then

@@ -30,7 +30,7 @@ zinit light Aloxaf/fzf-tab
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# autoload -Uz compinit && compinit
+autoload -Uz compinit && compinit
 zstyle ':completion:*' menu select
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zmodload zsh/complist
@@ -72,9 +72,17 @@ PATH=$PATH:$HOME/.local/opt/zig
 PATH=$PATH:$HOME/go/bin
 
 alias zigup='zigup --install-dir $HOME/.local/opt/zig/installs'
+alias ls='ls --color'
+alias aconfmgr='aconfmgr -c $HOME/dev/dotfiles/aconfmgr'
 
 bindkey -s '^f' "tmux_sessionizer\n"
 
-if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
-    . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-fi
+# if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+#     . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+# fi
+
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[[ -f /home/jorri/.dart-cli-completion/zsh-config.zsh ]] && . /home/jorri/.dart-cli-completion/zsh-config.zsh || true
+## [/Completion]
+
