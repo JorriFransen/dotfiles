@@ -10,7 +10,6 @@ AddPackage openssh # SSH protocol implementation for remote login, command execu
 AddPackage networkmanager # Network connection manager and user applications
 
 CreateFile /etc/.pwd.lock 600 > /dev/null
-CopyFile /etc/.updated
 CopyFile /etc/NetworkManager/system-connections/TP-Link_2.4GHz_070FDA.nmconnection 600
 CopyFile /etc/adjtime
 CopyFile /etc/fstab
@@ -25,7 +24,6 @@ CopyFile /etc/mkinitcpio.d/linux.preset
 CopyFile /etc/modprobe.d/iwlwifi.conf
 CopyFile /etc/pacman.conf
 CopyFile /etc/pacman.d/mirrorlist
-CopyFile /etc/pacman.d/mirrorlist.backup
 CopyFile /etc/paru.conf
 CreateFile /etc/sddm.conf > /dev/null
 CopyFile /etc/sddm.conf.d/kde_settings.conf
