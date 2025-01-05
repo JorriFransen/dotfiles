@@ -19,6 +19,7 @@ CopyFile /etc/gshadow
 CopyFile /etc/gshadow- 600
 CopyFile /etc/hostname
 CopyFile /etc/locale.conf
+CopyFile /etc/locale.gen
 CopyFile /etc/machine-id 444
 CopyFile /etc/mkinitcpio.d/linux.preset
 CopyFile /etc/modprobe.d/iwlwifi.conf

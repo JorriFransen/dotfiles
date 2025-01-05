@@ -11,7 +11,6 @@ AddPackage ffmpegthumbs # FFmpeg-based thumbnail creator for video files
 AddPackage firefox # Fast, Private & Safe Web Browser
 AddPackage kdegraphics-thumbnailers # Thumbnailers for various graphics file formats
 AddPackage kdenetwork-filesharing # Properties dialog plugin to share a directory with the local network
-AddPackage kio-admin # Manage files as administrator using the admin:// KIO protocol
 AddPackage nextcloud-client # Nextcloud desktop client
 AddPackage obsidian # A powerful knowledge base that works on top of a local folder of plain text Markdown files
 AddPackage wezterm # A GPU-accelerated cross-platform terminal emulator and multiplexer
