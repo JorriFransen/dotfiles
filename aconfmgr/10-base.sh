@@ -72,4 +72,4 @@ CreateLink /etc/systemd/user/pipewire.service.wants/wireplumber.service /usr/lib
 CreateLink /etc/systemd/user/sockets.target.wants/p11-kit-server.socket /usr/lib/systemd/user/p11-kit-server.socket
 CreateLink /etc/systemd/user/sockets.target.wants/pipewire-pulse.socket /usr/lib/systemd/user/pipewire-pulse.socket
 CreateLink /etc/systemd/user/sockets.target.wants/pipewire.socket /usr/lib/systemd/user/pipewire.socket
-
+CopyFile /etc/sddm.conf.d/hidpi.conf
