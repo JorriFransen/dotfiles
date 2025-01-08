@@ -11,6 +11,7 @@ AddPackage networkmanager # Network connection manager and user applications
 
 CreateFile /etc/.pwd.lock 600 > /dev/null
 CopyFile /etc/NetworkManager/system-connections/TP-Link_2.4GHz_070FDA.nmconnection 600
+CopyFile /etc/NetworkManager/system-connections/FRITZBox\ 5490\ NX\ 5Ghz.nmconnection 600
 CopyFile /etc/adjtime
 CopyFile /etc/fstab
 CopyFile /etc/group

@@ -1,0 +1,26 @@
+[connection]
+id=FRITZBox 5490 NX 5Ghz
+uuid=8a71e8f5-41ea-477d-9bb8-b553cd358563
+type=wifi
+interface-name=wlp4s0
+permissions=user:jorri:;
+
+[wifi]
+mode=infrastructure
+ssid=FRITZBox 5490 NX 5Ghz
+
+[wifi-security]
+auth-alg=open
+key-mgmt=wpa-psk
+leap-password-flags=1
+psk-flags=1
+wep-key-flags=1
+
+[ipv4]
+method=auto
+
+[ipv6]
+addr-gen-mode=default
+method=auto
+
+[proxy]
