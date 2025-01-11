@@ -8,5 +8,5 @@ AddPackage --foreign paru-bin # Feature packed AUR helper
 AddPackage --foreign paru-bin-debug # Detached debugging symbols for paru-bin
 AddPackage --foreign tor-browser-bin # Tor Browser Bundle: anonymous browsing using Firefox and Tor
 AddPackage --foreign yubico-authenticator # Yubico Authenticator for Desktop
-AddPackage --foreign zig-dev-bin # A general-purpose programming language and toolchain for maintaining robust, optimal, and reusable software
+AddPackage --foreign zig-nightly-bin # A general-purpose programming language and toolchain for maintaining robust, optimal, and reusable software (nightly build)
 AddPackage --foreign zls-git # Zig LSP implementation + Zig Language Server
