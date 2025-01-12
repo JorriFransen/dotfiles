@@ -1,5 +1,6 @@
 
 AddPackage linux # The Linux kernel and modules
+AddPackage linux-zen # The Linux ZEN kernel and modules
 AddPackage linux-firmware # Firmware files for Linux
 AddPackage base # Minimal package set to define a basic Arch Linux installation
 AddPackage base-devel # Basic tools to build Arch Linux packages
@@ -23,6 +24,7 @@ CopyFile /etc/locale.conf
 CopyFile /etc/locale.gen
 CopyFile /etc/machine-id 444
 CopyFile /etc/mkinitcpio.d/linux.preset
+CopyFile /etc/mkinitcpio.d/linux-zen.preset
 CopyFile /etc/modprobe.d/iwlwifi.conf
 CopyFile /etc/pacman.conf
 CopyFile /etc/pacman.d/mirrorlist
