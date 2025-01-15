@@ -2,6 +2,8 @@
 AddPackage linux # The Linux kernel and modules
 AddPackage linux-zen # The Linux ZEN kernel and modules
 AddPackage linux-firmware # Firmware files for Linux
+AddPackage linux-headers # Headers and scripts for building modules for the Linux kernel
+AddPackage linux-zen-headers # Headers and scripts for building modules for the Linux ZEN kernel
 AddPackage base # Minimal package set to define a basic Arch Linux installation
 AddPackage base-devel # Basic tools to build Arch Linux packages
 AddPackage amd-ucode # Microcode update image for AMD CPUs
@@ -9,10 +11,14 @@ AddPackage efibootmgr # Linux user-space application to modify the EFI Boot Mana
 AddPackage lshw # A small tool to provide detailed information on the hardware configuration of the machine.
 AddPackage openssh # SSH protocol implementation for remote login, command execution and file transfer
 AddPackage networkmanager # Network connection manager and user applications
+AddPackage noto-fonts-cjk # Google Noto CJK fonts
+AddPackage power-profiles-daemon # Makes power profiles handling available over D-Bus
+
 
 CreateFile /etc/.pwd.lock 600 > /dev/null
 CopyFile /etc/NetworkManager/system-connections/TP-Link_2.4GHz_070FDA.nmconnection 600
 CopyFile /etc/NetworkManager/system-connections/FRITZBox\ 5490\ NX\ 5Ghz.nmconnection 600
+CopyFile /etc/NetworkManager/system-connections/FRITZBox\ 5490\ NX.nmconnection 600
 CopyFile /etc/adjtime
 CopyFile /etc/fstab
 CopyFile /etc/group

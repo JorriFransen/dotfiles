@@ -1,5 +1,6 @@
 
-AddPackage nvidia # NVIDIA kernel modules
+AddPackage nvidia-dkms # NVIDIA kernel modules - module sources
+# AddPackage nvidia # NVIDIA kernel modules
 AddPackage nvidia-prime # NVIDIA Prime Render Offload configuration and utilities
 AddPackage nvidia-settings # Tool for configuring the NVIDIA graphics driver
 
