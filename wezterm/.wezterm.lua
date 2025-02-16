@@ -3,8 +3,8 @@ local mux = wezterm.mux
 local act = wezterm.action;
 local config = wezterm.config_builder()
 
-config.font_size = 13.5
-config.font = wezterm.font('JetBrains Mono', {})
+config.font_size = 14.5
+config.font = wezterm.font_with_fallback{'JetBrains Mono', 'DengXian'}
 config.window_background_opacity = 0.95
 
 -- config.initial_cols = 80
