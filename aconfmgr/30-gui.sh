@@ -16,5 +16,7 @@ AddPackage obsidian # A powerful knowledge base that works on top of a local fol
 AddPackage wezterm # A GPU-accelerated cross-platform terminal emulator and multiplexer
 AddPackage wl-clipboard # Command-line copy/paste utilities for Wayland
 
+AddPackage blender
+AddPackage renderdoc
 AddPackage steam # Valve's digital software delivery system
 
