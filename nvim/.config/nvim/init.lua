@@ -7,6 +7,7 @@ vim.wo.number = true
 vim.o.relativenumber = true
 vim.wo.relativenumber = true
 
+local config_path = vim.fn.stdpath("config")
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
     vim.fn.system({
@@ -120,7 +121,13 @@ require('lazy').setup({
     },
 
     -- Themes
-    { "folke/tokyonight.nvim", lazy = false, priority = 1000, },
+    { "folke/tokyonight.nvim", lazy = true, },
+    { "catppuccin/nvim", name = "catppuccin", lazy = true },
+    { "metalelf0/base16-black-metal-scheme", lazy = true },
+    { "morhetz/gruvbox", lazy = true },
+    { "rebelot/kanagawa.nvim", lazy = true },
+    { "sainnhe/everforest", lazy = true },
+    { "EdenEast/nightfox.nvim", lazy = true },
 
     -- Lualine statusline
     {
@@ -150,6 +157,16 @@ require('lazy').setup({
     { "hrsh7th/cmp-path" },
     { "neovim/nvim-lspconfig" },
 })
+
+local cs_filename = config_path .. "/colorscheme"
+assert(cs_filename)
+local cs_file = io.open(cs_filename, "r")
+if cs_file then
+    local scheme = cs_file:read("*a")
+    vim.cmd ("colorscheme "  .. scheme)
+else
+        vim.cmd "colorscheme tokyonight-night"
+end
 
 vim.o.cursorline = true
 vim.o.mouse = 'a'
@@ -188,16 +205,38 @@ vim.o.timeoutlen = 350
 
 vim.o.completeopt = 'menuone,noselect'
 
----@diagnostic disable-next-line: missing-fields
-require('tokyonight').setup {
-    transparent = true,
-    styles = {
-        sidebars = "dark",
-        floats = "dark"
-    },
-}
+local colorpicker = require("colorpicker")
+local colorschemes = colorpicker.colorschemes
 
-vim.cmd.colorscheme('tokyonight-night')
+vim.api.nvim_create_autocmd("ColorScheme", {
+    group = vim.api.nvim_create_augroup("wezterm_colorscheme", { clear = true}),
+    callback = function(args)
+        local colorscheme = colorschemes[args.match];
+        if not colorscheme then
+            vim.notify("Did not find wezterm colorscheme for " .. args.match, vim.log.levels.WARN)
+            return
+        end
+
+        -- Write theme to file for wezterm to  read
+        local wfilename = vim.fn.expand("$XDG_CONFIG_HOME/wezterm/colorscheme")
+        -- vim.notify("wfilename: " .. wfilename, vim.log.levels.INFO)
+        assert(type(wfilename) == "string")
+        local wfile = io.open(wfilename, "w")
+        assert(wfile);
+        wfile:write(colorscheme);
+        wfile:close()
+        -- vim.notify("Setting Wezterm color scheme to " .. colorscheme, vim.log.levels.INFO)
+
+        -- Write theme to file for nvim to read
+        local nfilename = vim.fn.expand("$XDG_CONFIG_HOME/nvim/colorscheme")
+        assert(type(nfilename) == "string")
+        local nfile = io.open(nfilename, "w")
+        assert(nfile)
+        nfile:write(args.match)
+        nfile:close()
+
+    end,
+})
 
 -- vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('i', '{<CR>', '{<CR>}<Esc>O', { noremap = true })
@@ -228,7 +267,8 @@ end
 vim.keymap.set('x', '@', apply_macro_to_visual_range, { expr = true });
 
 -- [[ Telescope config ]] --
-require('telescope').setup {
+local telescope = require "telescope"
+telescope.setup {
     defaults = {
         extensions = {
             fzf = {
@@ -248,7 +288,8 @@ require('telescope').setup {
     }
 }
 
-pcall(require('telescope').load_extension, 'fzf')
+local colorpicker = telescope.load_extension("colorpicker").colorpicker
+telescope.load_extension('fzf')
 
 local telescope_fn = require('telescope.builtin')
 local telescope_dropdown = require('telescope.themes').get_dropdown { winblend = 10, previewer = false }
@@ -260,6 +301,7 @@ vim.keymap.set('n', '<leader>*', telescope_fn.grep_string, { noremap = true })
 vim.keymap.set('n', '<leader>tr', telescope_fn.resume, { noremap = true })
 vim.keymap.set('n', '<leader>?', function() telescope_fn.oldfiles(telescope_dropdown) end, { noremap = true })
 vim.keymap.set('n', '<leader>/', function() telescope_fn.current_buffer_fuzzy_find(telescope_dropdown) end, { noremap = true })
+vim.keymap.set('n', '<leader>cs', function() colorpicker(telescope_dropdown) end, { noremap = true })
 
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
 
