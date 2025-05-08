@@ -80,6 +80,7 @@ bindkey -v '^?' backward-delete-char
 
 PATH=$PATH:$HOME/.local/scripts
 PATH=$PATH:$HOME/.local/opt/zig
+PATH=$PATH:$HOME/.local/opt/zls
 PATH=$PATH:$HOME/go/bin
 
 alias zigup='zigup --install-dir $HOME/.local/opt/zig/installs'
