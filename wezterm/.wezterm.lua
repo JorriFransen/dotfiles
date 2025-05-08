@@ -5,15 +5,27 @@ local config = wezterm.config_builder()
 
 config.font_size = 14.5
 config.font = wezterm.font_with_fallback{'JetBrains Mono', 'DengXian'}
-config.window_background_opacity = 0.95
+-- config.window_background_opacity = 0.95
 
 -- config.initial_cols = 80
 -- config.initial_rows = 24
 config.initial_cols = 120
 config.initial_rows = 35
 
-config.color_scheme = 'tokyonight_night'
-config.colors = { background = '#1a1b26' }
+
+local cs_filename = os.getenv("XDG_CONFIG_HOME").."/wezterm/colorscheme"
+assert(cs_filename)
+wezterm.add_to_config_reload_watch_list(cs_filename)
+local file = io.open(cs_filename, "r")
+-- wezterm.log_error("cs file: " .. cs_filename)
+if file then
+    local scheme = file:read("*a");
+    config.color_scheme = scheme
+    -- wezterm.log_error("Read colorscheme: '" .. scheme .. "'")
+    file:close()
+else
+    config.color_scheme = "tokyonight_night"
+end
 
 config.audible_bell = "Disabled"
 
