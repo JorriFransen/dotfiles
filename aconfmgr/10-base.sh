@@ -13,10 +13,6 @@ AddPackage noto-fonts-cjk # Google Noto CJK fonts
 AddPackage power-profiles-daemon # Makes power profiles handling available over D-Bus
 
 
-CreateFile /etc/.pwd.lock 600 > /dev/null
-CopyFile /etc/NetworkManager/system-connections/TP-Link_2.4GHz_070FDA.nmconnection 600
-CopyFile /etc/NetworkManager/system-connections/FRITZBox\ 5490\ NX\ 5Ghz.nmconnection 600
-CopyFile /etc/NetworkManager/system-connections/FRITZBox\ 5490\ NX.nmconnection 600
 CopyFile /etc/adjtime
 CopyFile /etc/fstab
 CopyFile /etc/group
@@ -27,23 +23,29 @@ CopyFile /etc/hostname
 CopyFile /etc/locale.conf
 CopyFile /etc/locale.gen
 CopyFile /etc/machine-id 444
-CopyFile /etc/mkinitcpio.d/linux.preset
 CopyFile /etc/mkinitcpio.d/linux-lts.preset
+CopyFile /etc/mkinitcpio.d/linux.preset
 CopyFile /etc/modprobe.d/iwlwifi.conf
+CopyFile /etc/NetworkManager/system-connections/FRITZBox\ 5490\ NX\ 5Ghz.nmconnection 600
+CopyFile /etc/NetworkManager/system-connections/FRITZBox\ 5490\ NX.nmconnection 600
+CopyFile /etc/NetworkManager/system-connections/TP-Link_2.4GHz_070FDA.nmconnection 600
 CopyFile /etc/pacman.conf
 CopyFile /etc/pacman.d/mirrorlist
 CopyFile /etc/paru.conf
-CreateFile /etc/sddm.conf > /dev/null
+CopyFile /etc/sddm.conf.d/hidpi.conf
 CopyFile /etc/sddm.conf.d/kde_settings.conf
+CopyFile /etc/security/pam_env.conf
 CopyFile /etc/shells
 CopyFile /etc/subgid
-CreateFile /etc/subgid- > /dev/null
 CopyFile /etc/subuid
-CreateFile /etc/subuid- > /dev/null
 CopyFile /etc/sudoers
 CopyFile /etc/vconsole.conf
 CopyFile /etc/xdg/reflector/reflector.conf
 CreateDir /lost+found 700
+CreateFile /etc/.pwd.lock 600 > /dev/null
+CreateFile /etc/sddm.conf > /dev/null
+CreateFile /etc/subgid- > /dev/null
+CreateFile /etc/subuid- > /dev/null
 CreateLink /etc/fonts/conf.d/10-hinting-slight.conf /usr/share/fontconfig/conf.default/10-hinting-slight.conf
 CreateLink /etc/fonts/conf.d/10-scale-bitmap-fonts.conf /usr/share/fontconfig/conf.default/10-scale-bitmap-fonts.conf
 CreateLink /etc/fonts/conf.d/10-sub-pixel-rgb.conf /usr/share/fontconfig/conf.default/10-sub-pixel-rgb.conf
@@ -74,9 +76,8 @@ CreateLink /etc/fonts/conf.d/90-synthetic.conf /usr/share/fontconfig/conf.defaul
 CreateLink /etc/localtime /usr/share/zoneinfo/Europe/Amsterdam
 CreateLink /etc/os-release ../usr/lib/os-release
 CreateLink /etc/systemd/user/default.target.wants/xdg-user-dirs-update.service /usr/lib/systemd/user/xdg-user-dirs-update.service
-CreateLink /etc/systemd/user/pipewire-session-manager.service /usr/lib/systemd/user/wireplumber.service
 CreateLink /etc/systemd/user/pipewire.service.wants/wireplumber.service /usr/lib/systemd/user/wireplumber.service
+CreateLink /etc/systemd/user/pipewire-session-manager.service /usr/lib/systemd/user/wireplumber.service
 CreateLink /etc/systemd/user/sockets.target.wants/p11-kit-server.socket /usr/lib/systemd/user/p11-kit-server.socket
 CreateLink /etc/systemd/user/sockets.target.wants/pipewire-pulse.socket /usr/lib/systemd/user/pipewire-pulse.socket
 CreateLink /etc/systemd/user/sockets.target.wants/pipewire.socket /usr/lib/systemd/user/pipewire.socket
-CopyFile /etc/sddm.conf.d/hidpi.conf

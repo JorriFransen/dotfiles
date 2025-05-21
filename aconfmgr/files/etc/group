@@ -21,7 +21,7 @@ disk:x:995:
 input:x:994:
 kmem:x:993:
 kvm:x:992:
-lp:x:991:
+lp:x:991:cups
 optical:x:990:
 render:x:989:
 sgx:x:988:
@@ -55,3 +55,6 @@ sddm:x:969:
 jorri:x:1000:
 openvpn:x:968:
 nvidia-persistenced:x:143:
+deluge:x:967:
+named:x:40:
+cups:x:209:

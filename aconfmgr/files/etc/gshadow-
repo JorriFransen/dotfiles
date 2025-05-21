@@ -54,3 +54,6 @@ rtkit:!*::
 sddm:!*::
 jorri:!::
 openvpn:!*::
+nvidia-persistenced:!*::
+deluge:!*::
+named:!*::

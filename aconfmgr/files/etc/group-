@@ -54,3 +54,6 @@ rtkit:x:133:
 sddm:x:969:
 jorri:x:1000:
 openvpn:x:968:
+nvidia-persistenced:x:143:
+deluge:x:967:
+named:x:40:

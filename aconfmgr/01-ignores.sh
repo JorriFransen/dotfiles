@@ -16,4 +16,3 @@ IgnorePath '/etc/passwd-'
 IgnorePath '/etc/resolv.conf'
 IgnorePath '/etc/shadow'
 IgnorePath '/etc/shadow-'
-
