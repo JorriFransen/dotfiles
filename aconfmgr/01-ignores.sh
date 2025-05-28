@@ -6,6 +6,7 @@ IgnorePath '/boot/*' # boot partition
 IgnorePath '/etc/ssl/*'
 IgnorePath '/etc/systemd/system/*'
 IgnorePath '/etc/pacman.d/gnupg/*'
+IgnorePath '/etc/pacman.d/mirrorlist.pacnew'
 
 IgnorePath '/etc/.updated'
 IgnorePath '/etc/openvpn'
