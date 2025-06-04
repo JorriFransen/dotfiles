@@ -10,6 +10,7 @@ AddPackage lshw # A small tool to provide detailed information on the hardware c
 AddPackage openssh # SSH protocol implementation for remote login, command execution and file transfer
 AddPackage networkmanager # Network connection manager and user applications
 AddPackage noto-fonts-cjk # Google Noto CJK fonts
+AddPackage otf-cascadia-code # A monospaced font by Microsoft that includes programming ligatures
 AddPackage power-profiles-daemon # Makes power profiles handling available over D-Bus
 
 
