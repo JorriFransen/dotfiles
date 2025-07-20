@@ -2,10 +2,10 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-vim.o.number = true
-vim.wo.number = true
+vim.o.number = true vim.wo.number = true
 vim.o.relativenumber = true
 vim.wo.relativenumber = true
+vim.o.foldenable = false
 
 local config_path = vim.fn.stdpath("config")
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -20,7 +20,10 @@ if not vim.uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.g.zig_fmt_autosave = false
+-- vim.g.zig_fmt_autosave = false
+local localzigfmt = vim.api.nvim_create_augroup("localzigfmt", {});
+vim.api.nvim_create_autocmd("BufWritePost", { group = localzigfmt,
+                             pattern = {"*.zig"}, command = 'silent !zig fmt <afile>'})
 
 require('lazy').setup({
 
@@ -131,6 +134,76 @@ require('lazy').setup({
         cond = not vim.g.vscode;
     },
 
+    -- LSP
+    {
+        "folke/lazydev.nvim",
+        ft = "lua",
+    },
+    { "neovim/nvim-lspconfig" }, -- LSP client configuration
+    {
+        -- Autocompletion
+        "hrsh7th/nvim-cmp",
+        opts = function(_,opts)
+            opts.sources = opts.sources or {}
+            table.insert(opts.sources, {
+                name = "lazydev",
+                group_index = 0,
+            })
+        end,
+        dependencies = {
+            "hrsh7th/cmp-nvim-lsp",     -- LSP source for nvim-cmp
+            "hrsh7th/cmp-buffer",       -- Buffer source for nvim-cmp
+            "hrsh7th/cmp-path",         -- Path source for nvim-cmp
+            "saadparwaiz1/cmp_luasnip", -- Snippet support (optional)
+            {
+                "L3MON4D3/LuaSnip",
+                version = "v2.*",
+                build = "make install_jsregexp"
+            },
+        },
+        config = function()
+            local cmp = require("cmp")
+            local luasnip = require("luasnip")
+
+            cmp.setup({
+                snippet = {
+                    expand = function(args)
+                        luasnip.lsp_expand(args.body)
+                    end,
+                },
+                mapping = cmp.mapping.preset.insert({
+                    ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+                    -- ["<C-f>"] = cmp.mapping.scroll_docs(4), -- conflicts with tmux-sessionizer
+                    ["<C-space>"] = cmp.mapping.complete(),
+                    ["<C-e>"] = cmp.mapping.abort(),
+                    ["<CR>"] = cmp.mapping.confirm({select = true}),
+
+                    -- Jump to next/previous placeholder (snippets)
+                    ["<Tab>"] = cmp.mapping(function(fallback)
+                        if luasnip.expand_or_jumpable() then
+                            luasnip.expand_or_jump()
+                        else
+                            fallback()
+                        end
+                    end, {"i", "s"}),
+                    ["<S-Tab>"] = cmp.mapping(function(fallback)
+                        if luasnip.jumpable(-1) then
+                            luasnip.jump(-1)
+                        else
+                            fallback()
+                        end
+                    end, {"i", "s"})
+
+                }),
+                sources = cmp.config.sources({
+                    { name = "nvim_lsp" },
+                    { name = "buffer" },
+                    { name = "path" },
+                }),
+            })
+        end,
+    },
+
 
     { 'rhysd/vim-llvm' },
     { 'tikhomirov/vim-glsl' },
@@ -151,13 +224,71 @@ require('lazy').setup({
 vim.api.nvim_create_autocmd("FileType", {
     pattern = { "zig" },
     callback = function()
-        -- vim.treesitter.start()
-        vim.opt.foldmethod = "expr"
+        vim.treesitter.start()
+        vim.o.foldmethod = "expr"
         vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 
     end,
 })
 
+local lspconfig = require("lspconfig")
+-- Common settings for LSP clients
+local on_attach = function(_, bufnr)
+    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+
+    -- Mappings
+    local bufopts = { noremap = true, silent = true, buffer = bufnr }
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
+    vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
+    vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
+    vim.keymap.set('n', '<space>wl', function()
+      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, bufopts)
+    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
+    vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)
+    vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+    vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
+end
+
+lspconfig.zls.setup {
+    on_attach = on_attach,
+    cmd = {"zls"},
+    filetypes = {"zig", "zir"},
+    root_dir = lspconfig.util.root_pattern("build.zig", ".git"),
+    single_file_support = true,
+    settings = { zls = {}},
+}
+lspconfig.lua_ls.setup {
+    on_attach = on_attach,
+    cmd = {"lua-language-server"},
+    filetypes = {"lua"},
+    settings = {
+        Lua = {
+            workspace = {
+                checkThirdParty = false,
+                library = {
+                    -- Specify global Lua libraries or folders to include for type checking/completion.
+                    -- Good for Neovim's runtime files:
+                    vim.fn.stdpath("data") .. "/lazy/lazy.nvim/lua", -- For lazy.nvim types
+                    vim.fn.getenv("VIMRUNTIME") .. "/lua", -- Neovim's built-in Lua files
+                    vim.fn.getenv("VIMRUNTIME") .. "/lua/vim/lsp",
+                    -- Add any other folders with Lua code you frequently work with
+                    -- "/path/to/your/lua/libs",
+                },
+            },
+            telemetry = { enable = false},
+            completion = { callSnippet = "Replace", },
+            diagnostics = { globals = {"vim"}},
+            runtime = { version = "Lua51"},
+            signatureHelp = { detail = "Full", },
+        },
+    },
+}
 
 local cs_filename = config_path .. "/colorscheme"
 assert(cs_filename)
