@@ -52,18 +52,13 @@ require('lazy').setup({
 
     {
         'nvim-treesitter/nvim-treesitter',
+        branch = "main",
         build = ":TSUpdate",
-        config = function ()
-            local configs = require("nvim-treesitter.configs")
-
-            configs.setup({
-                modules = {},
-                sync_install = false,
-                ensure_installed = { "zig", "c", "cpp", "lua", "vim", "vimdoc", "bash", "python", "regex", "markdown_inline" },
-                ignore_install = {},
-                auto_install = true,
-            })
-        end
+        lazy = false,
+        config = function()
+            local ts = require("nvim-treesitter")
+            ts.install({"zig", "c", "cpp", "lua", "vim", "vimdoc", "bash", "python", "regex", "markdown_inline"})
+        end,
     },
 
     {
@@ -136,15 +131,6 @@ require('lazy').setup({
         cond = not vim.g.vscode;
     },
 
-    -- Lsp stuff
-    { "folke/neodev.nvim" },
-    { "saadparwaiz1/cmp_luasnip" },
-    { "L3MON4D3/LuaSnip" },
-    { "hrsh7th/nvim-cmp" },
-    { "hrsh7th/cmp-nvim-lsp" },
-    { "hrsh7th/cmp-buffer" },
-    { "hrsh7th/cmp-path" },
-    { "neovim/nvim-lspconfig" },
 
     { 'rhysd/vim-llvm' },
     { 'tikhomirov/vim-glsl' },
@@ -161,6 +147,17 @@ require('lazy').setup({
     }
 
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "zig" },
+    callback = function()
+        -- vim.treesitter.start()
+        vim.opt.foldmethod = "expr"
+        vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+
+    end,
+})
+
 
 local cs_filename = config_path .. "/colorscheme"
 assert(cs_filename)
@@ -451,154 +448,6 @@ nmap('<leader>rot', function() RunTestsSetOptions() end)
 nmap('<leader>sbd', function() SetBuildDir() end)
 
 
-require("neodev").setup()
-
-local lspconfig = require("lspconfig")
-
-local lsp_capabilities = require("cmp_nvim_lsp").default_capabilities()
-local luasnip = require("luasnip")
-
---  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
-    -- NOTE: Remember that lua is a real programming language, and as such it is possible
-    -- to define small helper and utility functions so you don't have to repeat yourself
-    -- many times.
-    --
-    -- In this case, we create a function that lets us more easily define mappings specific
-    -- for LSP related items. It sets the mode, buffer and description for us each time.
-    local lsp_nmap = function(keys, func, desc)
-        if desc then
-            desc = 'LSP: ' .. desc
-        end
-
-        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-    end
-
-    lsp_nmap('<leader>rn',
-        function()
-            vim.lsp.buf.rename()
-            vim.cmd('wa')
-            -- nui_lsp_rename()
-        end,
-        '[R]e[n]ame')
-
-    lsp_nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-    lsp_nmap('<leader>qf', ':lua vim.lsp.buf.code_action({apply=true})<CR>', '[C]ode [A]ction')
-
-    lsp_nmap('gd', vim.lsp.buf.definition, "Goto definition")
-    lsp_nmap('gr', telescope_fn.lsp_references, "Goto definition")
-    lsp_nmap('gI', telescope_fn.lsp_implementations, "Goto definition")
-
-    lsp_nmap('K', vim.lsp.buf.hover, "Hover documentation")
-    lsp_nmap('<C-s>', vim.lsp.buf.signature_help, "Signature documentation")
-end
-
-lspconfig.clangd.setup {
-    capabilities = lsp_capabilities,
-    on_attach = on_attach,
-}
-
-lspconfig.lua_ls.setup {
-    capabilities = lsp_capabilities,
-    on_attach = on_attach,
-    settings = {
-        Lua = {
-            diagnostics = {
-                -- globals = { "vim" },
-            },
-            workspace = {
-                library = {
-                    vim.env.VIMRUNTIME,
-                    "${3rd}/luv/library",
-                    "${3rd}/wezterm/library",
-                },
-                -- library = vim.api.nvim_get_runtime_file("", true),
-            },
-            telemetry = {
-                enable = false,
-            },
-        },
-    },
-}
-
-lspconfig.zls.setup {
-    capabilities = lsp_capabilities,
-    on_attach = on_attach,
-}
-
--- lspconfig.nixd.setup {
---     capabilities = lsp_capabilities,
---     on_attach = on_attach,
--- }
-
--- lspconfig.nil_ls.setup {
---     capabilities = lsp_capabilities,
---     on_attach = on_attach,
--- }
-
-
-local cmp = require("cmp") -- nvim-cmp
-local cmp_types = require("cmp.types")
-
-cmp.setup({
-    snippet = {
-        expand = function(args)
-            luasnip.lsp_expand(args.body)
-        end,
-    },
-    -- sources = cmp.config.sources({ { name = "nvim_lsp"} }),
-    sources = {
-        { name = "nvim_lsp", },
-        { name = "buffer", }
-    },
-
-    mapping = cmp.mapping.preset.insert({
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4), -- Up
-        ['<C-f>'] = cmp.mapping.scroll_docs(4), -- Down
-        -- ['<CR>'] = cmp.mapping.complete(), -- doesn't seem to do anything?
-
-        ['<C-j>'] = {
-          i = function()
-            if cmp.visible() then
-              cmp.select_next_item({ behavior = cmp_types.cmp.SelectBehavior.Insert })
-            else
-              cmp.complete()
-            end
-          end,
-        },
-        ['<C-k>'] = {
-          i = function()
-            if cmp.visible() then
-              cmp.select_prev_item({ behavior = cmp_types.cmp.SelectBehavior.Insert })
-            else
-              cmp.complete()
-            end
-          end,
-        },
-
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-           else
-                fallback()
-            end
-        end, { 'i', 's' }),
-
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-
-        ['<CR>'] = cmp.mapping.confirm {
-          behavior = cmp.ConfirmBehavior.Replace,
-          select = true,
-        },
-    }),
-
-})
 
 local dap = require("dap")
 local dapui = require("dapui")
