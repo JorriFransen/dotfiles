@@ -138,6 +138,11 @@ require('lazy').setup({
     {
         "folke/lazydev.nvim",
         ft = "lua",
+        opts = {
+            library = {
+                { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+            },
+        },
     },
     { "neovim/nvim-lspconfig" }, -- LSP client configuration
     {
@@ -234,7 +239,7 @@ vim.api.nvim_create_autocmd("FileType", {
 local lspconfig = require("lspconfig")
 -- Common settings for LSP clients
 local on_attach = function(_, bufnr)
-    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+    -- vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
     -- Mappings
     local bufopts = { noremap = true, silent = true, buffer = bufnr }
