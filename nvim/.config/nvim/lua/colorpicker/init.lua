@@ -93,6 +93,6 @@ local colorpicker = function(opts)
 end
 
 return {
-    colorpicker = colorpicker,
-    colorschemes = colorschemes
+    picker = colorpicker,
+    schemes = colorschemes
 }

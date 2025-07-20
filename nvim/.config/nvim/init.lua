@@ -34,9 +34,6 @@ require('lazy').setup({
     { 'christoomey/vim-tmux-navigator', lazy = false },
     { 'RyanMillerC/better-vim-tmux-resizer' },
 
-    -- 'Tetralux/odin.vim',
-    'tikhomirov/vim-glsl',
-
     {
         'klen/nvim-config-local',
         config = function()
@@ -53,22 +50,18 @@ require('lazy').setup({
         end
     },
 
-    -- { 'rcarriga/nvim-dap-ui', dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
-    -- { 'theHamsta/nvim-dap-virtual-text' },
-
     {
         'nvim-treesitter/nvim-treesitter',
         build = ":TSUpdate",
         config = function ()
             local configs = require("nvim-treesitter.configs")
 
-            -- ---@diagnostic disable-next-line: missing-fields
             configs.setup({
-                ensure_installed = { "zig", "c", "cpp", "lua", "vim", "vimdoc", "bash", "python", "regex", "markdown_inline" },
+                modules = {},
                 sync_install = false,
+                ensure_installed = { "zig", "c", "cpp", "lua", "vim", "vimdoc", "bash", "python", "regex", "markdown_inline" },
+                ignore_install = {},
                 auto_install = true,
-                highlight = { enable = false },
-                indent = { enable = false }
             })
         end
     },
@@ -135,8 +128,6 @@ require('lazy').setup({
         opts = { options = { section_separators = '', component_separators = '' }}
     },
 
-    { 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons' },
-
     -- Adds indentation guides
     {
         'lukas-reineke/indent-blankline.nvim',
@@ -144,8 +135,6 @@ require('lazy').setup({
         opts = {},
         cond = not vim.g.vscode;
     },
-
-    { 'rhysd/vim-llvm', },
 
     -- Lsp stuff
     { "folke/neodev.nvim" },
@@ -156,6 +145,21 @@ require('lazy').setup({
     { "hrsh7th/cmp-buffer" },
     { "hrsh7th/cmp-path" },
     { "neovim/nvim-lspconfig" },
+
+    { 'rhysd/vim-llvm' },
+    { 'tikhomirov/vim-glsl' },
+
+
+    -- Debugger
+    { 'mfussenegger/nvim-dap' },
+    {
+        'rcarriga/nvim-dap-ui',
+        dependencies = {
+            'mfussenegger/nvim-dap',
+            'nvim-neotest/nvim-nio',
+        },
+    }
+
 })
 
 local cs_filename = config_path .. "/colorscheme"
@@ -206,7 +210,7 @@ vim.o.timeoutlen = 350
 vim.o.completeopt = 'menuone,noselect'
 
 local colorpicker = require("colorpicker")
-local colorschemes = colorpicker.colorschemes
+local colorschemes = colorpicker.schemes
 
 vim.api.nvim_create_autocmd("ColorScheme", {
     group = vim.api.nvim_create_augroup("wezterm_colorscheme", { clear = true}),
@@ -238,26 +242,30 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     end,
 })
 
+local function nmap(keys, func, opts)
+    vim.keymap.set('n', keys, func, opts)
+end
+
 -- vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('i', '{<CR>', '{<CR>}<Esc>O', { noremap = true })
 
 -- Remap for dealing with word wrap
-vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+nmap('k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+nmap('j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Window navigation
-vim.keymap.set('n', '<leader>wv', function() vim.cmd('vsplit') end, { noremap = true })
-vim.keymap.set('n', '<leader>ws', function() vim.cmd('split') end, { noremap = true })
+nmap('<leader>wv', function() vim.cmd('vsplit') end, { noremap = true })
+nmap('<leader>ws', function() vim.cmd('split') end, { noremap = true })
 
-vim.keymap.set('n', '<c-h>', function() vim.cmd('TmuxNavigateLeft') end, {noremap = true})
-vim.keymap.set('n', '<c-l>', function() vim.cmd('TmuxNavigateRight') end, {noremap = true})
-vim.keymap.set('n', '<c-k>', function() vim.cmd('TmuxNavigateUp') end, {noremap = true})
-vim.keymap.set('n', '<c-j>', function() vim.cmd('TmuxNavigateDown') end, {noremap = true})
+nmap('<c-h>', function() vim.cmd('TmuxNavigateLeft') end, {noremap = true})
+nmap('<c-l>', function() vim.cmd('TmuxNavigateRight') end, {noremap = true})
+nmap('<c-k>', function() vim.cmd('TmuxNavigateUp') end, {noremap = true})
+nmap('<c-j>', function() vim.cmd('TmuxNavigateDown') end, {noremap = true})
 
-vim.keymap.set('n', '<m-h>', function() vim.cmd('TmuxResizeLeft') end, {noremap = true})
-vim.keymap.set('n', '<m-l>', function() vim.cmd('TmuxResizeRight') end, {noremap = true})
-vim.keymap.set('n', '<m-k>', function() vim.cmd('TmuxResizeUp') end, {noremap = true})
-vim.keymap.set('n', '<m-j>', function() vim.cmd('TmuxResizeDown') end, {noremap = true})
+nmap('<m-h>', function() vim.cmd('TmuxResizeLeft') end, {noremap = true})
+nmap('<m-l>', function() vim.cmd('TmuxResizeRight') end, {noremap = true})
+nmap('<m-k>', function() vim.cmd('TmuxResizeUp') end, {noremap = true})
+nmap('<m-j>', function() vim.cmd('TmuxResizeDown') end, {noremap = true})
 
 -- Apply macro to visual selection
 -- vim.keymap.set('v', '@', ':normal @', { noremap = true });
@@ -288,87 +296,88 @@ telescope.setup {
     }
 }
 
-local colorpicker = telescope.load_extension("colorpicker").colorpicker
 telescope.load_extension('fzf')
 
 local telescope_fn = require('telescope.builtin')
 local telescope_dropdown = require('telescope.themes').get_dropdown { winblend = 10, previewer = false }
 
-vim.keymap.set('n', '<leader>ff', telescope_fn.find_files, { noremap = true })
-vim.keymap.set('n', '<leader>bb', function () telescope_fn.buffers(telescope_dropdown) end, { noremap = true })
-vim.keymap.set('n', '<leader>rg', telescope_fn.live_grep, { noremap = true })
-vim.keymap.set('n', '<leader>*', telescope_fn.grep_string, { noremap = true })
-vim.keymap.set('n', '<leader>tr', telescope_fn.resume, { noremap = true })
-vim.keymap.set('n', '<leader>?', function() telescope_fn.oldfiles(telescope_dropdown) end, { noremap = true })
-vim.keymap.set('n', '<leader>/', function() telescope_fn.current_buffer_fuzzy_find(telescope_dropdown) end, { noremap = true })
-vim.keymap.set('n', '<leader>cs', function() colorpicker(telescope_dropdown) end, { noremap = true })
+nmap('<leader>ff', telescope_fn.find_files, { noremap = true })
+nmap('<leader>bb', function () telescope_fn.buffers(telescope_dropdown) end, { noremap = true })
+nmap('<leader>rg', telescope_fn.live_grep, { noremap = true })
+nmap('<leader>*', telescope_fn.grep_string, { noremap = true })
+nmap('<leader>tr', telescope_fn.resume, { noremap = true })
+nmap('<leader>?', function() telescope_fn.oldfiles(telescope_dropdown) end, { noremap = true })
+nmap('<leader>/', function() telescope_fn.current_buffer_fuzzy_find(telescope_dropdown) end, { noremap = true })
+nmap('<leader>cs', function() colorpicker.picker(telescope_dropdown) end, { noremap = true })
 
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
 
-vim.keymap.set('n', '<leader>ut', function() vim.cmd('UndotreeToggle') end, { noremap = true })
-vim.keymap.set('n', '<leader>uf', function() vim.cmd('UndotreeFocus') end, { noremap = true })
-vim.keymap.set('n', '<leader>uc', function() vim.cmd('UndotreeHide') end, { noremap = true })
+nmap('<leader>ut', function() vim.cmd('UndotreeToggle') end, { noremap = true })
+nmap('<leader>uf', function() vim.cmd('UndotreeFocus') end, { noremap = true })
+nmap('<leader>uc', function() vim.cmd('UndotreeHide') end, { noremap = true })
 
-vim.keymap.set('n', '<leader>gs', function() vim.cmd('G') end, { noremap = true })
-vim.keymap.set('n', '<leader>gp', function() vim.cmd('G push') end, { noremap = true })
-vim.keymap.set('n', '<leader>gl', function() vim.cmd('G log') end, { noremap = true })
+nmap('<leader>gs', function() vim.cmd('G') end, { noremap = true })
+nmap('<leader>gp', function() vim.cmd('G push') end, { noremap = true })
+nmap('<leader>gl', function() vim.cmd('G log') end, { noremap = true })
 
-vim.keymap.set('n', '<leader>thh', function() vim.cmd('set hls!') end, { noremap = true })
-vim.keymap.set('n', '<leader>T', function() vim.cmd('tabe') vim.cmd('terminal') vim.cmd('startinsert') end, { noremap = true, desc = "Open terminal in new tab"})
-vim.keymap.set('n', '<C-T><C-h>', function() vim.cmd('tabp') end, { noremap = true });
+nmap('<leader>thh', function() vim.cmd('set hls!') end, { noremap = true })
+nmap('<leader>T', function() vim.cmd('tabe') vim.cmd('terminal') vim.cmd('startinsert') end, { noremap = true, desc = "Open terminal in new tab"})
+nmap('<C-T><C-h>', function() vim.cmd('tabp') end, { noremap = true });
 vim.keymap.set('i', '<C-T><C-h>', function() vim.cmd('stopinsert') vim.cmd('tabp') end, { noremap = true });
-vim.keymap.set('n', '<C-T><C-l>', function() vim.cmd('tabn') end, { noremap = true });
+nmap('<C-T><C-l>', function() vim.cmd('tabn') end, { noremap = true });
 vim.keymap.set('i', '<C-T><C-l>', function() vim.cmd('stopinsert') vim.cmd('tabn') end, { noremap = true });
 vim.keymap.set('t', '<C-T><C-h>', '<C-\\><C-n>:tabp<CR>', { noremap = true });
 vim.keymap.set('t', '<C-T><C-l>', '<C-\\><C-n>:tabn<CR>', { noremap = true });
 
-vim.keymap.set('n', '<leader>cd', ":execute empty(filter(getwininfo(), 'v:val.quickfix')) == 1 ? 'botright copen' : 'cclose'<CR>", { noremap = true, silent = true });
-vim.keymap.set('n', '<leader>en', function() vim.cmd('cn') end)
-vim.keymap.set('n', '<leader>ep', function() vim.cmd('cp') end)
-vim.keymap.set('n', '<leader>ef', function() vim.cmd('cfirst') end);
+nmap('<leader>cd', ":execute empty(filter(getwininfo(), 'v:val.quickfix')) == 1 ? 'botright copen' : 'cclose'<CR>", { noremap = true, silent = true });
+nmap('<leader>en', function() vim.cmd('cn') end)
+nmap('<leader>ep', function() vim.cmd('cp') end)
+nmap('<leader>ef', function() vim.cmd('cfirst') end);
 
-vim.keymap.set('n', '<leader>v', '<c-v>')
+nmap('<leader>v', '<c-v>')
 
 
-vim.opt.listchars = { eol = '·', tab = '⍿·', trail = '×' }
+vim.opt.listchars = "eol:.,tab:⍿·,trail:×"
 
 local ibl = require("ibl")
 ibl.setup()
 
-local ws_msg = ''
-local ws_timer = vim.uv.new_timer()
-local ws_buf = -1
-local ws_should_update = true
+local lualine = require('lualine')
 
----@cast ws_timer -nil
-ws_timer:start(2000, 2000, function()
-    ws_should_update = true
-    ws_buf = -1
-end)
-
-local function ws_component()
-    local bufnr = vim.api.nvim_get_current_buf()
-    if ws_should_update or ws_buf ~= bufnr then
-        ws_should_update = false
-        ws_buf = bufnr;
-        local ft = vim.api.nvim_get_option_value('filetype', { buf = bufnr})
-        local bt = vim.api.nvim_get_option_value('buftype', { buf = bufnr})
-
-        if ft == 'TelescopePrompt' or
-           ft == "fugitive" or
-           bt == 'terminal' then
-            return ''
-        end
-
-        local line = vim.fn.search('\\s\\+$', 'nw')
-        if line ~= 0 then
-            ws_msg =  '[' .. line .. ']trail'
-        else
-            ws_msg = ''
-        end
-    end
-    return ws_msg
-end
+-- local ws_msg = ''
+-- local ws_timer = vim.uv.new_timer()
+-- local ws_buf = -1
+-- local ws_should_update = true
+--
+-- ---@cast ws_timer -nil
+-- ws_timer:start(2000, 2000, function()
+--     ws_should_update = true
+--     ws_buf = -1
+-- end)
+--
+-- local function ws_component()
+--     local bufnr = vim.api.nvim_get_current_buf()
+--     if ws_should_update or ws_buf ~= bufnr then
+--         ws_should_update = false
+--         ws_buf = bufnr;
+--         local ft = vim.api.nvim_get_option_value('filetype', { buf = bufnr})
+--         local bt = vim.api.nvim_get_option_value('buftype', { buf = bufnr})
+--
+--         if ft == 'TelescopePrompt' or
+--            ft == "fugitive" or
+--            bt == 'terminal' then
+--             return ''
+--         end
+--
+--         local line = vim.fn.search('\\s\\+$', 'nw')
+--         if line ~= 0 then
+--             ws_msg =  '[' .. line .. ']trail'
+--         else
+--             ws_msg = ''
+--         end
+--     end
+--     return ws_msg
+-- end
 
 local function macro_component()
     local rec_reg = vim.fn.reg_recording()
@@ -377,10 +386,6 @@ local function macro_component()
     else return "Recording @" .. rec_reg end
 end
 
-local lualine = require('lualine')
-
--- Hide the commandline
--- vim.opt.cmdheight = 0
 
 -- Force refresh lualine when we start recording a macro
 vim.api.nvim_create_autocmd({ "RecordingEnter" }, {
@@ -399,6 +404,11 @@ vim.api.nvim_create_autocmd({ "RecordingLeave" }, {
         end))
     end,
 })
+
+local function ws_component()
+    local space = vim.fn.search([[\s\+$]], 'nwc')
+    return space ~= 0 and '[' .. space .. ']trail' or ""
+end
 
 lualine.setup {
     options = { section_separators = '', component_separators = '' },
@@ -420,33 +430,25 @@ lualine.setup {
     extensions = {'quickfix'},
 }
 
----@diagnostic disable-next-line: missing-fields
-require("bufferline").setup{
----@diagnostic disable-next-line: missing-fields
-    options = {
-        mode = "tabs",
-        always_show_bufferline = false,
-    }
-}
 vim.o.showtabline = 1
 
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+nmap('[d', function() vim.diagnostic.jump({count = -1, float = true }) end, { desc = 'Go to previous diagnostic message' })
+nmap(']d', function() vim.diagnostic.jump({count = 1, float = true }) end, { desc = 'Go to next diagnostic message' })
+nmap('<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+nmap('<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
-vim.keymap.set('n', '<leader>ga', function() vim.cmd('ClangdSwitchSourceHeader') end);
-vim.keymap.set('n', '<F1>', function() Compile() end)
+nmap('<leader>ga', function() vim.cmd('ClangdSwitchSourceHeader') end);
+nmap('<F1>', function() Compile() end)
 vim.keymap.set('i', '<F1>', function() vim.cmd('stopinsert') Compile() end)
-vim.keymap.set('n', '<leader><F1>', function() EmitCompileCommands() end)
-vim.keymap.set('n', '<F2>', function() Clean() end)
+nmap('<leader><F1>', function() EmitCompileCommands() end)
+nmap('<F2>', function() Clean() end)
 vim.keymap.set('i', '<F2>', function() vim.cmd('stopinsert') Clean() end)
-vim.keymap.set('n', '<F3>', function() Iwyu() end)
-vim.keymap.set('n', '<leader>rr', function() Run() end)
-vim.keymap.set('n', '<leader>rt', function() RunTests() end)
-vim.keymap.set('n', '<leader>ror', function() RunSetOptions() end)
-vim.keymap.set('n', '<leader>rot', function() RunTestsSetOptions() end)
-vim.keymap.set('n', '<leader>sbd', function() SetBuildDir() end)
+nmap('<F3>', function() Iwyu() end)
+nmap('<leader>rr', function() Run() end)
+nmap('<leader>rt', function() RunTests() end)
+nmap('<leader>ror', function() RunSetOptions() end)
+nmap('<leader>rot', function() RunTestsSetOptions() end)
+nmap('<leader>sbd', function() SetBuildDir() end)
 
 
 require("neodev").setup()
@@ -464,7 +466,7 @@ local on_attach = function(_, bufnr)
     --
     -- In this case, we create a function that lets us more easily define mappings specific
     -- for LSP related items. It sets the mode, buffer and description for us each time.
-    local nmap = function(keys, func, desc)
+    local lsp_nmap = function(keys, func, desc)
         if desc then
             desc = 'LSP: ' .. desc
         end
@@ -472,7 +474,7 @@ local on_attach = function(_, bufnr)
         vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
 
-    nmap('<leader>rn',
+    lsp_nmap('<leader>rn',
         function()
             vim.lsp.buf.rename()
             vim.cmd('wa')
@@ -480,15 +482,15 @@ local on_attach = function(_, bufnr)
         end,
         '[R]e[n]ame')
 
-    nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-    nmap('<leader>qf', ':lua vim.lsp.buf.code_action({apply=true})<CR>', '[C]ode [A]ction')
+    lsp_nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+    lsp_nmap('<leader>qf', ':lua vim.lsp.buf.code_action({apply=true})<CR>', '[C]ode [A]ction')
 
-    nmap('gd', vim.lsp.buf.definition, "Goto definition")
-    nmap('gr', telescope_fn.lsp_references, "Goto definition")
-    nmap('gI', telescope_fn.lsp_implementations, "Goto definition")
+    lsp_nmap('gd', vim.lsp.buf.definition, "Goto definition")
+    lsp_nmap('gr', telescope_fn.lsp_references, "Goto definition")
+    lsp_nmap('gI', telescope_fn.lsp_implementations, "Goto definition")
 
-    nmap('K', vim.lsp.buf.hover, "Hover documentation")
-    nmap('<C-s>', vim.lsp.buf.signature_help, "Signature documentation")
+    lsp_nmap('K', vim.lsp.buf.hover, "Hover documentation")
+    lsp_nmap('<C-s>', vim.lsp.buf.signature_help, "Signature documentation")
 end
 
 lspconfig.clangd.setup {
@@ -529,10 +531,10 @@ lspconfig.zls.setup {
 --     on_attach = on_attach,
 -- }
 
-lspconfig.nil_ls.setup {
-    capabilities = lsp_capabilities,
-    on_attach = on_attach,
-}
+-- lspconfig.nil_ls.setup {
+--     capabilities = lsp_capabilities,
+--     on_attach = on_attach,
+-- }
 
 
 local cmp = require("cmp") -- nvim-cmp
@@ -598,10 +600,92 @@ cmp.setup({
 
 })
 
+local dap = require("dap")
+local dapui = require("dapui")
+
+vim.cmd.hi [[ DapBreakPointText guifg=#ff0000 ]]
+vim.cmd.hi [[ DapStoppedText guifg=#00ff00 ]]
+vim.cmd.hi [[ DapStoppedLine guibg=#003319]]
+vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "DapBreakPointText"})
+vim.fn.sign_define("DapBreakpointCondition", { text = "", texthl = "DapBreakPointText"})
+vim.fn.sign_define("DapStopped", { text = "", texthl = "DapStoppedText", linehl = "DapStoppedLine" })
+
+---@diagnostic disable-next-line: missing-fields
+dapui.setup({
+    element_mappings = {
+        stacks = {
+            open = "<CR>",
+            expand = "o",
+        },
+    },
+})
+
+nmap('<leader>dp', dap.up);
+nmap('<leader>dn', dap.down);
+
+dap.listeners.before.attach.dapui_config = function()
+    dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+    dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+    dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+    dapui.close()
+end
+
+nmap('<leader><F5>', function() require('dap').disconnect({teminateDebuggee = true}) end)
+nmap('<F5>', function() require('dap').continue() end)
+nmap('<F10>', function() require('dap').step_over() end)
+nmap('<F11>', function() require('dap').step_into() end)
+nmap('<F12>', function() require('dap').step_out() end)
+nmap('<Leader>b', function() require('dap').toggle_breakpoint() end)
+nmap('<Leader>B', function() require('dap').set_breakpoint(vim.fn.input("Breakpoint condition: ")) end)
+nmap('<Leader>lp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
+nmap('<Leader>dr', function() require('dap').repl.open() end)
+nmap('<Leader>dl', function() require('dap').run_last() end)
+vim.keymap.set({'n', 'v'}, '<Leader>dh', function()
+  require('dap.ui.widgets').hover()
+end)
+vim.keymap.set({'n', 'v'}, '<Leader>dp', function()
+  require('dap.ui.widgets').preview()
+end)
+nmap('<Leader>df', function()
+  local widgets = require('dap.ui.widgets')
+  widgets.centered_float(widgets.frames)
+end)
+nmap('<Leader>ds', function()
+  local widgets = require('dap.ui.widgets')
+  widgets.centered_float(widgets.scopes)
+end)
+
+dap.adapters = {
+    codelldb = {
+        type = "server",
+        port = "${port}",
+        executable = {
+            command = "codelldb",
+            args = {
+                "--port", "${port}",
+                -- "--liblldb", "/home/jorri/dev/llvm-project/build/lib/liblldb.so",
+            },
+        },
+        options = {
+            logging = {
+                trace = true,
+                engineLogging = true
+            },
+        },
+    }
+}
 
 local ft = require('Comment.ft')
 ft.set('zc', { '//%s', '/*%s/*'})
 
+
+-- Extra text objects
 local chars = { '_', '.', ':', ',', ';', '|', '/', '\\', '*', '+', '%', '`', '?' }
 for _,char in ipairs(chars) do
     for _,mode in ipairs({ 'x', 'o' }) do
