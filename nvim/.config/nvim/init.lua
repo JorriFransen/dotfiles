@@ -2,238 +2,290 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-vim.o.number = true vim.wo.number = true
+vim.o.number = true
 vim.o.relativenumber = true
-vim.wo.relativenumber = true
 vim.o.foldenable = false
 
-local config_path = vim.fn.stdpath("config")
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.uv.fs_stat(lazypath) then
-    vim.fn.system({
-        "git",
-        "clone", "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
-        lazypath,
-    })
-end
-vim.opt.rtp:prepend(lazypath)
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
 
--- vim.g.zig_fmt_autosave = false
+vim.o.cursorline = true
+vim.o.mouse = 'a'
+vim.o.clipboard = 'unnamedplus'
+
+vim.o.showmode = true
+
+vim.o.hlsearch = true
+vim.o.ignorecase = true
+vim.o.smartcase = true
+
+vim.o.scrolloff = 5
+vim.o.splitbelow = true
+vim.o.splitright = true
+
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.backspace = 'start,eol,indent'
+vim.o.expandtab = true
+
+vim.o.wrap = true
+vim.o.breakindent = true
+
+vim.o.hidden = true
+vim.o.swapfile = false
+vim.o.undofile = true
+vim.o.undodir = vim.fn.expand('~/.nvim/undo')
+
+vim.o.signcolumn = 'number'
+vim.o.termguicolors = true
+
+vim.o.updatetime = 100
+vim.o.timeoutlen = 350
+
+-- vim.o.completeopt = 'menuone,noselect'
+
+vim.api.nvim_create_autocmd({ "FileType" }, { pattern = 'asm', command = 'setlocal expandtab'})
+
 local localzigfmt = vim.api.nvim_create_augroup("localzigfmt", {});
 vim.api.nvim_create_autocmd("BufWritePost", { group = localzigfmt,
                              pattern = {"*.zig"}, command = 'silent !zig fmt <afile>'})
 
-require('lazy').setup({
+local config_path = vim.fn.stdpath("config")
+local pack_path = vim.fn.stdpath("data") .. "/site/pack/core/opt"
 
-    { 'tpope/vim-fugitive', },
-
-    'mbbill/undotree',
-
-    { 'skywind3000/asyncrun.vim', },
-
-    "nvim-lua/plenary.nvim",
-    { 'christoomey/vim-tmux-navigator', lazy = false },
-    { 'RyanMillerC/better-vim-tmux-resizer' },
-
+vim.pack.add({
+    "https://github.com/tpope/vim-fugitive",
+    "https://github.com/mbbill/undotree",
+    "https://github.com/skywind3000/asyncrun.vim",
+    "https://github.com/nvim-lua/plenary.nvim",
+    "https://github.com/christoomey/vim-tmux-navigator",
+    "https://github.com/RyanMillerC/better-vim-tmux-resizer",
+    "https://github.com/klen/nvim-config-local",
+    "https://github.com/nvim-tree/nvim-web-devicons",
+    "https://github.com/goolord/alpha-nvim", -- Welcome screen
     {
-        'klen/nvim-config-local',
-        config = function()
-            require('config-local').setup { }
-        end,
+        src = "https://github.com/nvim-treesitter/nvim-treesitter",
+        version = "main",
     },
-
-    -- Welcome screen
-    {
-        'goolord/alpha-nvim',
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
-        config = function ()
-            require'alpha'.setup(require'alpha.themes.startify'.config)
-        end
-    },
-
-    {
-        'nvim-treesitter/nvim-treesitter',
-        branch = "main",
-        build = ":TSUpdate",
-        lazy = false,
-        config = function()
-            local ts = require("nvim-treesitter")
-            ts.install({"zig", "c", "cpp", "lua", "vim", "vimdoc", "bash", "python", "regex", "markdown_inline"})
-        end,
-    },
-
-    {
-        'numToStr/Comment.nvim',
-        opts = {
-            padding = true,
-            toggler = {
-                line = '<leader>;',
-                block = '<leader>b;',
-            },
-            opleader = {
-                line = '<leader>;',
-                block = '<leader>b;',
-            },
-            mappings = {
-                basic = true,
-                extra = false,
-            },
-        },
-        lazy = false,
-    },
-
-    -- Detect tabstop and shiftwidth automatically
-    'tpope/vim-sleuth',
-
-    'Raimondi/delimitmate',
-    -- {
-    --     'windwp/nvim-autopairs',
-    --     event = "InsertEnter",
-    --     opts = {}
-    -- },
-
-    'psliwka/vim-smoothie',
-
-    {
-        'nvim-telescope/telescope.nvim',
-        branch = '0.1.x',
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-            {
-                'nvim-telescope/telescope-fzf-native.nvim',
-                build = 'make',
-                cond = function()
-                    return vim.fn.executable('make') == 1
-                end,
-            },
-        },
-    },
+    "https://github.com/numToStr/Comment.nvim",
+    "https://github.com/tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
+    "https://github.com/Raimondi/delimitmate",
+    "https://github.com/windwp/nvim-autopairs",
+    "https://github.com/psliwka/vim-smoothie",
+    "https://github.com/nvim-telescope/telescope-fzf-native.nvim",
+    "https://github.com/nvim-telescope/telescope.nvim",
 
     -- Themes
-    { "folke/tokyonight.nvim", lazy = true, },
-    { "catppuccin/nvim", name = "catppuccin", lazy = true },
-    { "metalelf0/base16-black-metal-scheme", lazy = true },
-    { "morhetz/gruvbox", lazy = true },
-    { "rebelot/kanagawa.nvim", lazy = true },
-    { "sainnhe/everforest", lazy = true },
-    { "EdenEast/nightfox.nvim", lazy = true },
+    "https://github.com/folke/tokyonight.nvim",
+    "https://github.com/catppuccin/nvim",
+    "https://github.com/metalelf0/base16-black-metal-scheme",
+    "https://github.com/morhetz/gruvbox",
+    "https://github.com/rebelot/kanagawa.nvim",
+    "https://github.com/sainnhe/everforest",
+    "https://github.com/EdenEast/nightfox.nvim",
 
-    -- Lualine statusline
-    {
-        'nvim-lualine/lualine.nvim',
-        opts = { options = { section_separators = '', component_separators = '' }}
-    },
 
-    -- Adds indentation guides
-    {
-        'lukas-reineke/indent-blankline.nvim',
-        main = "ibl",
-        opts = {},
-        cond = not vim.g.vscode;
-    },
+    "https://github.com/nvim-lualine/lualine.nvim",
+    "https://github.com/lukas-reineke/indent-blankline.nvim",
 
     -- LSP
+    "https://github.com/neovim/nvim-lspconfig",
+    "https://github.com/hrsh7th/nvim-cmp",
+    "https://github.com/hrsh7th/nvim-cmp",
+    "https://github.com/hrsh7th/cmp-nvim-lsp",
+    "https://github.com/hrsh7th/cmp-buffer",
+    "https://github.com/saadparwaiz1/cmp_luasnip",
     {
-        "folke/lazydev.nvim",
-        ft = "lua",
-        opts = {
-            library = {
-                { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-            },
-        },
+        src = "https://github.com/L3MON4D3/LuaSnip",
+        version = vim.version.range('2.0');
     },
-    { "neovim/nvim-lspconfig" }, -- LSP client configuration
-    {
-        -- Autocompletion
-        "hrsh7th/nvim-cmp",
-        opts = function(_,opts)
-            opts.sources = opts.sources or {}
-            table.insert(opts.sources, {
-                name = "lazydev",
-                group_index = 0,
-            })
-        end,
-        dependencies = {
-            "hrsh7th/cmp-nvim-lsp",     -- LSP source for nvim-cmp
-            "hrsh7th/cmp-buffer",       -- Buffer source for nvim-cmp
-            "hrsh7th/cmp-path",         -- Path source for nvim-cmp
-            "saadparwaiz1/cmp_luasnip", -- Snippet support (optional)
-            {
-                "L3MON4D3/LuaSnip",
-                version = "v2.*",
-                build = "make install_jsregexp"
-            },
-        },
-        config = function()
-            local cmp = require("cmp")
-            local luasnip = require("luasnip")
+    "https://github.com/folke/lazydev.nvim",
 
-            cmp.setup({
-                snippet = {
-                    expand = function(args)
-                        luasnip.lsp_expand(args.body)
-                    end,
-                },
-                mapping = cmp.mapping.preset.insert({
-                    ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-                    -- ["<C-f>"] = cmp.mapping.scroll_docs(4), -- conflicts with tmux-sessionizer
-                    ["<C-space>"] = cmp.mapping.complete(),
-                    ["<C-e>"] = cmp.mapping.abort(),
-                    ["<CR>"] = cmp.mapping.confirm({select = true}),
-
-                    -- Jump to next/previous placeholder (snippets)
-                    ["<Tab>"] = cmp.mapping(function(fallback)
-                        if luasnip.expand_or_jumpable() then
-                            luasnip.expand_or_jump()
-                        else
-                            fallback()
-                        end
-                    end, {"i", "s"}),
-                    ["<S-Tab>"] = cmp.mapping(function(fallback)
-                        if luasnip.jumpable(-1) then
-                            luasnip.jump(-1)
-                        else
-                            fallback()
-                        end
-                    end, {"i", "s"})
-
-                }),
-                sources = cmp.config.sources({
-                    { name = "nvim_lsp" },
-                    { name = "buffer" },
-                    { name = "path" },
-                }),
-            })
-        end,
-    },
-
-
-    { 'rhysd/vim-llvm' },
-    { 'tikhomirov/vim-glsl' },
-
+    "https://github.com/rhysd/vim-llvm",
+    "https://github.com/tikhomirov/vim-glsl",
 
     -- Debugger
-    { 'mfussenegger/nvim-dap' },
-    {
-        'rcarriga/nvim-dap-ui',
-        dependencies = {
-            'mfussenegger/nvim-dap',
-            'nvim-neotest/nvim-nio',
-        },
-    }
-
+    "https://github.com/mfussenegger/nvim-dap",
+    "https://github.com/rcarriga/nvim-dap-ui",
+    "https://github.com/nvim-neotest/nvim-nio",
 })
 
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "zig" },
-    callback = function()
-        vim.treesitter.start()
-        vim.o.foldmethod = "expr"
-        vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+local function nmap(keys, func, opts)
+    vim.keymap.set('n', keys, func, opts)
+end
 
+require("config-local").setup({})
+
+require("alpha").setup(require("alpha.themes.startify").config)
+
+require("nvim-treesitter").install({"zig", "c", "cpp", "lua", "vim", "vimdoc", "bash", "python", "regex", "markdown_inline"})
+
+require("Comment").setup({
+    padding = true,
+    toggler = {
+        line = '<leader>;',
+        block = '<leader>b;',
+    },
+    opleader = {
+        line = '<leader>;',
+        block = '<leader>b;',
+    },
+    mappings = {
+        basic = true,
+        extra = false,
+    },
+})
+
+require("nvim-autopairs").setup({})
+
+local telescope = require("telescope")
+telescope.setup {
+    defaults = {
+        extensions = {
+            fzf = {
+                fuzzy = true,
+                override_generic_sorter = true,
+                override_file_sorter = true,
+            }
+        },
+    },
+    pickers = {
+        colorscheme = {
+            enable_preview = false,
+        }
+    }
+}
+
+local fzf_path = pack_path .. "/telescope-fzf-native.nvim"
+if not vim.fn.isdirectory(fzf_path) then
+    vim.notify("Unable to find fzf package path", vim.log.levels.ERROR)
+end
+
+local fzf_artifact_path = fzf_path .. "/build/libfzf.so"
+if vim.fn.filereadable(fzf_artifact_path) ~= 1 then
+    vim.notify(string.format("Building %s...", fzf_artifact_path), vim.log.levels.INFO)
+    local cmd = "cd " .. vim.fn.shellescape(fzf_path) .. " && make"
+    local output = vim.fn.system(cmd)
+    local status = vim.v.shell_error
+
+    if status ~= 0 then
+        vim.notify(string.format("Failed to build %s.\nOutput:\n%s", fzf_artifact_path, output), vim.log.levels.ERROR)
+    else
+        vim.notify(string.format("%s built successfully", fzf_artifact_path), vim.log.levels.INFO)
+    end
+end
+
+telescope.load_extension('fzf')
+
+local telescope_fn = require('telescope.builtin')
+local telescope_dropdown = require('telescope.themes').get_dropdown { winblend = 10, previewer = false }
+local colorpicker = require("colorpicker")
+
+nmap('<leader>ff', function () telescope_fn.find_files() end, { noremap = true  })
+nmap('<leader>bb', function () telescope_fn.buffers(telescope_dropdown) end, { noremap = true })
+nmap('<leader>rg', telescope_fn.live_grep, { noremap = true })
+nmap('<leader>*', telescope_fn.grep_string, { noremap = true })
+nmap('<leader>tr', telescope_fn.resume, { noremap = true })
+nmap('<leader>?', function() telescope_fn.oldfiles(telescope_dropdown) end, { noremap = true })
+nmap('<leader>/', function() telescope_fn.current_buffer_fuzzy_find(telescope_dropdown) end, { noremap = true })
+nmap('<leader>cs', function() colorpicker.picker(telescope_dropdown) end, { noremap = true })
+
+local function macro_component()
+    local rec_reg = vim.fn.reg_recording()
+
+    if rec_reg == "" then return ""
+    else return "Recording @" .. rec_reg end
+end
+
+local function ws_component()
+    local space = vim.fn.search([[\s\+$]], 'nwc')
+    return space ~= 0 and '[' .. space .. ']trail' or ""
+end
+
+
+local lualine = require("lualine");
+lualine.setup {
+    options = { section_separators = '', component_separators = '' },
+    sections = {
+        lualine_a = { { 'mode', fmt = function(str) return string.lower(str) end } },
+
+        lualine_b = {
+            'branch',
+            'diff',
+            { 'diagnostics', sources = { 'nvim_lsp'}, },
+            { macro_component },
+        },
+
+        lualine_c = {'filename'},
+        lualine_x = {'encoding', 'fileformat', 'filetype'},
+        lualine_y = {'searchcount' },
+        lualine_z = {'location', { ws_component, color = { bg = 'orange' } } }
+    },
+    extensions = {'quickfix'},
+}
+
+vim.o.showtabline = 1
+
+-- Force refresh lualine when we start recording a macro
+vim.api.nvim_create_autocmd({ "RecordingEnter" }, {
+    callback = function()
+        lualine.refresh({place={"statusline"}})
     end,
+})
+
+vim.api.nvim_create_autocmd({ "RecordingLeave" }, {
+    callback = function()
+        -- Wait for vim.fn.reg_recording to be purged
+        local timer = vim.uv.new_timer()
+        ---@cast timer -nil
+        timer:start(50, 0, vim.schedule_wrap(function()
+            lualine.refresh({place={"statusline"}})
+        end))
+    end,
+})
+
+local ibl = require("ibl")
+ibl.setup()
+
+local cmp = require("cmp");
+local luasnip = require("luasnip")
+
+cmp.setup({
+    snippet = {
+        expand = function(args)
+            luasnip.lsp_expand(args.body)
+        end,
+    },
+    mapping = cmp.mapping.preset.insert({
+        ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+        -- ["<C-f>"] = cmp.mapping.scroll_docs(4), -- conflicts with tmux-sessionizer
+        ["<C-space>"] = cmp.mapping.complete(),
+        ["<C-e>"] = cmp.mapping.abort(),
+        ["<CR>"] = cmp.mapping.confirm({select = true}),
+
+        -- Jump to next/previous placeholder (snippets)
+        ["<Tab>"] = cmp.mapping(function(fallback)
+            if luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+            else
+                fallback()
+            end
+        end, {"i", "s"}),
+        ["<S-Tab>"] = cmp.mapping(function(fallback)
+            if luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, {"i", "s"})
+
+    }),
+    sources = cmp.config.sources({
+        { name = "nvim_lsp" },
+        { name = "buffer" },
+        { name = "path" },
+    }),
 })
 
 local lspconfig = require("lspconfig")
@@ -247,7 +299,7 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
     vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
+    vim.keymap.set('n', '<c-s>', vim.lsp.buf.signature_help, bufopts)
     vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
     vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
     vim.keymap.set('n', '<space>wl', function()
@@ -295,6 +347,19 @@ lspconfig.lua_ls.setup {
     },
 }
 
+
+-- Zig
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "zig" },
+    callback = function()
+        vim.treesitter.start()
+        vim.o.foldmethod = "expr"
+        vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+
+    end,
+})
+
+-- Colorscheme switcher
 local cs_filename = config_path .. "/colorscheme"
 assert(cs_filename)
 local cs_file = io.open(cs_filename, "r")
@@ -305,45 +370,9 @@ else
         vim.cmd "colorscheme tokyonight-night"
 end
 
-vim.o.cursorline = true
-vim.o.mouse = 'a'
-vim.o.clipboard = 'unnamedplus'
 
-vim.o.showmode = false
-
-vim.o.hlsearch = true
-vim.o.ignorecase = true
-vim.o.smartcase = true
-
-vim.o.scrolloff = 5
-vim.o.splitbelow = true
-vim.o.splitright = true
-
-vim.o.tabstop = 4
-vim.o.shiftwidth = 4
-vim.o.backspace = 'start,eol,indent'
-vim.o.expandtab = true
-
-vim.api.nvim_create_autocmd({ "Filetype" }, { pattern = 'asm', command = 'setlocal expandtab'})
-
-vim.o.wrap = true
-vim.o.breakindent = true
-
-vim.o.hidden = true
-vim.o.swapfile = false
-vim.o.undofile = true
-vim.o.undodir = vim.fn.expand('~/.nvim/undo')
-
-vim.o.signcolumn = 'number'
-vim.o.termguicolors = true
-
-vim.o.updatetime = 100
-vim.o.timeoutlen = 350
-
-vim.o.completeopt = 'menuone,noselect'
-
-local colorpicker = require("colorpicker")
 local colorschemes = colorpicker.schemes
+
 
 vim.api.nvim_create_autocmd("ColorScheme", {
     group = vim.api.nvim_create_augroup("wezterm_colorscheme", { clear = true}),
@@ -362,7 +391,7 @@ vim.api.nvim_create_autocmd("ColorScheme", {
         assert(wfile);
         wfile:write(colorscheme);
         wfile:close()
-        -- vim.notify("Setting Wezterm color scheme to " .. colorscheme, vim.log.levels.INFO)
+        vim.notify("Setting Wezterm color scheme to " .. colorscheme, vim.log.levels.INFO)
 
         -- Write theme to file for nvim to read
         local nfilename = vim.fn.expand("$XDG_CONFIG_HOME/nvim/colorscheme")
@@ -374,10 +403,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 
     end,
 })
-
-local function nmap(keys, func, opts)
-    vim.keymap.set('n', keys, func, opts)
-end
 
 -- vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('i', '{<CR>', '{<CR>}<Esc>O', { noremap = true })
@@ -399,49 +424,6 @@ nmap('<m-h>', function() vim.cmd('TmuxResizeLeft') end, {noremap = true})
 nmap('<m-l>', function() vim.cmd('TmuxResizeRight') end, {noremap = true})
 nmap('<m-k>', function() vim.cmd('TmuxResizeUp') end, {noremap = true})
 nmap('<m-j>', function() vim.cmd('TmuxResizeDown') end, {noremap = true})
-
--- Apply macro to visual selection
--- vim.keymap.set('v', '@', ':normal @', { noremap = true });
-local function apply_macro_to_visual_range()
-     return ':norm @' .. vim.fn.getcharstr() .. '<CR>'
-end
-vim.keymap.set('x', '@', apply_macro_to_visual_range, { expr = true });
-
--- [[ Telescope config ]] --
-local telescope = require "telescope"
-telescope.setup {
-    defaults = {
-        extensions = {
-            fzf = {
-                fuzzy = true,
-                override_generic_sorter = true,
-                override_file_sorter = true,
-            }
-        },
-        mappings = {
-
-        }
-    },
-    pickers = {
-        colorscheme = {
-            enable_preview = true,
-        }
-    }
-}
-
-telescope.load_extension('fzf')
-
-local telescope_fn = require('telescope.builtin')
-local telescope_dropdown = require('telescope.themes').get_dropdown { winblend = 10, previewer = false }
-
-nmap('<leader>ff', telescope_fn.find_files, { noremap = true })
-nmap('<leader>bb', function () telescope_fn.buffers(telescope_dropdown) end, { noremap = true })
-nmap('<leader>rg', telescope_fn.live_grep, { noremap = true })
-nmap('<leader>*', telescope_fn.grep_string, { noremap = true })
-nmap('<leader>tr', telescope_fn.resume, { noremap = true })
-nmap('<leader>?', function() telescope_fn.oldfiles(telescope_dropdown) end, { noremap = true })
-nmap('<leader>/', function() telescope_fn.current_buffer_fuzzy_find(telescope_dropdown) end, { noremap = true })
-nmap('<leader>cs', function() colorpicker.picker(telescope_dropdown) end, { noremap = true })
 
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
 
@@ -472,98 +454,6 @@ nmap('<leader>v', '<c-v>')
 
 vim.opt.listchars = "eol:.,tab:⍿·,trail:×"
 
-local ibl = require("ibl")
-ibl.setup()
-
-local lualine = require('lualine')
-
--- local ws_msg = ''
--- local ws_timer = vim.uv.new_timer()
--- local ws_buf = -1
--- local ws_should_update = true
---
--- ---@cast ws_timer -nil
--- ws_timer:start(2000, 2000, function()
---     ws_should_update = true
---     ws_buf = -1
--- end)
---
--- local function ws_component()
---     local bufnr = vim.api.nvim_get_current_buf()
---     if ws_should_update or ws_buf ~= bufnr then
---         ws_should_update = false
---         ws_buf = bufnr;
---         local ft = vim.api.nvim_get_option_value('filetype', { buf = bufnr})
---         local bt = vim.api.nvim_get_option_value('buftype', { buf = bufnr})
---
---         if ft == 'TelescopePrompt' or
---            ft == "fugitive" or
---            bt == 'terminal' then
---             return ''
---         end
---
---         local line = vim.fn.search('\\s\\+$', 'nw')
---         if line ~= 0 then
---             ws_msg =  '[' .. line .. ']trail'
---         else
---             ws_msg = ''
---         end
---     end
---     return ws_msg
--- end
-
-local function macro_component()
-    local rec_reg = vim.fn.reg_recording()
-
-    if rec_reg == "" then return ""
-    else return "Recording @" .. rec_reg end
-end
-
-
--- Force refresh lualine when we start recording a macro
-vim.api.nvim_create_autocmd({ "RecordingEnter" }, {
-    callback = function()
-        lualine.refresh({place={"statusline"}})
-    end,
-})
-
-vim.api.nvim_create_autocmd({ "RecordingLeave" }, {
-    callback = function()
-        -- Wait for vim.fn.reg_recording to be purged
-        local timer = vim.uv.new_timer()
-        ---@cast timer -nil
-        timer:start(50, 0, vim.schedule_wrap(function()
-            lualine.refresh({place={"statusline"}})
-        end))
-    end,
-})
-
-local function ws_component()
-    local space = vim.fn.search([[\s\+$]], 'nwc')
-    return space ~= 0 and '[' .. space .. ']trail' or ""
-end
-
-lualine.setup {
-    options = { section_separators = '', component_separators = '' },
-    sections = {
-        lualine_a = { { 'mode', fmt = function(str) return string.lower(str) end } },
-
-        lualine_b = {
-            'branch',
-            'diff',
-            { 'diagnostics', sources = { 'nvim_lsp'}, },
-            { macro_component },
-        },
-
-        lualine_c = {'filename'},
-        lualine_x = {'encoding', 'fileformat', 'filetype'},
-        lualine_y = {'searchcount' },
-        lualine_z = {'location', { ws_component, color = { bg = 'orange' } } }
-    },
-    extensions = {'quickfix'},
-}
-
-vim.o.showtabline = 1
 
 nmap('[d', function() vim.diagnostic.jump({count = -1, float = true }) end, { desc = 'Go to previous diagnostic message' })
 nmap(']d', function() vim.diagnostic.jump({count = 1, float = true }) end, { desc = 'Go to next diagnostic message' })

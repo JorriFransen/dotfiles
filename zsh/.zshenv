@@ -10,3 +10,4 @@ export VISUAL=$my_editor
 
 export GPG_TTY=$(tty)
 export OPENCV_LOG_LEVEL=ERROR
+. "/home/jorri/.local/share/bob/env/env.sh"
