@@ -1,4 +1,3 @@
-
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
@@ -43,16 +42,27 @@ vim.o.termguicolors = true
 vim.o.updatetime = 100
 vim.o.timeoutlen = 350
 
+vim.o.winborder = "rounded"
+
 -- vim.o.completeopt = 'menuone,noselect'
+
+local config_dir = vim.fn.stdpath("config")
+local config_path = config_dir .. "/init.lua"
+local pack_path = vim.fn.stdpath("data") .. "/site/pack/core/opt"
+
+vim.keymap.set('n', '<leader>cr', function()
+    vim.cmd("bufdo update")
+    vim.cmd("source " .. config_path);
+end)
+vim.keymap.set('n', '<leader>ce', function()
+    vim.cmd("e " .. config_path);
+end)
 
 vim.api.nvim_create_autocmd({ "FileType" }, { pattern = 'asm', command = 'setlocal expandtab'})
 
 local localzigfmt = vim.api.nvim_create_augroup("localzigfmt", {});
 vim.api.nvim_create_autocmd("BufWritePost", { group = localzigfmt,
                              pattern = {"*.zig"}, command = 'silent !zig fmt <afile>'})
-
-local config_path = vim.fn.stdpath("config")
-local pack_path = vim.fn.stdpath("data") .. "/site/pack/core/opt"
 
 vim.pack.add({
     "https://github.com/tpope/vim-fugitive",
@@ -84,7 +94,6 @@ vim.pack.add({
     "https://github.com/rebelot/kanagawa.nvim",
     "https://github.com/sainnhe/everforest",
     "https://github.com/EdenEast/nightfox.nvim",
-
 
     "https://github.com/nvim-lualine/lualine.nvim",
     "https://github.com/lukas-reineke/indent-blankline.nvim",
@@ -248,6 +257,119 @@ vim.api.nvim_create_autocmd({ "RecordingLeave" }, {
 local ibl = require("ibl")
 ibl.setup()
 
+-- Colorscheme switcher
+local cs_filename = config_dir .. "/colorscheme"
+assert(cs_filename)
+local cs_file = io.open(cs_filename, "r")
+if cs_file then
+    local scheme = cs_file:read("*a")
+    vim.cmd ("colorscheme "  .. scheme)
+else
+        vim.cmd "colorscheme tokyonight-night"
+end
+
+local colorschemes = colorpicker.schemes
+
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+    group = vim.api.nvim_create_augroup("wezterm_colorscheme", { clear = true}),
+    callback = function(args)
+        local colorscheme = colorschemes[args.match];
+        if not colorscheme then
+            vim.notify("Did not find wezterm colorscheme for " .. args.match, vim.log.levels.WARN)
+            return
+        end
+
+        -- Write theme to file for wezterm to  read
+        local wfilename = vim.fn.expand("$XDG_CONFIG_HOME/wezterm/colorscheme")
+        -- vim.notify("wfilename: " .. wfilename, vim.log.levels.INFO)
+        assert(type(wfilename) == "string")
+        local wfile = io.open(wfilename, "w")
+        assert(wfile);
+        wfile:write(colorscheme);
+        wfile:close()
+        vim.notify("Setting Wezterm color scheme to " .. colorscheme, vim.log.levels.INFO)
+
+        -- Write theme to file for nvim to read
+        local nfilename = vim.fn.expand("$XDG_CONFIG_HOME/nvim/colorscheme")
+        assert(type(nfilename) == "string")
+        local nfile = io.open(nfilename, "w")
+        assert(nfile)
+        nfile:write(args.match)
+        nfile:close()
+
+    end,
+})
+
+-- vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+vim.keymap.set('i', '{<CR>', '{<CR>}<Esc>O', { noremap = true })
+
+-- Remap for dealing with word wrap
+nmap('k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+nmap('j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+
+-- Window navigation
+nmap('<leader>wv', function() vim.cmd('vsplit') end, { noremap = true })
+nmap('<leader>ws', function() vim.cmd('split') end, { noremap = true })
+
+nmap('<c-h>', function() vim.cmd('TmuxNavigateLeft') end, {noremap = true})
+nmap('<c-l>', function() vim.cmd('TmuxNavigateRight') end, {noremap = true})
+nmap('<c-k>', function() vim.cmd('TmuxNavigateUp') end, {noremap = true})
+nmap('<c-j>', function() vim.cmd('TmuxNavigateDown') end, {noremap = true})
+
+nmap('<m-h>', function() vim.cmd('TmuxResizeLeft') end, {noremap = true})
+nmap('<m-l>', function() vim.cmd('TmuxResizeRight') end, {noremap = true})
+nmap('<m-k>', function() vim.cmd('TmuxResizeUp') end, {noremap = true})
+nmap('<m-j>', function() vim.cmd('TmuxResizeDown') end, {noremap = true})
+
+vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
+
+nmap('<leader>ut', function() vim.cmd('UndotreeToggle') end, { noremap = true })
+nmap('<leader>uf', function() vim.cmd('UndotreeFocus') end, { noremap = true })
+nmap('<leader>uc', function() vim.cmd('UndotreeHide') end, { noremap = true })
+
+nmap('<leader>gs', function() vim.cmd('G') end, { noremap = true })
+nmap('<leader>gp', function() vim.cmd('G push') end, { noremap = true })
+nmap('<leader>gl', function() vim.cmd('G log') end, { noremap = true })
+
+nmap('<leader>thh', function() vim.cmd('set hls!') end, { noremap = true })
+nmap('<leader>T', function() vim.cmd('tabe') vim.cmd('terminal') vim.cmd('startinsert') end, { noremap = true, desc = "Open terminal in new tab"})
+nmap('<C-T><C-h>', function() vim.cmd('tabp') end, { noremap = true });
+vim.keymap.set('i', '<C-T><C-h>', function() vim.cmd('stopinsert') vim.cmd('tabp') end, { noremap = true });
+nmap('<C-T><C-l>', function() vim.cmd('tabn') end, { noremap = true });
+vim.keymap.set('i', '<C-T><C-l>', function() vim.cmd('stopinsert') vim.cmd('tabn') end, { noremap = true });
+vim.keymap.set('t', '<C-T><C-h>', '<C-\\><C-n>:tabp<CR>', { noremap = true });
+vim.keymap.set('t', '<C-T><C-l>', '<C-\\><C-n>:tabn<CR>', { noremap = true });
+
+nmap('<leader>cd', ":execute empty(filter(getwininfo(), 'v:val.quickfix')) == 1 ? 'botright copen' : 'cclose'<CR>", { noremap = true, silent = true });
+nmap('<leader>en', function() vim.cmd('cn') end)
+nmap('<leader>ep', function() vim.cmd('cp') end)
+nmap('<leader>ef', function() vim.cmd('cfirst') end);
+
+nmap('<leader>v', '<c-v>')
+
+
+vim.opt.listchars = "eol:.,tab:⍿·,trail:×"
+
+
+nmap('[d', function() vim.diagnostic.jump({count = -1, float = true }) end, { desc = 'Go to previous diagnostic message' })
+nmap(']d', function() vim.diagnostic.jump({count = 1, float = true }) end, { desc = 'Go to next diagnostic message' })
+nmap('<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+nmap('<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+nmap('<leader>ga', function() vim.cmd('ClangdSwitchSourceHeader') end);
+nmap('<F1>', function() Compile() end)
+vim.keymap.set('i', '<F1>', function() vim.cmd('stopinsert') Compile() end)
+nmap('<leader><F1>', function() EmitCompileCommands() end)
+nmap('<F2>', function() Clean() end)
+vim.keymap.set('i', '<F2>', function() vim.cmd('stopinsert') Clean() end)
+nmap('<F3>', function() Iwyu() end)
+nmap('<leader>rr', function() Run() end)
+nmap('<leader>rt', function() RunTests() end)
+nmap('<leader>ror', function() RunSetOptions() end)
+nmap('<leader>rot', function() RunTestsSetOptions() end)
+nmap('<leader>sbd', function() SetBuildDir() end)
+
 local cmp = require("cmp");
 local luasnip = require("luasnip")
 
@@ -359,119 +481,6 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
--- Colorscheme switcher
-local cs_filename = config_path .. "/colorscheme"
-assert(cs_filename)
-local cs_file = io.open(cs_filename, "r")
-if cs_file then
-    local scheme = cs_file:read("*a")
-    vim.cmd ("colorscheme "  .. scheme)
-else
-        vim.cmd "colorscheme tokyonight-night"
-end
-
-
-local colorschemes = colorpicker.schemes
-
-
-vim.api.nvim_create_autocmd("ColorScheme", {
-    group = vim.api.nvim_create_augroup("wezterm_colorscheme", { clear = true}),
-    callback = function(args)
-        local colorscheme = colorschemes[args.match];
-        if not colorscheme then
-            vim.notify("Did not find wezterm colorscheme for " .. args.match, vim.log.levels.WARN)
-            return
-        end
-
-        -- Write theme to file for wezterm to  read
-        local wfilename = vim.fn.expand("$XDG_CONFIG_HOME/wezterm/colorscheme")
-        -- vim.notify("wfilename: " .. wfilename, vim.log.levels.INFO)
-        assert(type(wfilename) == "string")
-        local wfile = io.open(wfilename, "w")
-        assert(wfile);
-        wfile:write(colorscheme);
-        wfile:close()
-        vim.notify("Setting Wezterm color scheme to " .. colorscheme, vim.log.levels.INFO)
-
-        -- Write theme to file for nvim to read
-        local nfilename = vim.fn.expand("$XDG_CONFIG_HOME/nvim/colorscheme")
-        assert(type(nfilename) == "string")
-        local nfile = io.open(nfilename, "w")
-        assert(nfile)
-        nfile:write(args.match)
-        nfile:close()
-
-    end,
-})
-
--- vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-vim.keymap.set('i', '{<CR>', '{<CR>}<Esc>O', { noremap = true })
-
--- Remap for dealing with word wrap
-nmap('k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-nmap('j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
--- Window navigation
-nmap('<leader>wv', function() vim.cmd('vsplit') end, { noremap = true })
-nmap('<leader>ws', function() vim.cmd('split') end, { noremap = true })
-
-nmap('<c-h>', function() vim.cmd('TmuxNavigateLeft') end, {noremap = true})
-nmap('<c-l>', function() vim.cmd('TmuxNavigateRight') end, {noremap = true})
-nmap('<c-k>', function() vim.cmd('TmuxNavigateUp') end, {noremap = true})
-nmap('<c-j>', function() vim.cmd('TmuxNavigateDown') end, {noremap = true})
-
-nmap('<m-h>', function() vim.cmd('TmuxResizeLeft') end, {noremap = true})
-nmap('<m-l>', function() vim.cmd('TmuxResizeRight') end, {noremap = true})
-nmap('<m-k>', function() vim.cmd('TmuxResizeUp') end, {noremap = true})
-nmap('<m-j>', function() vim.cmd('TmuxResizeDown') end, {noremap = true})
-
-vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
-
-nmap('<leader>ut', function() vim.cmd('UndotreeToggle') end, { noremap = true })
-nmap('<leader>uf', function() vim.cmd('UndotreeFocus') end, { noremap = true })
-nmap('<leader>uc', function() vim.cmd('UndotreeHide') end, { noremap = true })
-
-nmap('<leader>gs', function() vim.cmd('G') end, { noremap = true })
-nmap('<leader>gp', function() vim.cmd('G push') end, { noremap = true })
-nmap('<leader>gl', function() vim.cmd('G log') end, { noremap = true })
-
-nmap('<leader>thh', function() vim.cmd('set hls!') end, { noremap = true })
-nmap('<leader>T', function() vim.cmd('tabe') vim.cmd('terminal') vim.cmd('startinsert') end, { noremap = true, desc = "Open terminal in new tab"})
-nmap('<C-T><C-h>', function() vim.cmd('tabp') end, { noremap = true });
-vim.keymap.set('i', '<C-T><C-h>', function() vim.cmd('stopinsert') vim.cmd('tabp') end, { noremap = true });
-nmap('<C-T><C-l>', function() vim.cmd('tabn') end, { noremap = true });
-vim.keymap.set('i', '<C-T><C-l>', function() vim.cmd('stopinsert') vim.cmd('tabn') end, { noremap = true });
-vim.keymap.set('t', '<C-T><C-h>', '<C-\\><C-n>:tabp<CR>', { noremap = true });
-vim.keymap.set('t', '<C-T><C-l>', '<C-\\><C-n>:tabn<CR>', { noremap = true });
-
-nmap('<leader>cd', ":execute empty(filter(getwininfo(), 'v:val.quickfix')) == 1 ? 'botright copen' : 'cclose'<CR>", { noremap = true, silent = true });
-nmap('<leader>en', function() vim.cmd('cn') end)
-nmap('<leader>ep', function() vim.cmd('cp') end)
-nmap('<leader>ef', function() vim.cmd('cfirst') end);
-
-nmap('<leader>v', '<c-v>')
-
-
-vim.opt.listchars = "eol:.,tab:⍿·,trail:×"
-
-
-nmap('[d', function() vim.diagnostic.jump({count = -1, float = true }) end, { desc = 'Go to previous diagnostic message' })
-nmap(']d', function() vim.diagnostic.jump({count = 1, float = true }) end, { desc = 'Go to next diagnostic message' })
-nmap('<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-nmap('<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
-
-nmap('<leader>ga', function() vim.cmd('ClangdSwitchSourceHeader') end);
-nmap('<F1>', function() Compile() end)
-vim.keymap.set('i', '<F1>', function() vim.cmd('stopinsert') Compile() end)
-nmap('<leader><F1>', function() EmitCompileCommands() end)
-nmap('<F2>', function() Clean() end)
-vim.keymap.set('i', '<F2>', function() vim.cmd('stopinsert') Clean() end)
-nmap('<F3>', function() Iwyu() end)
-nmap('<leader>rr', function() Run() end)
-nmap('<leader>rt', function() RunTests() end)
-nmap('<leader>ror', function() RunSetOptions() end)
-nmap('<leader>rot', function() RunTestsSetOptions() end)
-nmap('<leader>sbd', function() SetBuildDir() end)
 
 
 

@@ -5,6 +5,7 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local utils = require "telescope.utils"
 
+-- Mapping from vim to wezterm theme
 local colorschemes = {
     ["tokyonight"] = "tokyonight",
     ["tokyonight-day"] = "tokyonight_day",
