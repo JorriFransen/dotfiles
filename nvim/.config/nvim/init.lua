@@ -171,10 +171,89 @@ if not vim.fn.isdirectory(fzf_path) then
     vim.notify("Unable to find fzf package path", vim.log.levels.ERROR)
 end
 
-local fzf_artifact_path = fzf_path .. "/build/libfzf.so"
+local function get_os()
+    local os_name = os.getenv("OS")
+    if os_name then
+        -- Windows typically returns "Windows_NT" or "Windows"
+        -- Linux/macOS won't have an "OS" env variable set in the same way,
+        -- so os.getenv("OS") will return nil on those platforms.
+        -- However, it's safer to check for common Linux/macOS indicators too.
+
+        if os_name:match("[Ww]indows") then
+            return "Windows"
+        end
+    end
+
+    -- For Unix-like systems (Linux, macOS, BSD, etc.), check for common shell commands
+    -- or properties that are more specific to those platforms.
+    -- Neovim's built-in `vim.loop.os_uname().sysname` is even better if available!
+
+    -- Neovim specific (recommended if running in Neovim)
+    if vim and vim.loop and vim.loop.os_uname then
+        local uname = vim.loop.os_uname()
+        if uname and uname.sysname then
+            local sysname_lower = uname.sysname:lower()
+            if sysname_lower:match("windows") then -- For WSL, or if vim.loop reports it directly
+                return "Windows"
+            elseif sysname_lower:match("linux") then
+                return "Linux"
+            elseif sysname_lower:match("darwin") then
+                return "macOS"
+            elseif sysname_lower:match("bsd") then
+                return "BSD"
+            end
+        end
+    end
+
+    -- Fallback for pure Lua (less reliable but can work)
+    -- Try to execute 'uname' command, which exists on Unix-like systems
+    local f = io.popen("uname -s 2>/dev/null", "r")
+    if f then
+        local result = f:read("*a"):lower():strip() -- .strip() might need a helper function if not in Neovim
+        f:close()
+        if result:match("linux") then
+            return "Linux"
+        elseif result:match("darwin") then
+            return "macOS"
+        elseif result:match("bsd") then
+            return "BSD"
+        elseif result:match("cygwin") or result:match("mingw") then
+            -- These are Unix-like environments on Windows, might still need DLLs for native Windows apps
+            return "Windows" -- Treat as Windows for DLLs
+        end
+    end
+
+    return "unknown" -- Fallback if nothing matches
+end
+
+local function unix_path(windows_path)
+    local result = windows_path:gsub(":", ""):gsub("\\", "/");
+    return "/" .. result:sub(1, 1):lower() .. result:sub(2)
+end
+
+local os = get_os();
+
+local fzf_artifact_path
+if (os == "Windows") then
+    fzf_artifact_path = fzf_path .. "\\build\\libfzf.dll"
+else
+    fzf_artifact_path = fzf_path .. "/build/libfzf.so"
+end
+
 if vim.fn.filereadable(fzf_artifact_path) ~= 1 then
+
     vim.notify(string.format("Building %s...", fzf_artifact_path), vim.log.levels.INFO)
-    local cmd = "cd " .. vim.fn.shellescape(fzf_path) .. " && make"
+
+    local cmd
+    if os == "Windows" then
+        local build_path = string.format("%s\\build", fzf_path)
+        cmd = string.format("cmake -S%s -B%s -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=\"3.5\" && cmake --build %s --config Release && cmake --install %s --prefix %s", fzf_path,  build_path, build_path, build_path, build_path)
+    else
+        cmd = string.format("cd %s && make", vim.fn.shellescape(fzf_path))
+    end
+
+    vim.notify("Command: " .. cmd, vim.log.levels.INFO)
+
     local output = vim.fn.system(cmd)
     local status = vim.v.shell_error
 
@@ -183,6 +262,7 @@ if vim.fn.filereadable(fzf_artifact_path) ~= 1 then
     else
         vim.notify(string.format("%s built successfully", fzf_artifact_path), vim.log.levels.INFO)
     end
+
 end
 
 telescope.load_extension('fzf')
@@ -211,7 +291,6 @@ local function ws_component()
     local space = vim.fn.search([[\s\+$]], 'nwc')
     return space ~= 0 and '[' .. space .. ']trail' or ""
 end
-
 
 local lualine = require("lualine");
 lualine.setup {
