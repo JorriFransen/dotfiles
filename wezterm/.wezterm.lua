@@ -3,9 +3,12 @@ local mux = wezterm.mux
 local act = wezterm.action;
 local config = wezterm.config_builder()
 
+config.enable_csi_u_key_encoding = true
+
 config.font_size = 14.5
 config.font = wezterm.font_with_fallback {
-    'Cascadia Mono PL',
+    'IBM Plex Mono',
+    'Cascadia Code',
     'Zenbones Mono',
     'JetBrains Mono',
     'Noto Color Emoji',
