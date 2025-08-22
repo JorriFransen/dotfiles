@@ -44,14 +44,16 @@ vim.o.timeoutlen = 350
 
 vim.o.winborder = "rounded"
 
--- vim.o.completeopt = 'menuone,noselect'
+-- Disable <Tab> acting like <C-I>
+vim.keymap.set("n", "<C-I>", "<C-I>")
+vim.keymap.set("n", "<Tab>", "<Nop>")
 
 local config_dir = vim.fn.stdpath("config")
 local config_path = config_dir .. "/init.lua"
 local pack_path = vim.fn.stdpath("data") .. "/site/pack/core/opt"
 
 vim.keymap.set('n', '<leader>cr', function()
-    vim.cmd("bufdo update")
+    vim.cmd.wa();
     vim.cmd("source " .. config_path);
 end)
 vim.keymap.set('n', '<leader>ce', function()
@@ -118,11 +120,53 @@ vim.pack.add({
     "https://github.com/mfussenegger/nvim-dap",
     "https://github.com/rcarriga/nvim-dap-ui",
     "https://github.com/nvim-neotest/nvim-nio",
+
+
+
+
+    -- New stuff...
+    "https://github.com/stevearc/oil.nvim",
 })
 
 local function nmap(keys, func, opts)
     vim.keymap.set('n', keys, func, opts)
 end
+
+require("oil").setup({
+    use_default_keymaps = false,
+    keymaps = {
+        ["g?"] = { "actions.show_help", mode = "n" },
+        ["<CR>"] = "actions.select",
+        ["<C-s>"] = { "actions.select", opts = { vertical = true } },
+        ["<C-w><C-h>"] = { "actions.select", opts = { horizontal = true } },
+        ["<C-t>"] = { "actions.select", opts = { tab = true } },
+        ["<C-p>"] = "actions.preview",
+        ["<C-c>"] = { "actions.close", mode = "n" },
+        ["<C-l>"] = "actions.refresh",
+        ["-"] = { "actions.parent", mode = "n" },
+        ["_"] = { "actions.open_cwd", mode = "n" },
+        ["`"] = { "actions.cd", mode = "n" },
+        ["~"] = { "actions.cd", opts = { scope = "tab" }, mode = "n" },
+        ["gs"] = { "actions.change_sort", mode = "n" },
+        ["gx"] = "actions.open_external",
+        ["g."] = { "actions.toggle_hidden", mode = "n" },
+        ["g\\"] = { "actions.toggle_trash", mode = "n" },
+    },
+
+})
+
+nmap("<leader>of", ":Oil --float .<CR>")
+nmap("<leader>oo", ":Oil .<CR>")
+nmap("<leader>ofd", function()
+    local dir = vim.fn.input("Open dir: ", vim.fn.getcwd(), "dir")
+    local cmd = "Oil --float " .. dir
+    vim.cmd(cmd);
+end)
+nmap("<leader>od", function()
+    local dir = vim.fn.input("Open dir: ", vim.fn.getcwd(), "dir")
+    local cmd = "Oil " .. dir
+    vim.cmd(cmd);
+end)
 
 require("config-local").setup({})
 
@@ -551,11 +595,14 @@ lspconfig.lua_ls.setup {
 
 -- Zig
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "zig" },
+    pattern = { "zig", "c", "c++" },
     callback = function()
         vim.treesitter.start()
+
         vim.o.foldmethod = "expr"
         vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+
+        -- vim.bo.identexpr = "v:lua.require'nvim-treesitter'.identexpr()"
 
     end,
 })
