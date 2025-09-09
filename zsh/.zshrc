@@ -79,11 +79,9 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
 PATH=$PATH:$HOME/.local/scripts
-PATH=$PATH:$HOME/.local/opt/zig
 PATH=$PATH:$HOME/.local/opt/zls
 PATH=$PATH:$HOME/go/bin
 
-alias zigup='zigup --install-dir $HOME/.local/opt/zig/installs --path-link $HOME/.local/opt/zig/zig'
 alias ls='ls --color'
 alias aconfmgr='aconfmgr -c $HOME/dev/dotfiles/aconfmgr'
 
