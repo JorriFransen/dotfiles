@@ -96,6 +96,7 @@ vim.pack.add({
     "https://github.com/rebelot/kanagawa.nvim",
     "https://github.com/sainnhe/everforest",
     "https://github.com/EdenEast/nightfox.nvim",
+    "https://github.com/pappasam/papercolor-theme-slim",
 
     "https://github.com/nvim-lualine/lualine.nvim",
     "https://github.com/lukas-reineke/indent-blankline.nvim",

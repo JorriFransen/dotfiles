@@ -19,6 +19,9 @@ local colorschemes = {
     ["gruvbox"] = "GruvboxDark",
     ["base16-black-metal-bathory"] = "Black Metal (Bathory) (base16)",
     ["kanagawa"] = "Kanagawa (Gogh)",
+    ["kanagawa-dragon"] = "Kanagawa Dragon (Gogh)",
+    ["kanagawa-lotus"] = "Kanagawa (Gogh)",
+    ["kanagawa-wave"] = "Kanagawa (Gogh)",
     ["everforest"] = "Everforest Dark (Gogh)",
     ["carbonfox"] = "carbonfox",
     ["dawnfox"] = "dawnfox",
@@ -27,6 +30,7 @@ local colorschemes = {
     ["dayfox"] = "dayfox",
     ["terafox"] = "terafox",
     ["nordfox"] = "nordfox",
+    ["PaperColorSlim"] = "PaperColor Dark (base16)"
 }
 
 local function getKeys(tab)
@@ -50,6 +54,7 @@ local colorpicker = function(opts)
             return
         end
         vim.cmd.colorscheme(selection.value)
+        vim.print("Set colorscheme to: " .. selection.value)
     end
 
     opts = opts or {}
