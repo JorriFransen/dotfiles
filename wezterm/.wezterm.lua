@@ -26,11 +26,11 @@ local cs_filename = os.getenv("XDG_CONFIG_HOME").."/wezterm/colorscheme"
 assert(cs_filename)
 wezterm.add_to_config_reload_watch_list(cs_filename)
 local file = io.open(cs_filename, "r")
--- wezterm.log_error("cs file: " .. cs_filename)
+wezterm.log_error("cs file: " .. cs_filename)
 if file then
     local scheme = file:read("*a");
     config.color_scheme = scheme
-    -- wezterm.log_error("Read colorscheme: '" .. scheme .. "'")
+    wezterm.log_error("Read colorscheme: '" .. scheme .. "'")
     file:close()
 else
     config.color_scheme = "tokyonight_night"
