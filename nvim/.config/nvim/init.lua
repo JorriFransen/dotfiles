@@ -498,6 +498,11 @@ nmap('<leader>sbd', function() SetBuildDir() end)
 local cmp = require("cmp");
 local luasnip = require("luasnip")
 
+luasnip.setup({
+    region_check_events = {"CursorMoved", "CursorHold", "InsertEnter"},
+    delete_check_events = {"TextChanged"},
+})
+
 cmp.setup({
     snippet = {
         expand = function(args)
