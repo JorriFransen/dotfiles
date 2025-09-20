@@ -30,7 +30,9 @@ local colorschemes = {
     ["dayfox"] = "dayfox",
     ["terafox"] = "terafox",
     ["nordfox"] = "nordfox",
-    ["PaperColorSlim"] = "PaperColor Dark (base16)"
+    ["PaperColorSlim"] = "PaperColor Dark (base16)",
+    -- ["midnight"] = "Mikado (terminal.sexy)",
+    ["midnight"] = "Melliflous",
 }
 
 local function getKeys(tab)

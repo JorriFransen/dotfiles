@@ -98,6 +98,8 @@ vim.pack.add({
     "https://github.com/EdenEast/nightfox.nvim",
     "https://github.com/pappasam/papercolor-theme-slim",
     -- "https://github.com/NLKNguyen/papercolor-theme",
+    "https://github.com/savq/melange-nvim",
+    "https://github.com/dasupradyumna/midnight.nvim",
 
     "https://github.com/nvim-lualine/lualine.nvim",
     "https://github.com/lukas-reineke/indent-blankline.nvim",
@@ -111,7 +113,7 @@ vim.pack.add({
     "https://github.com/saadparwaiz1/cmp_luasnip",
     {
         src = "https://github.com/L3MON4D3/LuaSnip",
-        version = vim.version.range('2.0');
+        version = vim.version.range('2.4');
     },
     "https://github.com/folke/lazydev.nvim",
 
@@ -339,22 +341,35 @@ local function ws_component()
 end
 
 local lualine = require("lualine");
+local bg_color =  { bg = '#181c20' }
 lualine.setup {
-    options = { section_separators = '', component_separators = '' },
+    options = {
+        section_separators = '',
+        component_separators = '',
+    },
     sections = {
-        lualine_a = { { 'mode', fmt = function(str) return string.lower(str) end } },
-
+        lualine_a = { { 'mode', fmt = function(str) return string.lower(str) end, } },
         lualine_b = {
             'branch',
             'diff',
-            { 'diagnostics', sources = { 'nvim_lsp'}, },
+            { 'diagnostics' },
             { macro_component },
         },
-
-        lualine_c = {'filename'},
-        lualine_x = {'encoding', 'fileformat', 'filetype'},
-        lualine_y = {'searchcount' },
-        lualine_z = {'location', { ws_component, color = { bg = 'orange' } } }
+        lualine_c = {
+            { 'filename' },
+        },
+        lualine_x = { { 'encoding' }, { 'fileformat' }, { 'filetype' } },
+        lualine_y = { 'searchcount' },
+        lualine_z = { 'progress', 'location', { ws_component, color = { bg = 'orange' } } }
+    },
+    inactive_sections = {
+        lualine_a = { },
+        lualine_b = { { 'branch', color = bg_color },{'filename'} },
+        -- lualine_c = { { 'filename' } },
+        lualine_c = {},
+        lualine_x = { 'encoding', 'fileformat', 'filetype' },
+        lualine_y = { 'searchcount' },
+        lualine_z = { 'progress', 'location'  },
     },
     extensions = {'quickfix'},
 }
@@ -379,8 +394,6 @@ vim.api.nvim_create_autocmd({ "RecordingLeave" }, {
     end,
 })
 
-local ibl = require("ibl")
-ibl.setup()
 
 -- Colorscheme switcher
 local cs_filename = config_dir .. "/colorscheme"
@@ -425,6 +438,9 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 
     end,
 })
+
+local ibl = require("ibl")
+ibl.setup()
 
 -- vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('i', '{<CR>', '{<CR>}<Esc>O', { noremap = true })
@@ -540,7 +556,7 @@ cmp.setup({
     }),
 })
 
-local lspconfig = require("lspconfig")
+-- local lspconfig = vim.lsp.config()
 -- Common settings for LSP clients
 local on_attach = function(_, bufnr)
     -- vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
@@ -564,18 +580,22 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
 end
 
-lspconfig.zls.setup {
+vim.lsp.config['zls'] = {
     on_attach = on_attach,
     cmd = {"zls"},
     filetypes = {"zig", "zir"},
-    root_dir = lspconfig.util.root_pattern("build.zig", ".git"),
+    root_markers = { 'build.zig', '.git' },
+    -- root_dir = require'lspconfig'.util.root_pattern("build.zig", ".git"),
     single_file_support = true,
     settings = { zls = {}},
 }
-lspconfig.lua_ls.setup {
+vim.lsp.enable('zls')
+
+vim.lsp.config['lua_ls'] = {
     on_attach = on_attach,
     cmd = {"lua-language-server"},
     filetypes = {"lua"},
+    root_markers = { { '.luarc.json', '.luarc.jsonc' }, '.git' },
     settings = {
         Lua = {
             workspace = {
@@ -598,6 +618,7 @@ lspconfig.lua_ls.setup {
         },
     },
 }
+vim.lsp.enable('lua_ls')
 
 
 -- Zig
