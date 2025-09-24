@@ -30,6 +30,7 @@ vim.o.expandtab = true
 
 vim.o.wrap = true
 vim.o.breakindent = true
+vim.o.virtualedit = 'block'
 
 vim.o.hidden = true
 vim.o.swapfile = false
@@ -100,6 +101,7 @@ vim.pack.add({
     -- "https://github.com/NLKNguyen/papercolor-theme",
     "https://github.com/savq/melange-nvim",
     "https://github.com/dasupradyumna/midnight.nvim",
+    "https://github.com/Shatur/neovim-ayu",
 
     "https://github.com/nvim-lualine/lualine.nvim",
     "https://github.com/lukas-reineke/indent-blankline.nvim",
@@ -374,7 +376,6 @@ lualine.setup {
     extensions = {'quickfix'},
 }
 
-vim.o.showtabline = 1
 
 -- Force refresh lualine when we start recording a macro
 vim.api.nvim_create_autocmd({ "RecordingEnter" }, {
@@ -439,15 +440,15 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     end,
 })
 
-local ibl = require("ibl")
-ibl.setup()
+-- local ibl = require("ibl")
+-- ibl.setup()
 
 -- vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('i', '{<CR>', '{<CR>}<Esc>O', { noremap = true })
 
 -- Remap for dealing with word wrap
-nmap('k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-nmap('j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+-- nmap('k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+-- nmap('j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Window navigation
 nmap('<leader>wv', function() vim.cmd('vsplit') end, { noremap = true })
