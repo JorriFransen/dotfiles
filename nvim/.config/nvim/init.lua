@@ -281,10 +281,10 @@ local function unix_path(windows_path)
     return "/" .. result:sub(1, 1):lower() .. result:sub(2)
 end
 
-local os = get_os();
+local current_os = get_os();
 
 local fzf_artifact_path
-if (os == "Windows") then
+if (current_os == "Windows") then
     fzf_artifact_path = fzf_path .. "\\build\\libfzf.dll"
 else
     fzf_artifact_path = fzf_path .. "/build/libfzf.so"
@@ -295,7 +295,7 @@ if vim.fn.filereadable(fzf_artifact_path) ~= 1 then
     vim.notify(string.format("Building %s...", fzf_artifact_path), vim.log.levels.INFO)
 
     local cmd
-    if os == "Windows" then
+    if current_os == "Windows" then
         local build_path = string.format("%s\\build", fzf_path)
         cmd = string.format("cmake -S%s -B%s -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=\"3.5\" && cmake --build %s --config Release && cmake --install %s --prefix %s", fzf_path,  build_path, build_path, build_path, build_path)
     else
@@ -420,8 +420,15 @@ vim.api.nvim_create_autocmd("ColorScheme", {
         end
 
         -- Write theme to file for wezterm to  read
-        local wfilename = vim.fn.expand("$XDG_CONFIG_HOME/wezterm/colorscheme")
-        -- vim.notify("wfilename: " .. wfilename, vim.log.levels.INFO)
+        local wfilename 
+        if current_os == "Windows" then
+            local dir = os.getenv("USERPROFILE").."\\wezterm"
+            os.execute("mkdir -p " .. dir);
+            wfilename = dir.."\\colorscheme"
+        else 
+            wfilename = vim.fn.expand("$XDG_CONFIG_HOME/wezterm/colorscheme")
+        end
+        vim.notify("wfilename: " .. wfilename, vim.log.levels.INFO)
         assert(type(wfilename) == "string")
         local wfile = io.open(wfilename, "w")
         assert(wfile);
@@ -430,7 +437,9 @@ vim.api.nvim_create_autocmd("ColorScheme", {
         vim.notify("Setting Wezterm color scheme to " .. colorscheme, vim.log.levels.INFO)
 
         -- Write theme to file for nvim to read
-        local nfilename = vim.fn.expand("$XDG_CONFIG_HOME/nvim/colorscheme")
+        -- local nfilename = vim.fn.expand("$XDG_CONFIG_HOME/nvim/colorscheme")
+        local nfilename = vim.fn.stdpath('config').."/colorscheme"
+        vim.notify("nfilename: " .. nfilename, vim.log.levels.INFO)
         assert(type(nfilename) == "string")
         local nfile = io.open(nfilename, "w")
         assert(nfile)
