@@ -396,19 +396,33 @@ vim.api.nvim_create_autocmd({ "RecordingLeave" }, {
 })
 
 
--- Colorscheme switcher
-local cs_filename = config_dir .. "/colorscheme"
-assert(cs_filename)
-local cs_file = io.open(cs_filename, "r")
-if cs_file then
-    local scheme = cs_file:read("*a")
-    vim.cmd ("colorscheme "  .. scheme)
-else
-        vim.cmd "colorscheme tokyonight-night"
-end
 
 local colorschemes = colorpicker.schemes
 
+local function int_to_rgb(n)
+  if not n then return nil end
+  local r = bit.rshift(n, 16)
+  local g = bit.band(bit.rshift(n, 8), 0xFF)
+  local b = bit.band(n, 0xFF)
+  return { r = r, g = g, b = b }
+end
+
+local function clamp(x) return math.min(255, math.max(0, x)) end
+
+local function rgb_to_hex(rgb)
+    return string.format("#%02x%02x%02x", rgb.r, rgb.g, rgb.b)
+end
+
+local function lighten(c, factor)
+    local rgb = int_to_rgb(c);
+    local result_rgb = {
+        r = clamp(rgb.r + (255 - rgb.r) * factor),
+        g = clamp(rgb.g + (255 - rgb.g) * factor),
+        b = clamp(rgb.b + (255 - rgb.b) * factor),
+    }
+
+    return rgb_to_hex(result_rgb)
+end
 
 vim.api.nvim_create_autocmd("ColorScheme", {
     group = vim.api.nvim_create_augroup("wezterm_colorscheme", { clear = true}),
@@ -420,34 +434,59 @@ vim.api.nvim_create_autocmd("ColorScheme", {
         end
 
         -- Write theme to file for wezterm to  read
-        local wfilename 
+        local wfilename
         if current_os == "Windows" then
             local dir = os.getenv("USERPROFILE").."\\wezterm"
             os.execute("mkdir -p " .. dir);
             wfilename = dir.."\\colorscheme"
-        else 
+        else
             wfilename = vim.fn.expand("$XDG_CONFIG_HOME/wezterm/colorscheme")
         end
-        vim.notify("wfilename: " .. wfilename, vim.log.levels.INFO)
+        -- vim.notify("wfilename: " .. wfilename, vim.log.levels.INFO)
         assert(type(wfilename) == "string")
         local wfile = io.open(wfilename, "w")
         assert(wfile);
         wfile:write(colorscheme);
         wfile:close()
-        vim.notify("Setting Wezterm color scheme to " .. colorscheme, vim.log.levels.INFO)
+        -- vim.notify("Setting Wezterm color scheme to " .. colorscheme, vim.log.levels.INFO)
 
         -- Write theme to file for nvim to read
         -- local nfilename = vim.fn.expand("$XDG_CONFIG_HOME/nvim/colorscheme")
         local nfilename = vim.fn.stdpath('config').."/colorscheme"
-        vim.notify("nfilename: " .. nfilename, vim.log.levels.INFO)
+        -- vim.notify("nfilename: " .. nfilename, vim.log.levels.INFO)
         assert(type(nfilename) == "string")
         local nfile = io.open(nfilename, "w")
         assert(nfile)
         nfile:write(args.match)
         nfile:close()
 
+        local normal_bg = vim.api.nvim_get_hl(0, { name = "Normal" }).bg
+        local line_nr_bg = vim.api.nvim_get_hl(0, { name = "LineNr" }).bg
+        -- vim.notify("normal_bg: " .. (normal_bg or "nil"), vim.log.levels.INFO)
+        -- vim.notify("line_nr_bg: " .. (line_nr_bg or "nil"), vim.log.levels.INFO)
+
+
+        if normal_bg == line_nr_bg or (normal_bg ~= nil and line_nr_bg == nil) then
+            local new_bg = lighten(normal_bg, 0.05);
+            vim.api.nvim_set_hl(0, "LineNr", { ctermbg = 0, bg = new_bg })
+            vim.api.nvim_set_hl(0, "CursorLineNr", { ctermbg = 0, bg = new_bg })
+            -- vim.notify("Setting custom linenr hi: " .. new_bg, vim.log.levels.INFO)
+        end
+
+
     end,
 })
+
+-- Colorscheme switcher
+local cs_filename = config_dir .. "/colorscheme"
+assert(cs_filename)
+local cs_file = io.open(cs_filename, "r")
+if cs_file then
+    local scheme = cs_file:read("*a")
+    vim.cmd ("colorscheme "  .. scheme)
+else
+        vim.cmd "colorscheme tokyonight-night"
+end
 
 -- local ibl = require("ibl")
 -- ibl.setup()
